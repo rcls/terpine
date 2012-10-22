@@ -47,23 +47,13 @@ architecture behavioral of round is
   signal I1 : word_t;
   signal I2 : word_t;
   signal I3 : word_t;
-  signal CC : word_t;
-  signal DD : word_t;
-  signal DDD: word_t;
-  signal EE : word_t;
-  signal EEE: word_t;
 begin
   process
   begin
     wait until rising_edge(clk);
-    EE <= E;
-    EEE <= EE;
-    DD <= D;
-    DDD <= DD;
-    CC <= C;
     I3 <= W + KK;
-    I2 <= (EEE rol 30) + I3;
-    I1 <= FF(B,CC,DDD) + I2;
+    I2 <= (E rol 30) + I3;
+    I1 <= FF(B,C,D) + I2;
     R <= (A rol 5) + I1;
   end process;
 end behavioral;
