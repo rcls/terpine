@@ -30,13 +30,13 @@ architecture behavioral of round is
       return Bu xor Cu xor Du;
     end if;
   end FF;
-  function KK return word_t is
+  function KK (NN : natural) return word_t is
   begin
-    if N < 20 then
+    if NN < 20 then
       return x"5a827999";
-    elsif N < 40 then
+    elsif NN < 40 then
       return x"6ed9eba1";
-    elsif N < 60 then
+    elsif NN < 60 then
       return x"8f1bbcdc";
     else
       return x"ca62c1d6";
@@ -73,48 +73,47 @@ architecture behavioral of round is
   function delay (i : natural) return boolean is
   begin return N >= dly and N mod dly < i; end delay;
 begin
-  d_a: if not delay (1) generate
+  n_a: if not delay (1) generate
     A1 <= A;
   end generate;
-  d_b: if not delay (2) generate
+  n_b: if not delay (2) generate
     B1 <= B;
   end generate;
-  d_c: if not delay (3) generate
+  n_c: if not delay (3) generate
     C1 <= C;
   end generate;
-  d_d: if not delay (4) generate
+  n_d: if not delay (4) generate
     D1 <= D;
   end generate;
-  d_e: if not delay (5) generate
+  n_e: if not delay (5) generate
     E1 <= E;
+  end generate;
+  d_a: if delay (1) generate
+    process begin wait until rising_edge(clk); A1 <= A; end process;
+  end generate;
+  d_b: if delay (2) generate
+    process begin wait until rising_edge(clk); B1 <= B; end process;
+  end generate;
+  d_c: if delay (3) generate
+    process begin wait until rising_edge(clk); C1 <= C; end process;
+  end generate;
+  d_d: if delay (4) generate
+    process begin wait until rising_edge(clk); D1 <= D; end process;
+  end generate;
+  d_e: if delay (5) generate
+    process begin wait until rising_edge(clk); E1 <= E; end process;
   end generate;
 
   process
   begin
     wait until rising_edge(clk);
-    if delay (1) then
-      A1 <= A;
-    end if;
-    if delay (2) then
-      B1 <= B;
-    end if;
-    if delay (3) then
-      C1 <= C;
-    end if;
-    if delay (4) then
-      D1 <= D;
-    end if;
-    if delay (5) then
-      E1 <= E;
-    end if;
-
     CC <= C1;
     DD <= D1;
     DDD <= DD;
     EE <= E1;
     EEE <= EE;
     I2 <= (EEE rol 30) + W;
-    I1 <= FF(B1, CC rol 30, DDD rol 30) + KK + I2;
+    I1 <= FF(B1, CC rol 30, DDD rol 30) + KK(N) + I2;
     R <= (A1 rol 5) + I1;
   end process;
 end behavioral;
