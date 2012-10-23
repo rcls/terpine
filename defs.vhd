@@ -10,4 +10,6 @@ package defs is
   subtype words_16_t is dataset_t (0 to 15);
   subtype words_5_t is dataset_t (0 to 4);
 
+  constant dly : integer := 8;
+
 end defs;

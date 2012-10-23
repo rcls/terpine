@@ -71,7 +71,7 @@ architecture behavioral of round is
   attribute keep of EE : signal is "soft";
 
   function delay (i : natural) return boolean is
-  begin return N >= 16 and N mod 16 < i; end delay;
+  begin return N >= dly and N mod dly < i; end delay;
 begin
   d_a: if not delay (1) generate
     A1 <= A;
