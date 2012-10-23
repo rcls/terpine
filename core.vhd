@@ -43,8 +43,6 @@ architecture behavioral of core is
   signal Eg : dataset_t (79 to 79);
 
   signal R : dataset_t (0 to 84);
-  signal RR : dataset_t (0 to 84);
-  signal RRR : dataset_t (0 to 84);
   signal W : dataset_t (0 to 79);
   signal bypass : words_5_t;
 begin
@@ -97,10 +95,10 @@ begin
   R(2) <= x"98badcfe";
   R(1) <= x"10325476";
   R(0) <= x"c3d2e1f0";
-  rounds: for i in 5 to 84 generate
+  rounds: for i in 0 to 79 generate
     round : entity work.round generic map (i)
-      port map (R(i), W(i-5),
-                R(i-1), R(i-2), RR(i-3), RRR(i-4), RRR(i-5), clk);
+      port map (R(i+5), W(i),
+                R(i+4), R(i+3), R(i+2), R(i+1), R(i), clk);
   end generate;
 
   bypasses: for i in 0 to 4 generate
@@ -112,8 +110,6 @@ begin
   begin
     wait until rising_edge(clk);
 
-    RR(0 to 81) <= R(0 to 81);
-    RRR(0 to 80) <= RR(0 to 80);
     -- FIXME - this is not right.
     output(0) <= R(84) + bypass(0);
     output(1) <= R(83) + bypass(1);
