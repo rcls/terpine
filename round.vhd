@@ -44,7 +44,6 @@ architecture behavioral of round is
   end KK;
   signal I1 : word_t;
   signal I2 : word_t;
-  signal I3 : word_t;
   signal CC : word_t;
   signal DD : word_t;
   signal DDD : word_t;
@@ -114,9 +113,8 @@ begin
     DDD <= DD;
     EE <= E1;
     EEE <= EE;
-    I3 <= W + KK;
-    I2 <= (EEE rol 30) + I3;
-    I1 <= FF(B1, CC rol 30, DDD rol 30) + I2;
+    I2 <= (EEE rol 30) + W;
+    I1 <= FF(B1, CC rol 30, DDD rol 30) + KK + I2;
     R <= (A1 rol 5) + I1;
   end process;
 end behavioral;
