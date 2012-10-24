@@ -67,12 +67,12 @@
     <property xil_pn:name="Selected Simulation Root Source Node Behavioral" xil_pn:value="work.core_test" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Simulator" xil_pn:value="ISim (VHDL/Verilog)" xil_pn:valueState="default"/>
     <property xil_pn:name="Speed Grade" xil_pn:value="-2" xil_pn:valueState="non-default"/>
-    <property xil_pn:name="Starting Placer Cost Table (1-100)" xil_pn:value="29" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="Starting Placer Cost Table (1-100)" xil_pn:value="28" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Synthesis Tool" xil_pn:value="XST (VHDL/Verilog)" xil_pn:valueState="default"/>
     <property xil_pn:name="Target UCF File Name" xil_pn:value="wrap.ucf" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Top-Level Source Type" xil_pn:value="HDL" xil_pn:valueState="default"/>
     <property xil_pn:name="Use Custom Waveform Configuration File Behav" xil_pn:value="true" xil_pn:valueState="non-default"/>
-    <property xil_pn:name="User Browsed Strategy Files" xil_pn:value="/home/ralph/fpga/terpine/ise/smartxplorer_results/run4/maproutabilityparstandard4.xds" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="User Browsed Strategy Files" xil_pn:value="/home/ralph/fpga/terpine/ise/smartxplorer_results/run32/maproutabilityparstandard1ct28.xds" xil_pn:valueState="non-default"/>
     <property xil_pn:name="VHDL Source Analysis Standard" xil_pn:value="VHDL-200X" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Working Directory" xil_pn:value="ise" xil_pn:valueState="non-default"/>
     <!--                                                                                  -->
