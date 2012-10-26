@@ -60,10 +60,17 @@ architecture cycle_behavioral of cycle is
   signal init3 : boolean;
 
   signal W : word_t;
-  signal WW : dataset_t (2 to 16);
-
+  signal W3 : word_t;
+  signal W8 : word_t;
+  signal W14 : word_t;
+  signal W16 : word_t;
 begin
   R <= A;
+
+  d3 : entity work.delay generic map (2) port map (w, w3, clk);
+  d8 : entity work.delay generic map (5) port map (w3, w8, clk);
+  d14: entity work.delay generic map (6) port map (w8, w14, clk);
+  d16: entity work.delay generic map (2) port map (w14, w16, clk);
 
   process
     variable kk : word_t;
@@ -147,9 +154,7 @@ begin
     if load = '1' then
       W <= Din;
     else
-      W <= (WW(3) xor WW(8) xor WW(14) xor WW(16)) rol 1;
+      W <= (W3 xor W8 xor W14 xor W16) rol 1;
     end if;
-    WW(2) <= W;
-    WW(3 to 16) <= WW(2 to 15);
   end process;
 end cycle_behavioral;
