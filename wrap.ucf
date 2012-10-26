@@ -1,4 +1,9 @@
 
 #Created by Constraints Editor (xc7a200t-fbg484-2) - 2012/10/23
 NET "clk" TNM_NET = clk;
-TIMESPEC ts_clk = PERIOD "clk" 5 ns HIGH 50%;
+#TIMESPEC ts_clk = PERIOD "clk" 3.75 ns HIGH 50%;
+#TIMESPEC ts_clk = PERIOD "clk" 3.5 ns HIGH 50%;
+#TIMESPEC ts_clk = PERIOD "clk" 3.333 ns HIGH 50%;
+# Adding delay output buffers...
+TIMESPEC ts_clk = PERIOD "clk" 3 ns HIGH 50%;
+#TIMESPEC ts_clk = PERIOD "clk" 2.75 ns HIGH 50%;

@@ -6,17 +6,20 @@ library work;
 use work.defs.all;
 
 entity delay is
-  generic (N : integer);
-  port (D : in word_t;
-        Q : out word_t;
+  generic (N : natural);
+  port (D : in unsigned (31 downto 0);
+        Q : out unsigned (31 downto 0);
         clk : in std_logic);
 end entity;
 
 architecture delay_behavioral of delay is
-  signal count : integer range 0 to N - 3;
+  subtype word_t is unsigned (31 downto 0);
+  type dataset_t is array (natural range <>) of word_t;
+  signal count : natural range 0 to N - 3;
   signal buf_D : word_t;
   signal buf_Q : word_t;
-  signal ram : dataset_t (0 to N - 3);
+  signal buf_Q2 : word_t;
+  signal ram : dataset_t (0 to N - 2);
   attribute keep_hierarchy : string;
   attribute keep_hierarchy of delay_behavioral : architecture is "true";
 begin
@@ -31,6 +34,7 @@ begin
     buf_D <= D;
     ram(count) <= buf_D;
     buf_Q <= ram(count);
-    Q <= buf_q;
+    buf_Q2 <= buf_Q;
+    Q <= buf_Q2;
   end process;
 end delay_behavioral;

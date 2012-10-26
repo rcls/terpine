@@ -78,34 +78,34 @@ begin
 
   -- We launch into the delay stages as late as possible.
   d0: for i in 0 to 11 generate
-    delay: entity work.delay generic map (i +11 + i / dly)
+    delay: entity work.delay generic map (i + 3 + i / dly)
       port map (input(i), W(i), clk);
   end generate;
   db: for i in 12 to 23 generate
-    delay: entity work.delay generic map (i + 9 + i / dly)
+    delay: entity work.delay generic map (i + 1 + i / dly)
       port map (Ea(i), W(i), clk);
   end generate;
   dd: for i in 24 to 35 generate
-    delay: entity work.delay generic map (i + 7 + i / dly)
+    delay: entity work.delay generic map (i - 1 + i / dly)
       port map (Eb(i), W(i), clk);
   end generate;
   df: for i in 36 to 47 generate
-    delay: entity work.delay generic map (i + 5 + i / dly)
+    delay: entity work.delay generic map (i - 3 + i / dly)
       port map (Ec(i), W(i), clk);
   end generate;
   dh: for i in 48 to 59 generate
-    delay: entity work.delay generic map (i + 3 + i / dly)
+    delay: entity work.delay generic map (i - 5 + i / dly)
       port map (Ed(i), W(i), clk);
   end generate;
   dj: for i in 60 to 75 generate
-    delay: entity work.delay generic map (i + 1 + i / dly)
+    delay: entity work.delay generic map (i - 7 + i / dly)
       port map (Ee(i), W(i), clk);
   end generate;
   dk: for i in 76 to 78 generate
-    delay: entity work.delay generic map (i + 0 + i / dly)
+    delay: entity work.delay generic map (i - 8 + i / dly)
       port map (Ef(i), W(i), clk);
   end generate;
-  delay: entity work.delay generic map (78 + 79 / dly)
+  delay: entity work.delay generic map (70 + 79 / dly)
     port map (Eg(79), W(79), clk);
 
   R(4) <= x"67452301";
