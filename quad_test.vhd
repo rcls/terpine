@@ -12,10 +12,10 @@ architecture behavioral of quad_test is
   signal clk : std_logic;
 
   signal phase_advance : std_logic;
-  signal load0 : std_logic;
-  signal load1 : std_logic;
-  signal load2 : std_logic;
-  signal load3 : std_logic;
+  signal loadA : std_logic;
+  signal loadB : std_logic;
+  signal loadC : std_logic;
+  signal loadD : std_logic;
 
   signal Din : word_t;
   signal R : word_t;
@@ -28,9 +28,9 @@ architecture behavioral of quad_test is
 
 begin
   p : entity work.phase port map (
-    phase_advance, load0, load1, load2, load3, clk);
+    phase_advance, loadA, loadB, loadC, loadD, clk);
   q : entity work.quad port map (
-    R, Din, phase_advance, load0, load1, load2, load3, clk);
+    R, Din, phase_advance, loadA, loadB, loadC, loadD, clk);
   process
   begin
     wait for 5ns;
@@ -41,9 +41,7 @@ begin
   process
   begin
     Din <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-    --wait until load1 = '1';
-    --wait until load1 = '0';
-    wait until load1 = '1';
+    wait until loadB = '1';
     wait until falling_edge(clk);
     wait until falling_edge(clk);
     for i in 0 to 15 loop
