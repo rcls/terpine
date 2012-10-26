@@ -14,11 +14,11 @@ entity cycle is
         clk : in std_logic);
 end cycle;
 
--- 'load' to 'A' is 5 cycle latency.
+-- 'load' to 'A' is 6 cycle latency.
 -- 'Din' to 'A' is 5 cycle latency.
--- 'phase_advance' to 'A' is 4 cycle latency.
+-- 'phase_advance' to 'A' is 5 cycle latency.
 -- Then 79 cycles to first result.
-architecture cycle_behavioral of cycle is
+architecture cycle of cycle is
   function F0(B : word_t; C : word_t; D : word_t) return word_t is
   begin
       return (B and C) or (not B and D);
@@ -64,6 +64,13 @@ architecture cycle_behavioral of cycle is
   signal W8 : word_t;
   signal W14 : word_t;
   signal W16 : word_t;
+
+  signal pa : std_logic;
+  signal ld : std_logic;
+
+  attribute keep_hierarchy : string;
+  attribute keep_hierarchy of cycle : architecture is "soft";
+
 begin
   R <= A;
 
@@ -123,7 +130,7 @@ begin
     init2 <= init3;
 
     -- 4 cycle latency into A.
-    if phase_advance = '1' then
+    if pa = '1' then
       case phase3 is                    -- Look-ahead...
         when 0 => kk := k1;
         when 1 => kk := k2;
@@ -140,21 +147,24 @@ begin
     end if;
     I3 <= kk + W;
 
-    if phase_advance = '1' then
-      if load = '1' or phase3 = 3 then
+    if pa = '1' then
+      if ld = '1' or phase3 = 3 then
         phase3 <= 0;
       else
         phase3 <= phase3 + 1;
       end if;
     end if;
 
-    init3 <= phase3 = 3 and phase_advance = '1';
+    init3 <= phase3 = 3 and pa = '1';
 
     -- 5 cycle latency into A.
-    if load = '1' then
+    if ld = '1' then
       W <= Din;
     else
       W <= (W3 xor W8 xor W14 xor W16) rol 1;
     end if;
+
+    ld <= load;
+    pa <= phase_advance;
   end process;
-end cycle_behavioral;
+end cycle;

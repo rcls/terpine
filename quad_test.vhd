@@ -45,6 +45,7 @@ begin
     --wait until load1 = '0';
     wait until load1 = '1';
     wait until falling_edge(clk);
+    wait until falling_edge(clk);
     for i in 0 to 15 loop
       wait until falling_edge(clk);
       Din <= data(i);

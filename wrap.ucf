@@ -3,5 +3,5 @@ NET "clk" TNM_NET = clk;
 #TIMESPEC ts_clk = PERIOD "clk" 3.75 ns HIGH 50%;
 #TIMESPEC ts_clk = PERIOD "clk" 3.5 ns HIGH 50%;
 #TIMESPEC ts_clk = PERIOD "clk" 3.333 ns HIGH 50%;
-TIMESPEC ts_clk = PERIOD "clk" 3 ns HIGH 50%;
-#TIMESPEC ts_clk = PERIOD "clk" 2.7 ns HIGH 50%;
+#TIMESPEC ts_clk = PERIOD "clk" 3 ns HIGH 50%;
+TIMESPEC ts_clk = PERIOD "clk" 2.7 ns HIGH 50%;
