@@ -74,10 +74,10 @@ architecture cycle of cycle is
 begin
   R <= A;
 
-  d3 : entity work.delay generic map (2) port map (w, w3, clk);
-  d8 : entity work.delay generic map (5) port map (w3, w8, clk);
-  d14: entity work.delay generic map (6) port map (w8, w14, clk);
-  d16: entity work.delay generic map (2) port map (w14, w16, clk);
+  d3_8 : entity work.double_delay generic map (2, 7)
+    port map (w, w, w3, w8, clk);
+  d14_16 : entity work.double_delay generic map (13, 15)
+    port map (w, w, w14, w16, clk);
 
   process
     variable kk : word_t;
