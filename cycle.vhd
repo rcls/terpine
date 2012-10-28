@@ -55,9 +55,12 @@ architecture cycle of cycle is
   signal I2 : word_t;
   signal I3 : word_t;
 
+  -- There is intentially redundancy here, to reduce fan out.
+  signal init1 : boolean;
+  signal init2 : boolean;
   signal init1_or_2 : boolean;
   signal init2_or_3 : boolean;
-  --signal init3 : boolean;
+  signal init1_or_3 : boolean;
 
   signal W : word_t;
   signal W2 : word_t;
@@ -128,15 +131,8 @@ begin
 
   process
     variable kk : word_t;
-    variable init1 : boolean;
-    variable init2 : boolean;
-    variable init3 : boolean;
   begin
     wait until rising_edge(clk);
-
-    init1 := init1_or_2 and not init2_or_3;
-    init2 := init1_or_2 and init2_or_3;
-    init3 := init2_or_3 and not init1_or_2;
 
     -- 1 cycle latency into A.
     A <= (A rol 5) + I1;
@@ -155,26 +151,26 @@ begin
     -- Look aheads for these, and set up for init 1.
     C2 <= A rol 30;
     D2 <= C2;
-    if init1 then
+    if init1_or_3 and init1_or_2 then -- init1.
       C2 <= iA rol 30;
     end if;
-    if init2 then
+    if init1_or_2 and not init1_or_3 then -- init2.
       C2 <= iB rol 30;
     end if;
-    if init3 then
+    if init1_or_3 and not init1_or_2 then -- init3.
       C2 <= iC;
     end if;
 
     -- 3 cycle latency into A.
     I2 <= D2 + I3;
-    if init3 then
+    if init2_or_3 and not init2 then -- init3
       I2 <= iE + I3;
     end if;
     if init2 then
       I2 <= iD + I3;
     end if;
 
-    if init2 or init3 then
+    if init2_or_3 then
       munged_phase2 <= 3;
     elsif phase3 = 3 then
       munged_phase2 <= 1;
@@ -208,8 +204,15 @@ begin
       end if;
     end if;
 
-    init2_or_3 <= (phase3 = 3 and pa = '1') or init3;
+    init2_or_3 <= (phase3 = 3 and pa = '1') or init2_or_3;
+    init2 <= init2_or_3;
+    if init2 then
+      init2 <= false;
+      init2_or_3 <= false;
+    end if;
     init1_or_2 <= init2_or_3;
+    init1_or_3 <= (phase3 = 3 and pa = '1') or (init1_or_2 and not init1_or_3);
+    init1 <= init2;
 
     -- 5 cycle latency into A.
     if ld = '1' then
