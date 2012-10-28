@@ -55,15 +55,22 @@ architecture cycle of cycle is
   signal I2 : word_t;
   signal I3 : word_t;
 
-  signal init1 : boolean;
-  signal init2 : boolean;
-  signal init3 : boolean;
+  signal init1_or_2 : boolean;
+  signal init2_or_3 : boolean;
+  --signal init3 : boolean;
 
   signal W : word_t;
+  signal W2 : word_t;
   signal W3 : word_t;
   signal W8 : word_t;
   signal W14 : word_t;
-  signal W16 : word_t;
+  signal W15 : word_t;
+
+  -- We split into 4 to rloc them seperately.
+  signal W16a : unsigned(0 to 7);
+  signal W16b : unsigned(0 to 7);
+  signal W16c : unsigned(0 to 7);
+  signal W16d : unsigned(0 to 7);
 
   signal pa : std_logic;
   signal ld : std_logic;
@@ -87,18 +94,49 @@ architecture cycle of cycle is
   attribute rloc of I2 : signal is col8;
   attribute rloc of D2 : signal is col8;
 
+  attribute hu_set of A : signal is "A_W2";
+  attribute hu_set of W2 : signal is "A_W2";
+  attribute rloc of A : signal is col8;
+  attribute rloc of W2 : signal is col8;
+
+  attribute hu_set of W : signal is "W_W3";
+  attribute hu_set of W3 : signal is "W_W3";
+  attribute rloc of W : signal is col8;
+  attribute rloc of W3 : signal is col8;
+
+  attribute hu_set of I3 : signal is "I3_W15";
+  attribute hu_set of W15 : signal is "I3_W15";
+  attribute rloc of I3 : signal is col8;
+  attribute rloc of W15 : signal is col8;
+
+  attribute hu_set of W16a : signal is "W16a";
+  attribute hu_set of W16b : signal is "W16b";
+  attribute hu_set of W16c : signal is "W16c";
+  attribute hu_set of W16d : signal is "W16d";
+  attribute rloc of W16a : signal is "X0Y0";
+  attribute rloc of W16b : signal is "X0Y0";
+  attribute rloc of W16c : signal is "X0Y0";
+  attribute rloc of W16d : signal is "X0Y0";
+
 begin
   R <= A;
 
-  d3_8 : entity work.double_delay generic map (2, 7)
-    port map (w, w, w3, w8, clk);
-  d14_16 : entity work.double_delay generic map (13, 15)
-    port map (w, w, w14, w16, clk);
+  d7_13 : entity work.double_delay generic map (7, 13)
+    port map (w, w, w8, w14, clk);
+  --d14_16 : entity work.double_delay generic map (13, 15)
+  --  port map (w, w, w14, w16, clk);
 
   process
     variable kk : word_t;
+    variable init1 : boolean;
+    variable init2 : boolean;
+    variable init3 : boolean;
   begin
     wait until rising_edge(clk);
+
+    init1 := init1_or_2 and not init2_or_3;
+    init2 := init1_or_2 and init2_or_3;
+    init3 := init2_or_3 and not init1_or_2;
 
     -- 1 cycle latency into A.
     A <= (A rol 5) + I1;
@@ -117,14 +155,15 @@ begin
     -- Look aheads for these, and set up for init 1.
     C2 <= A rol 30;
     D2 <= C2;
-    if init1 then -- is this needed?
+    if init1 then
       C2 <= iA rol 30;
     end if;
     if init2 then
       C2 <= iB rol 30;
-      D2 <= iC;
     end if;
-    init1 <= init2;
+    if init3 then
+      C2 <= iC;
+    end if;
 
     -- 3 cycle latency into A.
     I2 <= D2 + I3;
@@ -142,8 +181,6 @@ begin
     else
       munged_phase2 <= phase3;
     end if;
-
-    init2 <= init3;
 
     -- 4 cycle latency into A.
     if pa = '1' then
@@ -171,14 +208,22 @@ begin
       end if;
     end if;
 
-    init3 <= phase3 = 3 and pa = '1';
+    init2_or_3 <= (phase3 = 3 and pa = '1') or init3;
+    init1_or_2 <= init2_or_3;
 
     -- 5 cycle latency into A.
     if ld = '1' then
       W <= Din;
     else
-      W <= (W3 xor W8 xor W14 xor W16) rol 1;
+      W <= (W3 xor W8 xor W14 xor (W16d & W16c & W16b & W16a)) rol 1;
     end if;
+    W2 <= W;
+    W3 <= W2;
+    W15 <= W14;
+    W16d <= W15(31 downto 24);
+    W16c <= W15(23 downto 16);
+    W16b <= W15(15 downto  8);
+    W16a <= W15( 7 downto  0);
 
     ld <= load;
     pa <= phase_advance;
