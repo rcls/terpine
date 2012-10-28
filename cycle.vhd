@@ -71,6 +71,22 @@ architecture cycle of cycle is
   attribute keep_hierarchy : string;
   attribute keep_hierarchy of cycle : architecture is "soft";
 
+  attribute hu_set : string;
+  attribute rloc : string;
+  constant col8 : string :=
+    "X1Y7 X1Y7 X1Y7 X1Y7 " &
+    "X1Y6 X1Y6 X1Y6 X1Y6 " &
+    "X1Y5 X1Y5 X1Y5 X1Y5 " &
+    "X1Y4 X1Y4 X1Y4 X1Y4 " &
+    "X1Y3 X1Y3 X1Y3 X1Y3 " &
+    "X1Y2 X1Y2 X1Y2 X1Y2 " &
+    "X1Y1 X1Y1 X1Y1 X1Y1 " &
+    "X1Y0 X1Y0 X1Y0 X1Y0";
+  attribute hu_set of I2 : signal is "I2_D2";
+  attribute hu_set of D2 : signal is "I2_D2";
+  attribute rloc of I2 : signal is col8;
+  attribute rloc of D2 : signal is col8;
+
 begin
   R <= A;
 
