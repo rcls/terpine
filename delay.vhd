@@ -24,8 +24,8 @@ architecture delay of delay is
 begin
   --a <= to_unsigned (len - 2, 4);
   l : for i in 0 to 31 generate
-    attribute hu_set of s : label is "sr" & integer'image(i / 8);
-    attribute rloc of s : label is "x0y0";
+--    attribute hu_set of s : label is "sr" & integer'image(i / 8);
+--    attribute rloc of s : label is "x0y0";
   begin
     s : srl16e port map (d=> d(i), ce=> '1', clk=> clk,
                          a0=> a(0), a1=> a(1), a2=> a(2), a3=> a(3),
@@ -64,10 +64,10 @@ architecture double_delay of double_delay is
 begin
   --a <= to_unsigned (len - 2, 4);
   l : for i in 0 to 31 generate
-    attribute hu_set of sA : label is "sr" & integer'image(i / 4);
-    attribute hu_set of sB : label is "sr" & integer'image(i / 4);
-    attribute rloc of sA : label is "x0y0";
-    attribute rloc of sB : label is "x0y0";
+--    attribute hu_set of sA : label is "sr" & integer'image(i / 4);
+--    attribute hu_set of sB : label is "sr" & integer'image(i / 4);
+--    attribute rloc of sA : label is "x0y0";
+--    attribute rloc of sB : label is "x0y0";
   begin
     sA : srl16e port map (d=> dA(i), ce=> '1', clk=> clk,
                           a0=> aA(0), a1=> aA(1), a2=> aA(2), a3=> aA(3),

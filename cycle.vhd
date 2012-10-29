@@ -90,35 +90,63 @@ architecture cycle of cycle is
   attribute keep_hierarchy : string;
   attribute keep_hierarchy of cycle : architecture is "soft";
 
+  attribute use_clock_enable : string;
+  attribute use_sync_set : string;
+  attribute use_sync_reset : string;
   attribute hu_set : string;
   attribute rloc : string;
-  attribute hu_set of I2 : signal is "adders";
-  attribute hu_set of D2 : signal is "adders";
-  attribute rloc of I2 : signal is col8(3,0);
-  attribute rloc of D2 : signal is col8(3,0);
 
   attribute hu_set of A : signal is "adders";
   attribute hu_set of W2 : signal is "adders";
-  attribute rloc of A : signal is col8(1,0);
-  attribute rloc of W2 : signal is col8(1,0);
-
-  attribute hu_set of W : signal is "W_W3";
-  attribute hu_set of W3 : signal is "W_W3";
-  attribute rloc of W : signal is col8(0,0);
-  attribute rloc of W3 : signal is col8(0,0);
-
-  attribute hu_set of I3 : signal is "adders";
-  attribute hu_set of W16 : signal is "adders";
-  attribute rloc of I3 : signal is col8(0,0);
-  attribute rloc of W16 : signal is col8(0,0);
+  attribute rloc of A : signal is col8(1,1);
+  attribute rloc of W2 : signal is col8(1,1);
 
   attribute hu_set of I1 : signal is "adders";
-  attribute rloc of I1 : signal is col8(2,0);
+  attribute rloc of I1 : signal is col8(2,1);
 
   attribute hu_set of C2 : signal is "adders";
   attribute hu_set of W15 : signal is "adders";
-  attribute rloc of C2 : signal is col8(5,0);
-  attribute rloc of W15 : signal is col8(4,0);
+  attribute rloc of C2 : signal is col8(3,1);
+  attribute rloc of W15 : signal is col8(8,1);
+
+  attribute hu_set of I2 : signal is "adders";
+  attribute hu_set of D2 : signal is "adders";
+  attribute rloc of I2 : signal is col8(4,1);
+  attribute rloc of D2 : signal is col8(4,1);
+
+  attribute hu_set of W : signal is "adders";
+  attribute hu_set of W3 : signal is "adders";
+  attribute rloc of W : signal is col8(6,1);
+  attribute rloc of W3 : signal is col8(6,1);
+
+  attribute hu_set of I3 : signal is "adders";
+  attribute hu_set of W16 : signal is "adders";
+  attribute rloc of I3 : signal is col8(5,1);
+  attribute rloc of W16 : signal is col8(5,1);
+
+  attribute hu_set of init1 : signal is "adders";
+  attribute rloc of init1 : signal is "X1Y0";
+
+  attribute hu_set of munged_phase2 : signal is "adders";
+  attribute rloc of munged_phase2 : signal is "X2Y0";
+
+  attribute hu_set of phase3 : signal is "adders";
+  attribute hu_set of pa : signal is "adders";
+  attribute rloc of phase3 : signal is "X5Y0";
+  attribute rloc of pa : signal is "X5Y0";
+  attribute use_clock_enable of phase3 : signal is "no";
+  attribute use_sync_set of phase3 : signal is "no";
+  attribute use_sync_reset of phase3 : signal is "no";
+
+  attribute hu_set of init2_or_3 : signal is "adders";
+  attribute hu_set of init2 : signal is "adders";
+  attribute rloc of init2_or_3 : signal is "X4Y0";
+  attribute rloc of init2 : signal is "X4Y0";
+
+  attribute hu_set of w8 : signal is "adders";
+  attribute hu_set of w14 : signal is "adders";
+  attribute rloc of w8 : signal is col8(7,1);
+  attribute rloc of w14 : signal is col8(7,1);
 
 begin
   R <= A;
@@ -148,8 +176,8 @@ begin
     end case;
 
     -- Look aheads for these, and set up for init 1.
-    C2 <= A rol 30;
     D2 <= C2;
+    C2 <= A rol 30;
     if init1_or_3 and init1_or_2 then -- init1.
       C2 <= iA rol 30;
     end if;
@@ -226,5 +254,6 @@ begin
 
     ld <= load;
     pa <= phase_advance;
+
   end process;
 end cycle;
