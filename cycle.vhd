@@ -68,58 +68,57 @@ architecture cycle of cycle is
   signal W8 : word_t;
   signal W14 : word_t;
   signal W15 : word_t;
-
-  -- We split into 4 to rloc them seperately.
-  signal W16a : unsigned(0 to 7);
-  signal W16b : unsigned(0 to 7);
-  signal W16c : unsigned(0 to 7);
-  signal W16d : unsigned(0 to 7);
+  signal W16 : word_t;
 
   signal pa : std_logic;
   signal ld : std_logic;
+
+  function loc(x, y : integer) return string is
+  begin
+    return "X" & integer'image(x) & "Y" & integer'image(y);
+  end loc;
+  function lc4(x, y : integer) return string is
+  begin
+    return loc(x, y) & " " & loc(x, y) & " " & loc(x, y) & " " & loc(x, y);
+  end lc4;
+  function col8(x, y : integer) return string is
+  begin
+    return  lc4(x,y+7) &" "& lc4(x,y+6) &" "& lc4(x,y+5) &" "& lc4(x,y+4)
+      &" "& lc4(x,y+3) &" "& lc4(x,y+2) &" "& lc4(x,y+1) &" "& lc4(x,y);
+  end col8;
 
   attribute keep_hierarchy : string;
   attribute keep_hierarchy of cycle : architecture is "soft";
 
   attribute hu_set : string;
   attribute rloc : string;
-  constant col8 : string :=
-    "X1Y7 X1Y7 X1Y7 X1Y7 " &
-    "X1Y6 X1Y6 X1Y6 X1Y6 " &
-    "X1Y5 X1Y5 X1Y5 X1Y5 " &
-    "X1Y4 X1Y4 X1Y4 X1Y4 " &
-    "X1Y3 X1Y3 X1Y3 X1Y3 " &
-    "X1Y2 X1Y2 X1Y2 X1Y2 " &
-    "X1Y1 X1Y1 X1Y1 X1Y1 " &
-    "X1Y0 X1Y0 X1Y0 X1Y0";
-  attribute hu_set of I2 : signal is "I2_D2";
-  attribute hu_set of D2 : signal is "I2_D2";
-  attribute rloc of I2 : signal is col8;
-  attribute rloc of D2 : signal is col8;
+  attribute hu_set of I2 : signal is "adders";
+  attribute hu_set of D2 : signal is "adders";
+  attribute rloc of I2 : signal is col8(3,0);
+  attribute rloc of D2 : signal is col8(3,0);
 
-  attribute hu_set of A : signal is "A_W2";
-  attribute hu_set of W2 : signal is "A_W2";
-  attribute rloc of A : signal is col8;
-  attribute rloc of W2 : signal is col8;
+  attribute hu_set of A : signal is "adders";
+  attribute hu_set of W2 : signal is "adders";
+  attribute rloc of A : signal is col8(1,0);
+  attribute rloc of W2 : signal is col8(1,0);
 
   attribute hu_set of W : signal is "W_W3";
   attribute hu_set of W3 : signal is "W_W3";
-  attribute rloc of W : signal is col8;
-  attribute rloc of W3 : signal is col8;
+  attribute rloc of W : signal is col8(0,0);
+  attribute rloc of W3 : signal is col8(0,0);
 
-  attribute hu_set of I3 : signal is "I3_W15";
-  attribute hu_set of W15 : signal is "I3_W15";
-  attribute rloc of I3 : signal is col8;
-  attribute rloc of W15 : signal is col8;
+  attribute hu_set of I3 : signal is "adders";
+  attribute hu_set of W16 : signal is "adders";
+  attribute rloc of I3 : signal is col8(0,0);
+  attribute rloc of W16 : signal is col8(0,0);
 
-  attribute hu_set of W16a : signal is "W16a";
-  attribute hu_set of W16b : signal is "W16b";
-  attribute hu_set of W16c : signal is "W16c";
-  attribute hu_set of W16d : signal is "W16d";
-  attribute rloc of W16a : signal is "X0Y0";
-  attribute rloc of W16b : signal is "X0Y0";
-  attribute rloc of W16c : signal is "X0Y0";
-  attribute rloc of W16d : signal is "X0Y0";
+  attribute hu_set of I1 : signal is "adders";
+  attribute rloc of I1 : signal is col8(2,0);
+
+  attribute hu_set of C2 : signal is "adders";
+  attribute hu_set of W15 : signal is "adders";
+  attribute rloc of C2 : signal is col8(5,0);
+  attribute rloc of W15 : signal is col8(4,0);
 
 begin
   R <= A;
@@ -218,15 +217,12 @@ begin
     if ld = '1' then
       W <= Din;
     else
-      W <= (W3 xor W8 xor W14 xor (W16d & W16c & W16b & W16a)) rol 1;
+      W <= (W3 xor W8 xor W14 xor W16) rol 1;
     end if;
     W2 <= W;
     W3 <= W2;
     W15 <= W14;
-    W16d <= W15(31 downto 24);
-    W16c <= W15(23 downto 16);
-    W16b <= W15(15 downto  8);
-    W16a <= W15( 7 downto  0);
+    W16 <= W15;
 
     ld <= load;
     pa <= phase_advance;
