@@ -96,66 +96,45 @@ architecture cycle of cycle is
   attribute hu_set : string;
   attribute rloc : string;
 
-  attribute hu_set of w8 : signal is "adders";
-  attribute hu_set of w14 : signal is "adders";
   attribute rloc of w8 : signal is col8(0,1);
   attribute rloc of w14 : signal is col8(0,1);
 
-  attribute hu_set of A : signal is "adders";
-  attribute hu_set of W2 : signal is "adders";
   attribute rloc of A : signal is col8(1,1);
   attribute rloc of W2 : signal is col8(1,1);
 
-  attribute hu_set of C2 : signal is "adders";
   attribute rloc of C2 : signal is col8(2,1);
 
-  attribute hu_set of I1 : signal is "adders";
   attribute rloc of I1 : signal is col8(3,1);
 
-  attribute hu_set of W3 : signal is "adders";
   attribute rloc of W3 : signal is col8(4,1);
 
-  attribute hu_set of I2 : signal is "adders";
-  attribute hu_set of D2 : signal is "adders";
   attribute rloc of I2 : signal is col8(5,1);
   attribute rloc of D2 : signal is col8(5,1);
 
-  attribute hu_set of W : signal is "adders";
   attribute rloc of W : signal is col8(6,1);
-  attribute hu_set of W15 : signal is "adders";
   attribute rloc of W15 : signal is col8(6,0);
 
-  attribute hu_set of I3 : signal is "adders";
-  attribute hu_set of W16 : signal is "adders";
   attribute rloc of I3 : signal is col8(7,1);
   attribute rloc of W16 : signal is col8(7,1);
 
-  attribute hu_set of init1 : signal is "adders";
   attribute rloc of init1 : signal is "X1Y0";
 
-  attribute hu_set of munged_phase2 : signal is "adders";
   attribute rloc of munged_phase2 : signal is "X3Y0";
 
-  attribute hu_set of phase3 : signal is "adders";
-  attribute hu_set of pa : signal is "adders";
   attribute rloc of phase3 : signal is "X7Y0";
   attribute rloc of pa : signal is "X7Y0";
   attribute use_clock_enable of phase3 : signal is "no";
   attribute use_sync_set of phase3 : signal is "no";
   attribute use_sync_reset of phase3 : signal is "no";
 
-  attribute hu_set of init2_or_3 : signal is "adders";
-  attribute hu_set of init2 : signal is "adders";
   attribute rloc of init2_or_3 : signal is "X5Y0";
   attribute rloc of init2 : signal is "X5Y0";
 
 begin
   R <= A;
 
-  d7_13 : entity work.double_delay generic map (7, 13)
-    port map (w, w, w8, w14, clk);
-  --d14_16 : entity work.double_delay generic map (13, 15)
-  --  port map (w, w, w14, w16, clk);
+  d7 : entity work.delay generic map (7) port map (w, w8, clk);
+  d13 : entity work.delay generic map (13) port map (w, w14, clk);
 
   process
     variable kk : word_t;
