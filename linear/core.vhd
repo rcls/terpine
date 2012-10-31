@@ -9,7 +9,6 @@ use work.defs.all;
 entity core is
   port (input : in words_16_t;
         output : out words_5_t;
-        --bmon : out dataset_t (0 to 64);
         clk : in std_logic);
 end core;
 
@@ -17,14 +16,6 @@ architecture behavioral of core is
   function L (x : word_t) return word_t is
   begin
     return x rol 1;
-  end;
-  function LL (x : word_t) return word_t is
-  begin
-    return x rol 2;
-  end;
-  function LLL (x : word_t) return word_t is
-  begin
-    return x rol 3;
   end;
   function quad (i : natural; x : dataset_t) return word_t is
   begin
@@ -42,19 +33,24 @@ architecture behavioral of core is
 
   signal Eg : dataset_t (79 to 79);
 
-  signal R : dataset_t (0 to 84);
   signal W : dataset_t (0 to 79);
 
   signal oB : word_t;
   signal oC1 : word_t;
-  signal oC2 : word_t;
   signal oD1 : word_t;
-  signal oD2 : word_t;
-  signal oD3 : word_t;
   signal oE1 : word_t;
   signal oE2 : word_t;
-  signal oE3 : word_t;
-  signal oE4 : word_t;
+
+  function dly0(n, adj : integer) return integer is
+  begin
+    return n * 2 + adj + (n * 2) / line_len;
+  end function;
+  function dly1(n, adj : integer) return integer is
+  begin
+    return n * 2 + 1 + adj + (n * 2 + 1) / line_len;
+  end function;
+
+  signal A, B, C, D, E : dataset_t (0 to core_len);
 begin
 
   expA : entity work.expand12 port map (input, Ea, clk);
@@ -77,66 +73,77 @@ begin
   end process;
 
   -- We launch into the delay stages as late as possible.
-  d0: for i in 0 to 11 generate
-    delay: entity work.delay generic map (i + 3 + i / dly)
-      port map (input(i), W(i), clk);
+  da: for i in 0 to 5 generate
+    delay: entity work.double_delay generic map (dly0(i,3), dly1(i,3))
+      port map (input(2*i), W(2*i), input(2*i+1), W(2*i+1), clk);
   end generate;
-  db: for i in 12 to 23 generate
-    delay: entity work.delay generic map (i + 1 + i / dly)
-      port map (Ea(i), W(i), clk);
+  db: for i in 6 to 11 generate
+    delay: entity work.double_delay generic map (dly0(i,1), dly1(i,1))
+      port map (Ea(2*i), W(2*i), Ea(2*i+1), W(2*i+1), clk);
   end generate;
-  dd: for i in 24 to 35 generate
-    delay: entity work.delay generic map (i - 1 + i / dly)
-      port map (Eb(i), W(i), clk);
+  dd: for i in 12 to 17 generate
+    delay: entity work.double_delay generic map (dly0(i,-1), dly1(i,-1))
+      port map (Eb(2*i), W(2*i), Eb(2*i+1), W(2*i+1), clk);
   end generate;
-  df: for i in 36 to 47 generate
-    delay: entity work.delay generic map (i - 3 + i / dly)
-      port map (Ec(i), W(i), clk);
+  df: for i in 18 to 23 generate
+    delay: entity work.double_delay generic map (dly0(i,-3), dly1(i,-3))
+      port map (Ec(2*i), W(2*i), Ec(2*i+1), W(2*i+1), clk);
   end generate;
-  dh: for i in 48 to 59 generate
-    delay: entity work.delay generic map (i - 5 + i / dly)
-      port map (Ed(i), W(i), clk);
+  dh: for i in 24 to 29 generate
+    delay: entity work.double_delay generic map (dly0(i,-5), dly1(i,-5))
+      port map (Ed(2*i), W(2*i), Ed(2*i+1), W(2*i+1), clk);
   end generate;
-  dj: for i in 60 to 75 generate
-    delay: entity work.delay generic map (i - 7 + i / dly)
-      port map (Ee(i), W(i), clk);
+  dj: for i in 30 to 37 generate
+    delay: entity work.double_delay generic map (dly0(i,-7), dly1(i,-7))
+      port map (Ee(2*i), W(2*i), Ee(2*i+1), W(2*i+1), clk);
   end generate;
-  dk: for i in 76 to 78 generate
-    delay: entity work.delay generic map (i - 8 + i / dly)
-      port map (Ef(i), W(i), clk);
-  end generate;
-  delay: entity work.delay generic map (70 + 79 / dly)
-    port map (Eg(79), W(79), clk);
 
-  R(4) <= x"67452301";
-  R(3) <= x"efcdab89";
-  R(2) <= x"98badcfe" rol 2;
-  R(1) <= x"10325476" rol 2;
-  R(0) <= x"c3d2e1f0" rol 2;
-  rounds: for i in 0 to 79 generate
-    round : entity work.round generic map (i)
-      port map (R(i+5), W(i),
-                R(i+4), R(i+3), R(i+2), R(i+1), R(i), clk);
+  penul: entity work.double_delay generic map (dly0(38,-8), dly1(38,-8))
+    port map (Ef(76), W(76), Ef(77), W(77), clk);
+  delay: entity work.double_delay generic map (dly0(39,-8), dly1(39,-9))
+    port map (Ef(78), W(78), Eg(79), W(79), clk);
+
+  A(0) <= x"67452301";
+  B(0) <= x"efcdab89";
+  C(0) <= x"98badcfe" rol 2;
+  D(0) <= x"10325476" rol 2;
+  E(0) <= x"c3d2e1f0" rol 2;
+  lines: for i in 0 to core_len-1 generate
+    constant dir : integer := 1 - 2 * (i mod 2);
+    signal Cbuf, Dbuf: word_t;
+    signal Ai, Bi, Ci, Di, Ei : word_t;
+  begin
+    lne: entity work.line generic map (i*line_len, dir)
+      port map (W(i*line_len to i*line_len + line_len - 1),
+                Ai, Bi, Ci, Di, Ei,
+                A(i+1), B(i+1), Cbuf, Dbuf, E(i+1),
+                clk);
+    process
+    begin
+      wait until rising_edge(clk);
+      Ai <= A(i);
+      Bi <= B(i);
+      Ci <= C(i);
+      Di <= D(i);
+      Ei <= E(i);
+      C(i+1) <= Cbuf;
+      D(i+1) <= Dbuf;
+    end process;
   end generate;
 
   process
   begin
     wait until rising_edge(clk);
 
-    output(0) <= R(84) + x"67452301";
-    oB <= R(83);
+    output(0) <= A(core_len) + x"67452301";
+    oB <= B(core_len);
     output(1) <= oB + x"efcdab89";
-    oC1 <= R(82) rol 30;
-    oC2 <= oC1;
-    output(2) <= oC2 + x"98badcfe";
-    oD1 <= R(81) rol 30;
-    oD2 <= oD1;
-    oD3 <= oD2;
-    output(3) <= oD3 + x"10325476";
-    oE1 <= R(80) rol 30;
+    oC1 <= C(core_len) rol 30;
+    output(2) <= oC1 + x"98badcfe";
+    oD1 <= D(core_len) rol 30;
+    output(3) <= oD1 + x"10325476";
+    oE1 <= E(core_len) rol 30;
     oE2 <= oE1;
-    oE3 <= oE2;
-    oE4 <= oE3;
-    output(4) <= oE4 + x"c3d2e1f0";
+    output(4) <= oE2 + x"c3d2e1f0";
   end process;
 end behavioral;
