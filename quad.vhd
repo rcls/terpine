@@ -45,7 +45,7 @@ begin
     ldC <= loadC;
     ldD <= loadD;
 
-    if pa = '1' then
+    if phase_advance = '1' then
       if ldA = '1' or phase = 3 then
         phase <= 0;
       else
