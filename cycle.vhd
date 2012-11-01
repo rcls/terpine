@@ -82,10 +82,10 @@ architecture cycle of cycle is
 
   --attribute rloc of D2 : signal is col8(4,1);
   attribute rloc of D2 : signal is
-    "X4Y8 X4Y8 X4Y8 X4Y8 X4Y8 X4Y8 X4Y8 X4Y8 " &
     "X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 " &
-    "X4Y6 X4Y6 X4Y6 X4Y6 X4Y3 X4Y3 X4Y3 X4Y3 " &
-    "X4Y3 X4Y3 X2Y2 X2Y2 X4Y1 X4Y1 X4Y1 X4Y1";
+    "X4Y6 X4Y6 X4Y6 X4Y6 X4Y6 X4Y6 X4Y6 X4Y6 " &
+    "X4Y5 X4Y5 X4Y5 X4Y5 X4Y5 X4Y5 X4Y5 X4Y5 " &
+    "X4Y2 X4Y2 X4Y2 X4Y2 X4Y1 X4Y1 X4Y1 X4Y1";
 
   attribute rloc of I2 : signal is col8(5,1);
 
@@ -100,21 +100,25 @@ architecture cycle of cycle is
 
   attribute rloc of init1 : signal is "X1Y1";
 
-  attribute rloc of munged_phase2 : signal is "X2Y2";
+  attribute rloc of munged_phase2 : signal is "X2Y0";
 
   -- pa ends up on a 5FF.  phase3 is a bit far from the I3 adder...
-  attribute rloc of phase3 : signal is "X4Y4";
+  attribute rloc of phase3 : signal is "X4Y3";
   attribute rloc of pa : signal is "X7Y1";
   attribute rloc of init1_or_2, init1_or_3 : signal is "X4Y4";
   attribute use_clock_enable of phase3 : signal is "no";
+  attribute use_sync_set of init2, init1_or_2, init1_or_3, init2_or_3 : signal
+    is "no";
+  attribute use_sync_reset of init2, init1_or_2, init1_or_3, init2_or_3 : signal
+    is "no";
   attribute use_sync_set of phase3 : signal is "no";
-  attribute use_sync_reset of phase3 : signal is "no";
   attribute use_sync_set of munged_phase2 : signal is "no";
+  attribute use_sync_reset of phase3 : signal is "no";
   attribute use_sync_reset of munged_phase2 : signal is "no";
   --attribute use_sync_set of C2 : signal is "no";
   --attribute use_sync_reset of C2 : signal is "no";
 
-  attribute rloc of init2_or_3, init2 : signal is "X4Y5";
+  attribute rloc of init2_or_3, init2 : signal is "X4Y4";
 
   function bb (b : boolean) return std_logic is
   begin
@@ -132,7 +136,7 @@ begin
     constant kB : bv32 := const(iB rol 30, I);
     constant kC : bv32 := const(iC, I);
     type ia is array (0 to 7) of integer;
-    constant col : ia := (2, 4, 2, 2, 2, 2, 2, 2);
+    constant col : ia := (2, 2, 2, 2, 2, 2, 2, 4);
     attribute rloc of c2_w2_15 : label is loc(col(I/4), I/4 + 1);
   begin
     c2_w2_15 : entity work.bit5op2 generic map (
