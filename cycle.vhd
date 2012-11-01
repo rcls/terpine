@@ -48,7 +48,7 @@ architecture cycle of cycle is
   signal phase3 : natural range 0 to 3 := phase_init;
   signal munged_phase2 : natural range 0 to 3;
 
-  signal A : word_t;
+  signal A, A30 : word_t;
   signal C2 : word_t;
   signal D2 : word_t;
   signal I1 : word_t;
@@ -56,11 +56,11 @@ architecture cycle of cycle is
   signal I3 : word_t;
 
   -- There is intentially redundancy here, to reduce fan out.
-  signal init1 : boolean;
-  signal init2 : boolean;
-  signal init1_or_2 : boolean;
-  signal init2_or_3 : boolean;
-  signal init1_or_3 : boolean;
+  signal init1 : std_logic := '0';
+  signal init2 : std_logic := '0';
+  signal init1_or_2 : std_logic := '0';
+  signal init2_or_3 : std_logic := '0';
+  signal init1_or_3 : std_logic := '0';
 
   signal W : word_t;
   signal W2_15 : word_t;
@@ -87,8 +87,8 @@ architecture cycle of cycle is
 
   attribute rloc of A : signal is col8(1,1);
 
-  attribute rloc of C2 : signal is col8(2,1);
-  attribute rloc of W2_15 : signal is col8(8,1);
+  --attribute rloc of C2 : signal is col8(2,1);
+  --attribute rloc of W2_15 : signal is col8(8,1);
 
   attribute rloc of I1 : signal is col8(3,1);
 
@@ -109,17 +109,39 @@ architecture cycle of cycle is
   attribute use_clock_enable of phase3 : signal is "no";
   attribute use_sync_set of phase3 : signal is "no";
   attribute use_sync_reset of phase3 : signal is "no";
-  attribute use_sync_set of C2 : signal is "no";
-  attribute use_sync_reset of C2 : signal is "no";
+  --attribute use_sync_set of C2 : signal is "no";
+  --attribute use_sync_reset of C2 : signal is "no";
 
   attribute rloc of init2_or_3 : signal is "X5Y0";
   attribute rloc of init2 : signal is "X5Y0";
 
+  function bb (b : boolean) return std_logic is
+  begin
+    if b then return '1'; else return '0'; end if;
+  end bb;
 begin
   R <= A;
 
   d7 : entity work.delay generic map (7) port map (w, w8, clk);
   d13 : entity work.delay generic map (13) port map (w, w14, clk);
+
+  A30 <= A rol 30;
+  c2w2_15s: for I in 0 to 31 generate
+    constant kA : bv32 := const(iA rol 30, I);
+    constant kB : bv32 := const(iB rol 30, I);
+    constant kC : bv32 := const(iC, I);
+    attribute rloc of c2_w2_15 : label is loc(2, I/4 + 1);
+  begin
+    c2_w2_15 : entity work.bit5op2 generic map (
+      M0 xor M1,
+      (not M2 and not M3 and M4) or
+      (    M2 and     M3 and kA) or
+      (    M2 and not M3 and kB) or
+      (not M2 and     M3 and kC))
+      port map (W2_15(I), C2(I),
+                W(I), W14(I), init1_or_2, init1_or_3, A30(I),
+                clk);
+  end generate;
 
   process
     variable kk : word_t;
@@ -128,7 +150,7 @@ begin
 
     -- 1 cycle latency into A.
     A <= (A rol 5) + I1;
-    if init1 then
+    if init1 = '1' then
       A <= (iA rol 5) + F0(iB, iC, iD) - F0(iA, iB rol 30, iC) + I1;
     end if;
 
@@ -142,27 +164,27 @@ begin
 
     -- Look aheads for these, and set up for init 1.
     D2 <= C2;
-    C2 <= A rol 30;
-    if init1_or_3 and init1_or_2 then -- init1.
-      C2 <= iA rol 30;
-    end if;
-    if init1_or_2 and not init1_or_3 then -- init2.
-      C2 <= iB rol 30;
-    end if;
-    if init1_or_3 and not init1_or_2 then -- init3.
-      C2 <= iC;
-    end if;
+    --C2 <= A rol 30;
+    --if init1_or_3 and init1_or_2 then -- init1.
+    --  C2 <= iA rol 30;
+    --end if;
+    --if init1_or_2 and not init1_or_3 then -- init2.
+    --  C2 <= iB rol 30;
+    --end if;
+    --if init1_or_3 and not init1_or_2 then -- init3.
+    --  C2 <= iC;
+    --end if;
 
     -- 3 cycle latency into A.
     I2 <= D2 + I3;
-    if init2_or_3 and not init2 then -- init3
+    if init2_or_3 = '1' and not init2 = '1' then -- init3
       I2 <= iE + I3;
     end if;
-    if init2 then
+    if init2 = '1' then
       I2 <= iD + I3;
     end if;
 
-    if init2_or_3 then
+    if init2_or_3 = '1' then
       munged_phase2 <= 3;
     elsif phase3 = 3 then
       munged_phase2 <= 1;
@@ -196,14 +218,14 @@ begin
       end if;
     end if;
 
-    init2_or_3 <= (phase3 = 3 and pa = '1') or init2_or_3;
+    init2_or_3 <= (bb(phase3 = 3) and pa) or init2_or_3;
     init2 <= init2_or_3;
-    if init2 then
-      init2 <= false;
-      init2_or_3 <= false;
+    if init2 = '1' then
+      init2 <= '0';
+      init2_or_3 <= '0';
     end if;
     init1_or_2 <= init2_or_3;
-    init1_or_3 <= (phase3 = 3 and pa = '1') or (init1_or_2 and not init1_or_3);
+    init1_or_3 <= (bb(phase3 = 3) and pa) or (init1_or_2 and not init1_or_3);
     init1 <= init2;
 
     -- 5 cycle latency into A.
@@ -212,7 +234,7 @@ begin
     else
       W <= (W3_16 xor W8 xor W14) rol 1;
     end if;
-    W2_15 <= W xor W14;
+    --W2_15 <= W xor W14;
     W3_16 <= W2_15;
 
     ld <= load;
