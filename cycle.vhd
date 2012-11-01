@@ -106,7 +106,7 @@ architecture cycle of cycle is
   attribute rloc of phase3 : signal is "X4Y3";
   attribute rloc of pa : signal is "X7Y1";
   attribute rloc of init1_or_2, init1_or_3 : signal is "X4Y4";
-  attribute rloc of ld : signal is "X4Y2";
+  attribute rloc of ld : signal is "X4Y4";
   attribute use_clock_enable of phase3 : signal is "no";
   attribute use_sync_set of init2, init1_or_2, init1_or_3, init2_or_3 : signal
     is "no";

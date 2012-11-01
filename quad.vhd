@@ -37,6 +37,12 @@ architecture quad of quad is
   attribute rloc of cC : label is "X0Y10";
   attribute rloc of cD : label is "X8Y10";
 
+  attribute rloc of R : signal is
+    "X4Y9 X4Y9 X4Y9 X4Y9 X4Y8 X4Y8 X4Y8 X4Y8 " &
+    "X12Y9 X12Y9 X12Y9 X12Y9 X12Y8 X12Y8 X12Y8 X12Y8 " &
+    "X4Y17 X4Y17 X4Y17 X4Y17 X4Y16 X4Y16 X4Y16 X4Y16 " &
+    "X12Y17 X12Y17 X12Y17 X12Y17 X12Y16 X12Y16 X12Y16 X12Y16";
+
 begin
   cA : entity work.cycle generic map (3) port map (rA, Din, ldA, pa, clk);
   cB : entity work.cycle generic map (2) port map (rB, Din, ldB, pa, clk);
