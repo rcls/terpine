@@ -2,6 +2,13 @@
 NET "clk" TNM_NET = clk;
 #TIMESPEC ts_clk = PERIOD "clk" 3.75 ns HIGH 50%;
 #TIMESPEC ts_clk = PERIOD "clk" 3.5 ns HIGH 50%;
-#TIMESPEC ts_clk = PERIOD "clk" 3.333 ns HIGH 50%;
+# Spartan
 #TIMESPEC ts_clk = PERIOD "clk" 3 ns HIGH 50%;
+#TIMESPEC ts_clk = PERIOD "clk" 3.333 ns HIGH 50%;
+# Artix -2...
 TIMESPEC ts_clk = PERIOD "clk" 2.6 ns HIGH 50%;
+
+INST "q/pa" RLOC_ORIGIN = "X30Y150";
+#INST "q/cB/A_0" RLOC_ORIGIN = "X31Y152";
+#INST "q/cC/A_0" RLOC_ORIGIN = "X21Y162";
+#INST "q/cD/A_0" RLOC_ORIGIN = "X31Y162";

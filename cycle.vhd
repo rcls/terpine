@@ -71,24 +71,16 @@ architecture cycle of cycle is
   signal pa : std_logic;
   signal ld : std_logic;
 
-  attribute keep_hierarchy : string;
   attribute keep_hierarchy of cycle : architecture is "soft";
 
-  attribute use_clock_enable : string;
-  attribute use_sync_set : string;
-  attribute use_sync_reset : string;
-  attribute hu_set : string;
-  attribute rloc : string;
-
-  --attribute rloc of d7: label is "X0Y1";
-  --attribute rloc of d13: label is "X0Y1";
-  attribute rloc of W8 : signal is col8(0,1);
-  attribute rloc of W14 : signal is col8(0,1);
+  attribute rloc of d7, d13: label is "X4Y1";
+  --attribute rloc of W8 : signal is col8(4,1);
+  --attribute rloc of W14 : signal is col8(4,1);
 
   attribute rloc of A : signal is col8(1,1);
 
-  --attribute rloc of C2 : signal is col8(2,1);
-  --attribute rloc of W2_15 : signal is col8(8,1);
+  attribute rloc of C2 : signal is col8(2,1);
+  attribute rloc of W2_15 : signal is col8(2,1);
 
   attribute rloc of I1 : signal is col8(3,1);
 
@@ -137,7 +129,7 @@ begin
       (not M2 and not M3 and M4) or
       (    M2 and     M3 and kA) or
       (    M2 and not M3 and kB) or
-      (not M2 and     M3 and kC))
+      (not M2 and     M3 and kC), I)
       port map (W2_15(I), C2(I),
                 W(I), W14(I), init1_or_2, init1_or_3, A30(I),
                 clk);
