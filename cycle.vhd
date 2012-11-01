@@ -80,15 +80,15 @@ architecture cycle of cycle is
   attribute hu_set : string;
   attribute rloc : string;
 
-  attribute rloc of d7: label is "X0Y1";
-  attribute rloc of d13: label is "X0Y1";
+  --attribute rloc of d7: label is "X0Y1";
+  --attribute rloc of d13: label is "X0Y1";
   attribute rloc of W8 : signal is col8(0,1);
   attribute rloc of W14 : signal is col8(0,1);
 
   attribute rloc of A : signal is col8(1,1);
 
   attribute rloc of C2 : signal is col8(2,1);
-  attribute rloc of W2_15 : signal is col8(2,1);
+  attribute rloc of W2_15 : signal is col8(8,1);
 
   attribute rloc of I1 : signal is col8(3,1);
 
