@@ -63,29 +63,13 @@ architecture cycle of cycle is
   signal init1_or_3 : boolean;
 
   signal W : word_t;
-  signal W2 : word_t;
-  signal W3 : word_t;
+  signal W2_15 : word_t;
+  signal W3_16 : word_t;
   signal W8 : word_t;
   signal W14 : word_t;
-  signal W15 : word_t;
-  signal W16 : word_t;
 
   signal pa : std_logic;
   signal ld : std_logic;
-
-  function loc(x, y : integer) return string is
-  begin
-    return "X" & integer'image(x) & "Y" & integer'image(y);
-  end loc;
-  function lc4(x, y : integer) return string is
-  begin
-    return loc(x, y) & " " & loc(x, y) & " " & loc(x, y) & " " & loc(x, y);
-  end lc4;
-  function col8(x, y : integer) return string is
-  begin
-    return  lc4(x,y+7) &" "& lc4(x,y+6) &" "& lc4(x,y+5) &" "& lc4(x,y+4)
-      &" "& lc4(x,y+3) &" "& lc4(x,y+2) &" "& lc4(x,y+1) &" "& lc4(x,y);
-  end col8;
 
   attribute keep_hierarchy : string;
   attribute keep_hierarchy of cycle : architecture is "soft";
@@ -96,26 +80,25 @@ architecture cycle of cycle is
   attribute hu_set : string;
   attribute rloc : string;
 
-  attribute rloc of w8 : signal is col8(0,1);
-  attribute rloc of w14 : signal is col8(0,1);
+  attribute rloc of d7: label is "X0Y1";
+  attribute rloc of d13: label is "X0Y1";
+  attribute rloc of W8 : signal is col8(0,1);
+  attribute rloc of W14 : signal is col8(0,1);
 
   attribute rloc of A : signal is col8(1,1);
-  attribute rloc of W2 : signal is col8(1,1);
 
   attribute rloc of C2 : signal is col8(2,1);
+  attribute rloc of W2_15 : signal is col8(2,1);
 
   attribute rloc of I1 : signal is col8(3,1);
-
-  attribute rloc of W3 : signal is col8(4,1);
 
   attribute rloc of I2 : signal is col8(5,1);
   attribute rloc of D2 : signal is col8(5,1);
 
   attribute rloc of W : signal is col8(6,1);
-  attribute rloc of W15 : signal is col8(6,0);
+  attribute rloc of W3_16 : signal is col8(6,1);
 
   attribute rloc of I3 : signal is col8(7,1);
-  attribute rloc of W16 : signal is col8(7,1);
 
   attribute rloc of init1 : signal is "X1Y0";
 
@@ -126,6 +109,8 @@ architecture cycle of cycle is
   attribute use_clock_enable of phase3 : signal is "no";
   attribute use_sync_set of phase3 : signal is "no";
   attribute use_sync_reset of phase3 : signal is "no";
+  attribute use_sync_set of C2 : signal is "no";
+  attribute use_sync_reset of C2 : signal is "no";
 
   attribute rloc of init2_or_3 : signal is "X5Y0";
   attribute rloc of init2 : signal is "X5Y0";
@@ -225,12 +210,10 @@ begin
     if ld = '1' then
       W <= Din;
     else
-      W <= (W3 xor W8 xor W14 xor W16) rol 1;
+      W <= (W3_16 xor W8 xor W14) rol 1;
     end if;
-    W2 <= W;
-    W3 <= W2;
-    W15 <= W14;
-    W16 <= W15;
+    W2_15 <= W xor W14;
+    W3_16 <= W2_15;
 
     ld <= load;
     pa <= phase_advance;
