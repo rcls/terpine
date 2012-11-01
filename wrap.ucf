@@ -12,3 +12,6 @@ INST "q/pa" RLOC_ORIGIN = "X30Y150";
 #INST "q/cB/A_0" RLOC_ORIGIN = "X31Y152";
 #INST "q/cC/A_0" RLOC_ORIGIN = "X21Y162";
 #INST "q/cD/A_0" RLOC_ORIGIN = "X31Y162";
+
+INST "*/munged_phase2_0" BEL = "DFF";
+INST "*/munged_phase2_1" BEL = "CFF";

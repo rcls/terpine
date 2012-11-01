@@ -73,10 +73,6 @@ architecture cycle of cycle is
 
   attribute keep_hierarchy of cycle : architecture is "soft";
 
-  attribute rloc of d7, d13: label is "X4Y1";
-  --attribute rloc of W8 : signal is col8(4,1);
-  --attribute rloc of W14 : signal is col8(4,1);
-
   attribute rloc of A : signal is col8(1,1);
 
   attribute rloc of C2 : signal is col8(2,1);
@@ -84,28 +80,41 @@ architecture cycle of cycle is
 
   attribute rloc of I1 : signal is col8(3,1);
 
+  --attribute rloc of D2 : signal is col8(4,1);
+  attribute rloc of D2 : signal is
+    "X4Y8 X4Y8 X4Y8 X4Y8 X4Y8 X4Y8 X4Y8 X4Y8 " &
+    "X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 " &
+    "X4Y6 X4Y6 X4Y6 X4Y6 X4Y3 X4Y3 X4Y3 X4Y3 " &
+    "X4Y3 X4Y3 X2Y2 X2Y2 X4Y1 X4Y1 X4Y1 X4Y1";
+
   attribute rloc of I2 : signal is col8(5,1);
-  attribute rloc of D2 : signal is col8(5,1);
 
   attribute rloc of W : signal is col8(6,1);
   attribute rloc of W3_16 : signal is col8(6,1);
 
   attribute rloc of I3 : signal is col8(7,1);
 
-  attribute rloc of init1 : signal is "X1Y0";
+  attribute rloc of d7, d13: label is "X8Y1";
+  --attribute rloc of W8 : signal is col8(4,1);
+  --attribute rloc of W14 : signal is col8(4,1);
 
-  attribute rloc of munged_phase2 : signal is "X3Y0";
+  attribute rloc of init1 : signal is "X1Y1";
 
-  attribute rloc of phase3 : signal is "X7Y0";
-  attribute rloc of pa : signal is "X7Y0";
+  attribute rloc of munged_phase2 : signal is "X2Y2";
+
+  -- pa ends up on a 5FF.  phase3 is a bit far from the I3 adder...
+  attribute rloc of phase3 : signal is "X4Y4";
+  attribute rloc of pa : signal is "X7Y1";
+  attribute rloc of init1_or_2, init1_or_3 : signal is "X4Y4";
   attribute use_clock_enable of phase3 : signal is "no";
   attribute use_sync_set of phase3 : signal is "no";
   attribute use_sync_reset of phase3 : signal is "no";
+  attribute use_sync_set of munged_phase2 : signal is "no";
+  attribute use_sync_reset of munged_phase2 : signal is "no";
   --attribute use_sync_set of C2 : signal is "no";
   --attribute use_sync_reset of C2 : signal is "no";
 
-  attribute rloc of init2_or_3 : signal is "X5Y0";
-  attribute rloc of init2 : signal is "X5Y0";
+  attribute rloc of init2_or_3, init2 : signal is "X4Y5";
 
   function bb (b : boolean) return std_logic is
   begin
@@ -122,7 +131,9 @@ begin
     constant kA : bv32 := const(iA rol 30, I);
     constant kB : bv32 := const(iB rol 30, I);
     constant kC : bv32 := const(iC, I);
-    attribute rloc of c2_w2_15 : label is loc(2, I/4 + 1);
+    type ia is array (0 to 7) of integer;
+    constant col : ia := (2, 4, 2, 2, 2, 2, 2, 2);
+    attribute rloc of c2_w2_15 : label is loc(col(I/4), I/4 + 1);
   begin
     c2_w2_15 : entity work.bit5op2 generic map (
       M0 xor M1,

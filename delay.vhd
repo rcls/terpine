@@ -17,18 +17,17 @@ entity delay is
 end delay;
 
 architecture delay of delay is
-  signal r : word_t;
   signal a : unsigned (3 downto 0) := to_unsigned (len - 2, 4);
 begin
   l : for i in 0 to 31 generate
+    signal b, r : std_logic;
+    attribute rloc of r : signal is loc(0, i/4);
+    attribute rloc of s : label is loc(0, i/4);
   begin
     s : srl16e port map (d=> d(i), ce=> '1', clk=> clk,
                          a0=> a(0), a1=> a(1), a2=> a(2), a3=> a(3),
-                         q => r(i));
+                         q => b);
+    f : fd port map (d=>b, q=> r, c=> clk);
+    q(i) <= r;
   end generate;
-  process
-  begin
-    wait until rising_edge(clk);
-    q <= r;
-  end process;
 end;
