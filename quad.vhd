@@ -31,13 +31,9 @@ architecture quad of quad is
   signal ldC : std_logic;
   signal ldD : std_logic;
 
-  --attribute rloc_origin : string;
-  --attribute rloc_origin of pa : signal is "X30Y148";
-  --attribute hu_set of pa : signal is "quad";
-  --attribute hu_set of cA, cB, cC, cD : label is "quad";
-  attribute rloc of pa : signal is "X0Y-2";
-  attribute rloc of cA : label is "X0Y0";
-  attribute rloc of cB : label is "X8Y0";
+  attribute rloc of pa : signal is "X0Y0";
+  attribute rloc of cA : label is "X0Y2";
+  attribute rloc of cB : label is "X8Y2";
   attribute rloc of cC : label is "X0Y10";
   attribute rloc of cD : label is "X8Y10";
 

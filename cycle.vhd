@@ -82,9 +82,9 @@ architecture cycle of cycle is
 
   --attribute rloc of D2 : signal is col8(4,1);
   attribute rloc of D2 : signal is
-    "X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 X4Y7 " &
-    "X4Y6 X4Y6 X4Y6 X4Y6 X4Y6 X4Y6 X4Y6 X4Y6 " &
-    "X4Y5 X4Y5 X4Y5 X4Y5 X4Y5 X4Y5 X4Y5 X4Y5 " &
+    "X1Y7 X1Y7 X1Y7 X1Y7 X1Y6 X1Y6 X1Y6 X1Y6 " &
+    "X1Y5 X1Y5 X1Y5 X1Y5 X1Y4 X1Y4 X1Y4 X1Y4 " &
+    "X1Y3 X1Y3 X1Y3 X1Y3 X4Y5 X4Y5 X4Y5 X4Y5 " &
     "X4Y2 X4Y2 X4Y2 X4Y2 X4Y1 X4Y1 X4Y1 X4Y1";
 
   attribute rloc of I2 : signal is col8(5,1);
@@ -106,6 +106,7 @@ architecture cycle of cycle is
   attribute rloc of phase3 : signal is "X4Y3";
   attribute rloc of pa : signal is "X7Y1";
   attribute rloc of init1_or_2, init1_or_3 : signal is "X4Y4";
+  attribute rloc of ld : signal is "X4Y2";
   attribute use_clock_enable of phase3 : signal is "no";
   attribute use_sync_set of init2, init1_or_2, init1_or_3, init2_or_3 : signal
     is "no";
@@ -115,8 +116,6 @@ architecture cycle of cycle is
   attribute use_sync_set of munged_phase2 : signal is "no";
   attribute use_sync_reset of phase3 : signal is "no";
   attribute use_sync_reset of munged_phase2 : signal is "no";
-  --attribute use_sync_set of C2 : signal is "no";
-  --attribute use_sync_reset of C2 : signal is "no";
 
   attribute rloc of init2_or_3, init2 : signal is "X4Y4";
 
