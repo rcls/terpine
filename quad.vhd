@@ -31,7 +31,11 @@ architecture quad of quad is
   signal ldC : std_logic;
   signal ldD : std_logic;
 
+  -- FIXME, these need to disappear...
   attribute rloc of pa : signal is "X0Y0";
+  attribute rloc of loadA, loadB, loadC, loadD : signal is "X1Y0";
+  attribute rloc of phase : signal is "X2Y0";
+
   attribute rloc of cA : label is "X0Y2";
   attribute rloc of cB : label is "X8Y2";
   attribute rloc of cC : label is "X0Y10";
@@ -59,10 +63,10 @@ begin
     ldD <= loadD;
 
     if phase_advance = '1' then
-      if ldA = '1' or phase = 3 then
+      if loadA = '1' then
         phase <= 0;
       else
-        phase <= phase + 1;
+        phase <= (phase + 1) mod 4;
       end if;
     end if;
     case phase is

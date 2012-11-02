@@ -45,8 +45,8 @@ architecture cycle of cycle is
   constant k2 : word_t := x"8f1bbcdc";
   constant k3 : word_t := x"ca62c1d6";
 
-  signal phase3 : natural range 0 to 3 := phase_init;
-  signal munged_phase2 : natural range 0 to 3;
+  signal phase4 : natural range 0 to 3 := phase_init;
+  signal munged_phase2, munged_phase3 : natural range 0 to 3;
 
   signal A, A30 : word_t;
   signal C2 : word_t;
@@ -56,11 +56,10 @@ architecture cycle of cycle is
   signal I3 : word_t;
 
   -- There is intentially redundancy here, to reduce fan out.
-  signal init1 : std_logic := '0';
-  signal init2 : std_logic := '0';
+  signal init1, init2, init3 : std_logic := '0';
   signal init1_or_2 : std_logic := '0';
   signal init2_or_3 : std_logic := '0';
-  signal init1_or_3 : std_logic := '0';
+  signal init3_or_4 : std_logic := '0';
 
   signal W : word_t;
   signal W2_15 : word_t;
@@ -88,6 +87,7 @@ architecture cycle of cycle is
     "X4Y2 X4Y2 X4Y2 X4Y2 X4Y1 X4Y1 X4Y1 X4Y1";
 
   attribute rloc of I2 : signal is col8(5,1);
+  attribute rloc of init2_or_3, init2 : signal is "X5Y1";
 
   attribute rloc of W : signal is col8(6,1);
   attribute rloc of W3_16 : signal is col8(6,1);
@@ -95,29 +95,18 @@ architecture cycle of cycle is
   attribute rloc of I3 : signal is col8(7,1);
 
   attribute rloc of d7, d13: label is "X8Y1";
-  --attribute rloc of W8 : signal is col8(4,1);
-  --attribute rloc of W14 : signal is col8(4,1);
 
   attribute rloc of init1 : signal is "X1Y1";
 
   attribute rloc of munged_phase2 : signal is "X2Y0";
 
-  -- pa ends up on a 5FF.  phase3 is a bit far from the I3 adder...
-  attribute rloc of phase3 : signal is "X4Y3";
-  attribute rloc of pa : signal is "X7Y1";
-  attribute rloc of init1_or_2, init1_or_3 : signal is "X4Y4";
-  attribute rloc of ld : signal is "X4Y4";
-  attribute use_clock_enable of phase3 : signal is "no";
-  attribute use_sync_set of init2, init1_or_2, init1_or_3, init2_or_3 : signal
-    is "no";
-  attribute use_sync_reset of init2, init1_or_2, init1_or_3, init2_or_3 : signal
-    is "no";
-  attribute use_sync_set of phase3 : signal is "no";
-  attribute use_sync_set of munged_phase2 : signal is "no";
-  attribute use_sync_reset of phase3 : signal is "no";
-  attribute use_sync_reset of munged_phase2 : signal is "no";
+  attribute rloc of phase4, munged_phase3 : signal is "X4Y3";
 
-  attribute rloc of init2_or_3, init2 : signal is "X4Y4";
+  attribute rloc of init1_or_2, init3_or_4, init3 : signal is "X4Y4";
+  attribute rloc of pa : signal is "X7Y1";
+  attribute rloc of ld : signal is "X4Y4";
+  attribute use_sync_set of phase4, munged_phase3 : signal is "no";
+  attribute use_sync_reset of phase4, munged_phase3 : signal is "no";
 
   function bb (b : boolean) return std_logic is
   begin
@@ -141,11 +130,11 @@ begin
     c2_w2_15 : entity work.bit5op2 generic map (
       M0 xor M1,
       (not M2 and not M3 and M4) or
-      (    M2 and     M3 and kA) or
-      (    M2 and not M3 and kB) or
+      (    M2 and not M3 and kA) or
+      (    M2 and     M3 and kB) or
       (not M2 and     M3 and kC), I)
       port map (W2_15(I), C2(I),
-                W(I), W14(I), init1_or_2, init1_or_3, A30(I),
+                W(I), W14(I), init1_or_2, init2_or_3, A30(I),
                 clk);
   end generate;
 
@@ -190,49 +179,14 @@ begin
       I2 <= iD + I3;
     end if;
 
-    if init2_or_3 = '1' then
-      munged_phase2 <= 3;
-    elsif phase3 = 3 then
-      munged_phase2 <= 1;
-    else
-      munged_phase2 <= phase3;
-    end if;
-
     -- 4 cycle latency into A.
-    if pa = '1' then
-      case phase3 is                    -- Look-ahead...
-        when 0 => kk := k1;
-        when 1 => kk := k2;
-        when 2 => kk := k3;
-        when 3 => kk := k0;
-      end case;
-    else
-      case phase3 is
-        when 0 => kk := k0;
-        when 1 => kk := k1;
-        when 2 => kk := k2;
-        when 3 => kk := k3;
-      end case;
-    end if;
+    case phase4 is
+      when 0 => kk := k0;
+      when 1 => kk := k1;
+      when 2 => kk := k2;
+      when 3 => kk := k3;
+    end case;
     I3 <= kk + W;
-
-    if pa = '1' then
-      if ld = '1' or phase3 = 3 then
-        phase3 <= 0;
-      else
-        phase3 <= phase3 + 1;
-      end if;
-    end if;
-
-    init2_or_3 <= (bb(phase3 = 3) and pa) or init2_or_3;
-    init2 <= init2_or_3;
-    if init2 = '1' then
-      init2 <= '0';
-      init2_or_3 <= '0';
-    end if;
-    init1_or_2 <= init2_or_3;
-    init1_or_3 <= (bb(phase3 = 3) and pa) or (init1_or_2 and not init1_or_3);
-    init1 <= init2;
 
     -- 5 cycle latency into A.
     if ld = '1' then
@@ -243,8 +197,33 @@ begin
     --W2_15 <= W xor W14;
     W3_16 <= W2_15;
 
+    -- Control signals.
     ld <= load;
     pa <= phase_advance;
+
+    init3_or_4 <= (bb(phase4 = 3) and pa) or (init3_or_4 and not init3);
+    init3 <= init3_or_4 and not init3;
+    init2 <= init3;
+    init1 <= init2;
+    init2_or_3 <= init3_or_4;
+    init1_or_2 <= init2_or_3;
+
+    if pa = '1' then
+      if ld = '1' then
+        phase4 <= 0;
+      else
+        phase4 <= (phase4 + 1) mod 4;
+      end if;
+    end if;
+
+    if init3_or_4 = '1' then
+      munged_phase3 <= 3;
+    elsif phase4 = 3 then
+      munged_phase3 <= 1;
+    else
+      munged_phase3 <= phase4;
+    end if;
+    munged_phase2 <= munged_phase3;
 
   end process;
 end cycle;

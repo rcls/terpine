@@ -14,16 +14,20 @@ end wrap;
 architecture behaviour of wrap is
   signal R : word_t;
   signal Din : word_t;
-  signal load0 : std_logic;
-  signal load1 : std_logic;
-  signal load2 : std_logic;
-  signal load3 : std_logic;
+  signal loadA : std_logic;
+  signal loadB : std_logic;
+  signal loadC : std_logic;
+  signal loadD : std_logic;
   signal phase_advance : std_logic;
 begin
   p : entity work.phase port map (
-    phase_advance, load0, load1, load2, load3, clk);
+    phase_advance, loadA, loadB, loadC, loadD, clk);
   q : entity work.quad port map (
-    R, Din, phase_advance, load0, load1, load2, load3, clk);
-  Din <= Din_io;
-  R_io <= R;
+    R, Din, phase_advance, loadA, loadB, loadC, loadD, clk);
+  process
+  begin
+    wait until rising_edge(clk);
+    Din <= Din_io;
+    R_io <= R;
+  end process;
 end behaviour;
