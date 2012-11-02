@@ -101,11 +101,10 @@ architecture cycle of cycle is
 
   attribute rloc of munged_phase2 : signal is "X2Y0";
 
-  attribute rloc of phase4, munged_phase3 : signal is "X4Y3";
+  attribute rloc of phase4, pa, ld : signal is "X4Y4";
+  attribute rloc of munged_phase3 : signal is "X4Y3";
+  attribute rloc of init1_or_2, init3_or_4, init3 : signal is "X4Y3";
 
-  attribute rloc of init1_or_2, init3_or_4, init3 : signal is "X4Y4";
-  attribute rloc of pa : signal is "X7Y1";
-  attribute rloc of ld : signal is "X4Y4";
   attribute use_sync_set of phase4, munged_phase3 : signal is "no";
   attribute use_sync_reset of phase4, munged_phase3 : signal is "no";
 

@@ -40,16 +40,15 @@ begin
   end process;
   process
   begin
-    Din <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    Din <= (others => 'U');
     wait until loadB = '1';
-    wait until falling_edge(clk);
     wait until falling_edge(clk);
     for i in 0 to 15 loop
       wait until falling_edge(clk);
       Din <= data(i);
     end loop;
     wait until falling_edge(clk);
-    Din <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    Din <= (others => 'U');
     wait for 1 us;
   end process;
 end behavioral;

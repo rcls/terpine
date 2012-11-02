@@ -15,6 +15,7 @@ package defs is
 
   attribute bel : string;
   attribute hu_set : string;
+  attribute keep : string;
   attribute keep_hierarchy : string;
   attribute rloc : string;
   attribute use_clock_enable : string;

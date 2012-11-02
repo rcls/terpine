@@ -9,11 +9,11 @@ use work.defs.all;
 entity quad is
   port (R : out word_t;
         Din : in word_t;
-        phase_advance : in std_logic;
-        loadA : in std_logic;
-        loadB : in std_logic;
-        loadC : in std_logic;
-        loadD : in std_logic;
+        pa : in std_logic;
+        ldA : in std_logic;
+        ldB : in std_logic;
+        ldC : in std_logic;
+        ldD : in std_logic;
         clk : in std_logic);
 end quad;
 
@@ -22,12 +22,9 @@ architecture quad of quad is
   attribute keep_hierarchy of quad : architecture is "soft";
   signal ph5A, ph5B, ph5C, ph5D : natural range 0 to 3;
   signal rA, rB, rC, rD : word_t;
-  signal pa : std_logic;
-  signal ldA, ldB, ldC, ldD : std_logic;
 
   -- FIXME, these need to disappear...
-  attribute rloc of pa : signal is "X0Y0";
-  attribute rloc of loadA, loadB, loadC, loadD : signal is "X1Y0";
+  attribute rloc of ldA, ldB, ldC, ldD : signal is "X1Y0";
 
   attribute rloc of cA : label is "X0Y2";
   attribute rloc of cB : label is "X8Y2";
@@ -62,12 +59,6 @@ begin
   process
   begin
     wait until rising_edge(clk);
-    pa <= phase_advance;
-    ldA <= loadA;
-    ldB <= loadB;
-    ldC <= loadC;
-    ldD <= loadD;
-
     R( 7 downto  0) <= choose (ph5A, 0, rA, rB, rC, rD);
     R(15 downto  8) <= choose (ph5B, 8, rB, rC, rD, rA);
     R(23 downto 16) <= choose (ph5C,16, rC, rD, rA, rB);

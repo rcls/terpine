@@ -8,10 +8,7 @@ NET "clk" TNM_NET = clk;
 # Artix -2...
 TIMESPEC ts_clk = PERIOD "clk" 2.6 ns HIGH 50%;
 
-INST "q/pa" RLOC_ORIGIN = "X30Y150";
-#INST "q/cB/A_0" RLOC_ORIGIN = "X31Y152";
-#INST "q/cC/A_0" RLOC_ORIGIN = "X21Y162";
-#INST "q/cD/A_0" RLOC_ORIGIN = "X31Y162";
+INST "Din_0" RLOC_ORIGIN = "X30Y154";
 
-INST "*/munged_phase2_0" BEL = "DFF";
-INST "*/munged_phase2_1" BEL = "CFF";
+#INST "*/munged_phase2_0" BEL = "DFF";
+#INST "*/munged_phase2_1" BEL = "CFF";
