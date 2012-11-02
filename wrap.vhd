@@ -21,7 +21,7 @@ architecture behaviour of wrap is
   signal phase_advance : std_logic;
 
   attribute rloc of phase_advance : signal is "X0Y0";
-  attribute rloc of p : label is "X0Y0";
+  attribute rloc of q : label is "X0Y0";
   attribute rloc of R_io : signal is col8(-4,2);
   attribute rloc of Din : signal is col8(-8,2);
 begin

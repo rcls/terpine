@@ -28,8 +28,13 @@ architecture line of line is
   signal B : dataset_t(0 to line_len - 1);
   signal C : dataset_t(0 to line_len);
 
-  attribute keep of Ai, Bi, Ci, Di, Ei : signal is "true";
-  attribute keep_hierarchy of line : architecture is "soft";
+  attribute keep of Ai, Bi, Ci, Di, Ei : signal is "soft";
+  attribute keep_hierarchy of line : architecture is "true";
+
+  attribute rloc of Di, Ei : signal is col8(-dir, 0);
+  attribute rloc of Ci : signal is col8(0,0);
+  attribute rloc of Bi : signal is col8(2*dir, 0);
+  attribute rloc of Ai : signal is col8(3*dir, 0);
 
 begin
   A(1) <= Ai;
@@ -50,8 +55,8 @@ begin
     attribute rloc of BB : signal is col8(dir*(i*4+7),0);
     attribute rloc of CC : signal is col8(dir*(i*4+4),0);
   begin
-      B(i+1) <= BB;
-      C(i+2) <= CC;
+    B(i+1) <= BB;
+    C(i+2) <= CC;
     process
     begin
       wait until rising_edge(clk);

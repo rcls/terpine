@@ -11,7 +11,7 @@ entity expand12 is
         clk : in std_logic);
 end expand12;
 
-architecture behavioural of expand12 is
+architecture expand12 of expand12 is
   function L (x : word_t) return word_t is
   begin
     return x rol 1;
@@ -47,12 +47,14 @@ architecture behavioural of expand12 is
   attribute rloc of O20, O21, O22, O23 : signal is row32(0,1);
   attribute rloc of O24, O25, O26, O27 : signal is row32(0,0);
 
+  constant xor01234 : word_t := x"96696996";
+  constant xor34 : word_t := x"00ffff00";
 begin
 
   -- Sigh.
   O(12) <= O12; O(13) <= O13; O(14) <= O14; O(15) <= O15;
   O(16) <= O16; O(17) <= O17; O(18) <= O18; O(19) <= O19;
-  O(20) <= O21; O(21) <= O21; O(22) <= O22; O(23) <= O23;
+  O(20) <= O20; O(21) <= O21; O(22) <= O22; O(23) <= O23;
   O(24) <= O24; O(25) <= O25; O(26) <= O26; O(27) <= O27;
 
   process
@@ -98,4 +100,4 @@ begin
     O26 <= LLL(Q17 xor T12) xor LL(T15) xor L(Q18) xor L(P12);
     O27 <= LLL(Q18 xor T13) xor LL(P10) xor L(P13) xor LL(T11);
   end process;
-end behavioural;
+end expand12;

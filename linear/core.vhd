@@ -12,7 +12,9 @@ entity core is
         clk : in std_logic);
 end core;
 
-architecture behavioral of core is
+architecture core of core is
+  attribute keep_hierarchy of core : architecture is "soft";
+
   function L (x : word_t) return word_t is
   begin
     return x rol 1;
@@ -51,13 +53,15 @@ architecture behavioral of core is
   end function;
 
   signal A, B, C, D, E : dataset_t (0 to core_len);
+  attribute keep of A, B, C, D, E : signal is "soft";
+
 begin
 
-  expA : entity work.expand12 port map (input, Ea, clk);
-  expB : entity work.expand12 port map (Ea, Eb, clk);
-  expC : entity work.expand12 port map (Eb, Ec, clk);
-  expD : entity work.expand12 port map (Ec, Ed, clk);
-  expE : entity work.expand12 port map (Ed, Ee, clk);
+  expA : entity work.expand12b port map (input, Ea, clk);
+  expB : entity work.expand12b port map (Ea, Eb, clk);
+  expC : entity work.expand12b port map (Eb, Ec, clk);
+  expD : entity work.expand12b port map (Ec, Ed, clk);
+  expE : entity work.expand12b port map (Ed, Ee, clk);
 
   process
   begin
@@ -112,6 +116,7 @@ begin
     constant dir : integer := 1 - 2 * (i mod 2);
     signal Cbuf, Dbuf: word_t;
     signal Ai, Bi, Ci, Di, Ei : word_t;
+    attribute keep of Cbuf, Dbuf : signal is "soft";
   begin
     lne: entity work.line generic map (i*line_len, dir)
       port map (W(i*line_len to i*line_len + line_len - 1),
@@ -146,4 +151,4 @@ begin
     oE2 <= oE1;
     output(4) <= oE2 + x"c3d2e1f0";
   end process;
-end behavioral;
+end core;
