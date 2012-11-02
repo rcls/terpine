@@ -20,21 +20,14 @@ end quad;
 architecture quad of quad is
   attribute keep_hierarchy : string;
   attribute keep_hierarchy of quad : architecture is "soft";
-  signal phase : natural range 0 to 3;
-  signal rA : word_t;
-  signal rB : word_t;
-  signal rC : word_t;
-  signal rD : word_t;
+  signal ph5A, ph5B, ph5C, ph5D : natural range 0 to 3;
+  signal rA, rB, rC, rD : word_t;
   signal pa : std_logic;
-  signal ldA : std_logic;
-  signal ldB : std_logic;
-  signal ldC : std_logic;
-  signal ldD : std_logic;
+  signal ldA, ldB, ldC, ldD : std_logic;
 
   -- FIXME, these need to disappear...
   attribute rloc of pa : signal is "X0Y0";
   attribute rloc of loadA, loadB, loadC, loadD : signal is "X1Y0";
-  attribute rloc of phase : signal is "X2Y0";
 
   attribute rloc of cA : label is "X0Y2";
   attribute rloc of cB : label is "X8Y2";
@@ -47,11 +40,24 @@ architecture quad of quad is
     "X4Y17 X4Y17 X4Y17 X4Y17 X4Y16 X4Y16 X4Y16 X4Y16 " &
     "X12Y17 X12Y17 X12Y17 X12Y17 X12Y16 X12Y16 X12Y16 X12Y16";
 
+  function choose(m : natural range 0 to 3; n : natural;
+                  A, B, C, D : word_t) return byte_t is
+    variable r : byte_t;
+  begin
+    case m is
+      when 0 => r := A(n+7 downto n);
+      when 1 => r := B(n+7 downto n);
+      when 2 => r := C(n+7 downto n);
+      when 3 => r := D(n+7 downto n);
+    end case;
+    return r;
+  end choose;
+
 begin
-  cA : entity work.cycle generic map (3) port map (rA, Din, ldA, pa, clk);
-  cB : entity work.cycle generic map (2) port map (rB, Din, ldB, pa, clk);
-  cC : entity work.cycle generic map (1) port map (rC, Din, ldC, pa, clk);
-  cD : entity work.cycle generic map (0) port map (rD, Din, ldD, pa, clk);
+  cA : entity work.cycle generic map (3) port map (rA, Din, ldA, pa, ph5A, clk);
+  cB : entity work.cycle generic map (2) port map (rB, Din, ldB, pa, ph5B, clk);
+  cC : entity work.cycle generic map (1) port map (rC, Din, ldC, pa, ph5C, clk);
+  cD : entity work.cycle generic map (0) port map (rD, Din, ldD, pa, ph5D, clk);
 
   process
   begin
@@ -62,18 +68,9 @@ begin
     ldC <= loadC;
     ldD <= loadD;
 
-    if phase_advance = '1' then
-      if loadA = '1' then
-        phase <= 0;
-      else
-        phase <= (phase + 1) mod 4;
-      end if;
-    end if;
-    case phase is
-      when 0 => R <= rA;
-      when 1 => R <= rB;
-      when 2 => R <= rC;
-      when 3 => R <= rD;
-    end case;
+    R( 7 downto  0) <= choose (ph5A, 0, rA, rB, rC, rD);
+    R(15 downto  8) <= choose (ph5B, 8, rB, rC, rD, rA);
+    R(23 downto 16) <= choose (ph5C,16, rC, rD, rA, rB);
+    R(31 downto 24) <= choose (ph5D,24, rD, rA, rB, rC);
   end process;
 end quad;

@@ -11,6 +11,7 @@ entity cycle is
         Din : in word_t;
         load : in std_logic;
         phase_advance : in std_logic;
+        phase5 : out natural range 0 to 3;
         clk : in std_logic);
 end cycle;
 
@@ -45,7 +46,7 @@ architecture cycle of cycle is
   constant k2 : word_t := x"8f1bbcdc";
   constant k3 : word_t := x"ca62c1d6";
 
-  signal phase4 : natural range 0 to 3 := phase_init;
+  signal phase4, ph5 : natural range 0 to 3 := phase_init;
   signal munged_phase2, munged_phase3 : natural range 0 to 3;
 
   signal A, A30 : word_t;
@@ -70,7 +71,7 @@ architecture cycle of cycle is
   signal pa : std_logic;
   signal ld : std_logic;
 
-  attribute keep_hierarchy of cycle : architecture is "soft";
+  attribute keep_hierarchy of cycle : architecture is "true";
 
   attribute rloc of A : signal is col8(1,1);
 
@@ -201,20 +202,14 @@ begin
     ld <= load;
     pa <= phase_advance;
 
+    phase4 <= ph5;
+
     init3_or_4 <= (bb(phase4 = 3) and pa) or (init3_or_4 and not init3);
     init3 <= init3_or_4 and not init3;
     init2 <= init3;
     init1 <= init2;
     init2_or_3 <= init3_or_4;
     init1_or_2 <= init2_or_3;
-
-    if pa = '1' then
-      if ld = '1' then
-        phase4 <= 0;
-      else
-        phase4 <= (phase4 + 1) mod 4;
-      end if;
-    end if;
 
     if init3_or_4 = '1' then
       munged_phase3 <= 3;
@@ -224,6 +219,19 @@ begin
       munged_phase3 <= phase4;
     end if;
     munged_phase2 <= munged_phase3;
-
   end process;
+
+  process (phase4, pa, ld)
+  begin
+    ph5 <= phase4;
+    if pa = '1' then
+      if ld = '1' then
+        ph5 <= 0;
+      else
+        ph5 <= (phase4 + 1) mod 4;
+      end if;
+    end if;
+  end process;
+  phase5 <= ph5;
+
 end cycle;

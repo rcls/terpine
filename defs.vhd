@@ -5,6 +5,8 @@ use ieee.numeric_std.all;
 package defs is
 
   subtype word_t is unsigned (31 downto 0);
+  subtype byte_t is unsigned (7 downto 0);
+
   subtype bv32 is bit_vector (31 downto 0);
 
   type dataset_t is array (natural range <>) of word_t;
