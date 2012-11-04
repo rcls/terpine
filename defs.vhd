@@ -25,15 +25,25 @@ package defs is
   begin
     return "X" & integer'image(x) & "Y" & integer'image(y);
   end loc;
-  function lc4(x, y : integer) return string is
+
+  function col(
+    x, y : integer; len : natural;
+    div : natural := 4; base : integer := 0) return string is
   begin
-    return loc(x, y) & " " & loc(x, y) & " " & loc(x, y) & " " & loc(x, y);
-  end lc4;
-  function col8(x, y : integer) return string is
+    if len = 0 then
+      return "";
+    elsif len = 1 then
+      return loc (x, y + base/div);
+    else
+      return col(x, y, len - len/2, div, base + len/2) &" "&
+        col(x, y, len/2, div, base);
+    end if;
+  end col;
+
+  function col32(x, y : integer) return string is
   begin
-    return  lc4(x,y+7) &" "& lc4(x,y+6) &" "& lc4(x,y+5) &" "& lc4(x,y+4)
-      &" "& lc4(x,y+3) &" "& lc4(x,y+2) &" "& lc4(x,y+1) &" "& lc4(x,y);
-  end col8;
+    return col(x, y, 32);
+  end col32;
 
   function abcd(index : integer) return string is
   begin

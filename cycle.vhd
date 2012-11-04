@@ -73,27 +73,24 @@ architecture cycle of cycle is
 
   attribute keep_hierarchy of cycle : architecture is "true";
 
-  attribute rloc of A : signal is col8(1,1);
+  attribute rloc of A : signal is col32(1,1);
 
-  attribute rloc of C2 : signal is col8(2,1);
-  attribute rloc of W2_15 : signal is col8(2,1);
+  attribute rloc of C2 : signal is col32(2,1);
+  attribute rloc of W2_15 : signal is col32(2,1);
 
-  attribute rloc of I1 : signal is col8(3,1);
+  attribute rloc of I1 : signal is col32(3,1);
 
-  --attribute rloc of D2 : signal is col8(4,1);
+  --attribute rloc of D2 : signal is col32(4,1);
   attribute rloc of D2 : signal is
-    "X1Y7 X1Y7 X1Y7 X1Y7 X1Y6 X1Y6 X1Y6 X1Y6 " &
-    "X1Y5 X1Y5 X1Y5 X1Y5 X1Y4 X1Y4 X1Y4 X1Y4 " &
-    "X1Y3 X1Y3 X1Y3 X1Y3 X4Y5 X4Y5 X4Y5 X4Y5 " &
-    "X4Y2 X4Y2 X4Y2 X4Y2 X4Y1 X4Y1 X4Y1 X4Y1";
+    col(1,3,20) &" "& col(4,5,4) &" "& col(4,1,8);
 
-  attribute rloc of I2 : signal is col8(5,1);
+  attribute rloc of I2 : signal is col32(5,1);
   attribute rloc of init2_or_3, init2 : signal is "X5Y1";
 
-  attribute rloc of W : signal is col8(6,1);
-  attribute rloc of W3_16 : signal is col8(6,1);
+  attribute rloc of W, W3_16 : signal is
+    col(6, 0, 4) &" "& col(6, 1, 28);
 
-  attribute rloc of I3 : signal is col8(7,1);
+  attribute rloc of I3 : signal is col32(7,1);
 
   attribute rloc of d7, d13: label is "X8Y1";
 
