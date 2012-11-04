@@ -33,9 +33,9 @@ package defs is
     if len = 0 then
       return "";
     elsif len = 1 then
-      return loc (x, y + base/div);
+      return loc (x, y + base/div) & " ";
     else
-      return col(x, y, len - len/2, div, base + len/2) &" "&
+      return col(x, y, len - len/2, div, base + len/2) &
         col(x, y, len/2, div, base);
     end if;
   end col;

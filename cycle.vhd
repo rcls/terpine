@@ -81,13 +81,12 @@ architecture cycle of cycle is
   attribute rloc of I1 : signal is col32(3,1);
 
   --attribute rloc of D2 : signal is col32(4,1);
-  attribute rloc of D2 : signal is col(1,3,24) &" "& col(4,1,8);
+  attribute rloc of D2 : signal is col(5,2,24) & col(4,1,8);
 
   attribute rloc of I2 : signal is col32(5,1);
   attribute rloc of init2_or_3, init2 : signal is "X5Y1";
 
-  attribute rloc of W, W3_16 : signal is
-    col(6, 0, 4) &" "& col(6, 1, 28);
+  attribute rloc of W, W3_16 : signal is col(6, 0, 4) & col(6, 1, 28);
 
   attribute rloc of I3 : signal is col32(7,1);
 
