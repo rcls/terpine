@@ -11,7 +11,7 @@ entity cycle is
         Din : in word_t;
         load : in std_logic;
         phase_advance : in std_logic;
-        phase5 : out natural range 0 to 3;
+        phase_out : out natural range 0 to 3;
         clk : in std_logic);
 end cycle;
 
@@ -46,7 +46,7 @@ architecture cycle of cycle is
   constant k2 : word_t := x"8f1bbcdc";
   constant k3 : word_t := x"ca62c1d6";
 
-  signal phase4, ph5 : natural range 0 to 3 := phase_init;
+  signal phase4, phase5 : natural range 0 to 3 := phase_init;
   signal munged_phase2, munged_phase3 : natural range 0 to 3;
 
   signal A, A30 : word_t;
@@ -81,8 +81,7 @@ architecture cycle of cycle is
   attribute rloc of I1 : signal is col32(3,1);
 
   --attribute rloc of D2 : signal is col32(4,1);
-  attribute rloc of D2 : signal is
-    col(1,3,20) &" "& col(4,5,4) &" "& col(4,1,8);
+  attribute rloc of D2 : signal is col(1,3,24) &" "& col(4,1,8);
 
   attribute rloc of I2 : signal is col32(5,1);
   attribute rloc of init2_or_3, init2 : signal is "X5Y1";
@@ -98,12 +97,14 @@ architecture cycle of cycle is
 
   attribute rloc of munged_phase2 : signal is "X2Y0";
 
-  attribute rloc of phase4, pa, ld : signal is "X4Y4";
+  attribute rloc of phase5 : signal is "X4Y5";
+  attribute rloc of phase4 : signal is "X7Y1";
+  attribute rloc of pa, ld : signal is "X4Y4";
   attribute rloc of munged_phase3 : signal is "X4Y3";
   attribute rloc of init1_or_2, init3_or_4, init3 : signal is "X4Y3";
 
-  attribute use_sync_set of phase4, munged_phase3 : signal is "no";
-  attribute use_sync_reset of phase4, munged_phase3 : signal is "no";
+  attribute use_sync_set of munged_phase3 : signal is "no";
+  attribute use_sync_reset of munged_phase3 : signal is "no";
 
   function bb (b : boolean) return std_logic is
   begin
@@ -111,6 +112,7 @@ architecture cycle of cycle is
   end bb;
 begin
   R <= A;
+  phase_out <= phase5;
 
   d7 : entity work.delay generic map (7) port map (w, w8, clk);
   d13 : entity work.delay generic map (13) port map (w, w14, clk);
@@ -198,7 +200,14 @@ begin
     ld <= load;
     pa <= phase_advance;
 
-    phase4 <= ph5;
+    if phase_advance = '1' then
+      if ld = '1' then
+        phase5 <= 0;
+      else
+        phase5 <= (phase5 + 1) mod 4;
+      end if;
+    end if;
+    phase4 <= phase5;
 
     init3_or_4 <= (bb(phase4 = 3) and pa) or (init3_or_4 and not init3);
     init3 <= init3_or_4 and not init3;
@@ -216,18 +225,5 @@ begin
     end if;
     munged_phase2 <= munged_phase3;
   end process;
-
-  process (phase4, pa, ld)
-  begin
-    ph5 <= phase4;
-    if pa = '1' then
-      if ld = '1' then
-        ph5 <= 0;
-      else
-        ph5 <= (phase4 + 1) mod 4;
-      end if;
-    end if;
-  end process;
-  phase5 <= ph5;
 
 end cycle;
