@@ -32,10 +32,7 @@ architecture quad of quad is
   attribute rloc of cD : label is "X8Y10";
 
   attribute rloc of R : signal is
-    "X4Y9 X4Y9 X4Y9 X4Y9 X4Y8 X4Y8 X4Y8 X4Y8 " &
-    "X12Y9 X12Y9 X12Y9 X12Y9 X12Y8 X12Y8 X12Y8 X12Y8 " &
-    "X4Y17 X4Y17 X4Y17 X4Y17 X4Y16 X4Y16 X4Y16 X4Y16 " &
-    "X12Y17 X12Y17 X12Y17 X12Y17 X12Y16 X12Y16 X12Y16 X12Y16";
+    col(4,8,8) & col(12,8,8) & col(4,16,8) & col(12,16,8);
 
   function choose(m : natural range 0 to 3; n : natural;
                   A, B, C, D : word_t) return byte_t is

@@ -27,6 +27,11 @@ architecture behavioral of phase is
   signal count : natural range 0 to 19;
   signal phase : natural range 0 to 3;
 
+  attribute rloc of ldA, ldB, ldC, ldD : signal is "X0Y0";
+  attribute rloc of count : signal is "X0Y1";
+  attribute rloc of pa : signal is "X0Y2";
+  attribute rloc of phase : signal is "X0Y3";
+
   function b_to_l (b : boolean) return std_logic is
   begin -- god vhdl sucks.
     if b then return '1'; else return '0'; end if;
