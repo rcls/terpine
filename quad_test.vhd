@@ -42,7 +42,7 @@ begin
   begin
     Din <= (others => 'U');
     wait until loadB = '1';
-    wait until falling_edge(clk);
+    --wait until falling_edge(clk);
     for i in 0 to 15 loop
       wait until falling_edge(clk);
       Din <= data(i);
