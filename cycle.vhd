@@ -68,7 +68,7 @@ architecture cycle of cycle is
   signal W8 : word_t;
   signal W14 : word_t;
 
-  signal pa : std_logic;
+  signal pa5, pa6 : std_logic;
   signal ld : std_logic;
 
   attribute keep_hierarchy of cycle : architecture is "true";
@@ -95,14 +95,15 @@ architecture cycle of cycle is
 
   attribute rloc of munged_phase2 : signal is "X1Y-1";
 
-  attribute rloc of phase5 : signal is "X3Y4"; -- Has CE.
+  attribute rloc of phase5, pa6 : signal is "X3Y4"; -- Has CE.
   attribute rloc of phase4 : signal is "X6Y0";
-  attribute rloc of pa, ld : signal is "X3Y3";
+  attribute rloc of pa5, ld : signal is "X3Y3";
   attribute rloc of munged_phase3 : signal is "X3Y2";
   attribute rloc of init1_or_2, init3_or_4, init3 : signal is "X3Y2";
 
-  attribute use_sync_set of munged_phase3 : signal is "no";
-  attribute use_sync_reset of munged_phase3 : signal is "no";
+  attribute use_sync_set of phase5, munged_phase3 : signal is "no";
+  attribute use_sync_reset of phase5, munged_phase3 : signal is "no";
+  attribute use_clock_enable of phase5 : signal is "no";
 
   function bb (b : boolean) return std_logic is
   begin
@@ -196,18 +197,17 @@ begin
 
     -- Control signals.
     ld <= load;
-    pa <= phase_advance;
+    pa6 <= phase_advance;
+    pa5 <= pa6;
 
-    if phase_advance = '1' then
-      if ld = '1' then
-        phase5 <= 0;
-      else
-        phase5 <= (phase5 + 1) mod 4;
-      end if;
+    if pa5 = '1' and ld = '1' then
+      phase5 <= 0;
+    elsif pa6 = '1' then
+      phase5 <= (phase5 + 1) mod 4;
     end if;
     phase4 <= phase5;
 
-    init3_or_4 <= (bb(phase4 = 3) and pa) or (init3_or_4 and not init3);
+    init3_or_4 <= (bb(phase4 = 3) and pa5) or (init3_or_4 and not init3);
     init3 <= init3_or_4 and not init3;
     init2 <= init3;
     init1 <= init2;

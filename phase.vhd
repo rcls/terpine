@@ -59,10 +59,10 @@ begin
       count <= count + 1;
     end if;
 
-    pa <= b_to_l(count = 0);
-    ldA <= b_to_l(phase = 0 and count < 16);
-    ldB <= b_to_l(phase = 1 and count < 16);
-    ldC <= b_to_l(phase = 2 and count < 16);
-    ldD <= b_to_l(phase = 3 and count < 16);
+    pa <= b_to_l(count = 19);
+    ldA <= b_to_l(phase = 1 and count < 16);
+    ldB <= b_to_l(phase = 2 and count < 16);
+    ldC <= b_to_l(phase = 3 and count < 16);
+    ldD <= b_to_l(phase = 0 and count < 16);
   end process;
 end behavioral;
