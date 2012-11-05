@@ -64,7 +64,7 @@
     <property xil_pn:name="Implementation Top Instance Path" xil_pn:value="/wrap" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Number of Paths in Error/Verbose Report Post Trace" xil_pn:value="1" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Optimization Goal" xil_pn:value="Area" xil_pn:valueState="non-default"/>
-    <property xil_pn:name="Package" xil_pn:value="fgg484" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="Package" xil_pn:value="fbg484" xil_pn:valueState="default"/>
     <property xil_pn:name="Placer Extra Effort Map" xil_pn:value="Normal" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Preferred Language" xil_pn:value="VHDL" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Property Specification in Project File" xil_pn:value="Store non-default values only" xil_pn:valueState="non-default"/>

@@ -20,16 +20,20 @@ end quad;
 architecture quad of quad is
   attribute keep_hierarchy : string;
   attribute keep_hierarchy of quad : architecture is "soft";
+
   signal ph5A, ph5B, ph5C, ph5D : natural range 0 to 3;
   signal rA, rB, rC, rD : word_t;
+  signal Db : word_t;
 
-  attribute rloc of cA : label is "X0Y2";
-  attribute rloc of cB : label is "X8Y2";
-  attribute rloc of cC : label is "X0Y10";
-  attribute rloc of cD : label is "X8Y10";
+  attribute rloc of cA : label is "X0Y0";
+  attribute rloc of cB : label is "X8Y0";
+  attribute rloc of cC : label is "X0Y8";
+  attribute rloc of cD : label is "X8Y8";
 
   attribute rloc of R : signal is
-    col(3,7,8) & col(11,7,8) & col(3,15,8) & col(11,15,8);
+    col(3,5,8) & col(11,5,8) & col(3,13,8) & col(11,13,8);
+  attribute rloc of Db : signal is
+    col(3,5,8) & col(11,5,8) & col(3,13,8) & col(11,13,8);
 
   function choose(m : natural range 0 to 3; n : natural;
                   A, B, C, D : word_t) return byte_t is
@@ -45,14 +49,15 @@ architecture quad of quad is
   end choose;
 
 begin
-  cA : entity work.cycle generic map (3) port map (rA, Din, ldA, pa, ph5A, clk);
-  cB : entity work.cycle generic map (2) port map (rB, Din, ldB, pa, ph5B, clk);
-  cC : entity work.cycle generic map (1) port map (rC, Din, ldC, pa, ph5C, clk);
-  cD : entity work.cycle generic map (0) port map (rD, Din, ldD, pa, ph5D, clk);
+  cA : entity work.cycle generic map (3) port map (rA, Db, ldA, pa, ph5A, clk);
+  cB : entity work.cycle generic map (2) port map (rB, Db, ldB, pa, ph5B, clk);
+  cC : entity work.cycle generic map (1) port map (rC, Db, ldC, pa, ph5C, clk);
+  cD : entity work.cycle generic map (0) port map (rD, Db, ldD, pa, ph5D, clk);
 
   process
   begin
     wait until rising_edge(clk);
+    Db <= Din;
     R( 7 downto  0) <= choose (ph5A, 0, rA, rB, rC, rD);
     R(15 downto  8) <= choose (ph5B, 8, rB, rC, rD, rA);
     R(23 downto 16) <= choose (ph5C,16, rC, rD, rA, rB);
