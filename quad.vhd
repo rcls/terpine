@@ -23,16 +23,13 @@ architecture quad of quad is
   signal ph5A, ph5B, ph5C, ph5D : natural range 0 to 3;
   signal rA, rB, rC, rD : word_t;
 
-  -- FIXME, these need to disappear...
-  attribute rloc of ldA, ldB, ldC, ldD : signal is "X1Y0";
-
   attribute rloc of cA : label is "X0Y2";
   attribute rloc of cB : label is "X8Y2";
   attribute rloc of cC : label is "X0Y10";
   attribute rloc of cD : label is "X8Y10";
 
   attribute rloc of R : signal is
-    col(4,8,8) & col(12,8,8) & col(4,16,8) & col(12,16,8);
+    col(3,7,8) & col(11,7,8) & col(3,15,8) & col(11,15,8);
 
   function choose(m : natural range 0 to 3; n : natural;
                   A, B, C, D : word_t) return byte_t is

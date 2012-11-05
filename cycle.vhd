@@ -73,34 +73,33 @@ architecture cycle of cycle is
 
   attribute keep_hierarchy of cycle : architecture is "true";
 
-  attribute rloc of A : signal is col32(1,1);
+  attribute rloc of A : signal is col32(0,0);
+  attribute rloc of init1 : signal is "X0Y0";
 
-  attribute rloc of C2 : signal is col32(2,1);
-  attribute rloc of W2_15 : signal is col32(2,1);
+  attribute rloc of C2 : signal is col32(1,0);
+  attribute rloc of W2_15 : signal is col32(1,0);
 
-  attribute rloc of I1 : signal is col32(3,1);
+  attribute rloc of I1 : signal is col32(2,0);
 
   --attribute rloc of D2 : signal is col32(4,1);
-  attribute rloc of D2 : signal is col(5,2,24) & col(4,1,8);
+  attribute rloc of D2 : signal is col(4,1,24) & col(3,0,8);
 
-  attribute rloc of I2 : signal is col32(5,1);
-  attribute rloc of init2_or_3, init2 : signal is "X5Y1";
+  attribute rloc of I2 : signal is col32(4,0);
+  attribute rloc of init2_or_3, init2 : signal is "X4Y0";
 
-  attribute rloc of W, W3_16 : signal is col(6, 0, 4) & col(6, 1, 28);
+  attribute rloc of W, W3_16 : signal is col(5, -1, 4) & col(5, 0, 28);
 
-  attribute rloc of I3 : signal is col32(7,1);
+  attribute rloc of I3 : signal is col32(6,0);
 
-  attribute rloc of d7, d13: label is "X8Y1";
+  attribute rloc of d7, d13: label is "X7Y0";
 
-  attribute rloc of init1 : signal is "X1Y1";
+  attribute rloc of munged_phase2 : signal is "X1Y-1";
 
-  attribute rloc of munged_phase2 : signal is "X2Y0";
-
-  attribute rloc of phase5 : signal is "X4Y5";
-  attribute rloc of phase4 : signal is "X7Y1";
-  attribute rloc of pa, ld : signal is "X4Y4";
-  attribute rloc of munged_phase3 : signal is "X4Y3";
-  attribute rloc of init1_or_2, init3_or_4, init3 : signal is "X4Y3";
+  attribute rloc of phase5 : signal is "X3Y4"; -- Has CE.
+  attribute rloc of phase4 : signal is "X6Y0";
+  attribute rloc of pa, ld : signal is "X3Y3";
+  attribute rloc of munged_phase3 : signal is "X3Y2";
+  attribute rloc of init1_or_2, init3_or_4, init3 : signal is "X3Y2";
 
   attribute use_sync_set of munged_phase3 : signal is "no";
   attribute use_sync_reset of munged_phase3 : signal is "no";
@@ -122,8 +121,8 @@ begin
     constant kB : bv32 := const(iB rol 30, I);
     constant kC : bv32 := const(iC, I);
     type ia is array (0 to 7) of integer;
-    constant col : ia := (2, 2, 2, 2, 2, 2, 2, 4);
-    attribute rloc of c2_w2_15 : label is loc(col(I/4), I/4 + 1);
+    constant col : ia := (1, 1, 1, 1, 1, 1, 1, 3);
+    attribute rloc of c2_w2_15 : label is loc(col(I/4), I/4);
   begin
     c2_w2_15 : entity work.bit5op2 generic map (
       M0 xor M1,

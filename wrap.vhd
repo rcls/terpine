@@ -20,10 +20,10 @@ architecture behaviour of wrap is
   signal loadD : std_logic;
   signal phase_advance : std_logic;
 
-  attribute rloc of phase_advance : signal is "X0Y0";
   attribute rloc of q : label is "X0Y0";
   attribute rloc of R_io : signal is col32(-4,2);
-  attribute rloc of Din : signal is col32(-8,2);
+  attribute rloc of p : label is "X-5Y0";
+  attribute rloc of Din : signal is col32(-6,2);
 begin
   p : entity work.phase port map (
     phase_advance, loadA, loadB, loadC, loadD, clk);
