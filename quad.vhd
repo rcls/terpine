@@ -49,10 +49,10 @@ architecture quad of quad is
   end choose;
 
 begin
-  cA : entity work.cycle generic map (3) port map (rA, Db, ldA, pa, ph5A, clk);
-  cB : entity work.cycle generic map (2) port map (rB, Db, ldB, pa, ph5B, clk);
-  cC : entity work.cycle generic map (1) port map (rC, Db, ldC, pa, ph5C, clk);
-  cD : entity work.cycle generic map (0) port map (rD, Db, ldD, pa, ph5D, clk);
+  cA : entity work.cycle port map (rA, Db, ldA, pa, ph5A, clk);
+  cB : entity work.cycle port map (rB, Db, ldB, pa, ph5B, clk);
+  cC : entity work.cycle port map (rC, Db, ldC, pa, ph5C, clk);
+  cD : entity work.cycle port map (rD, Db, ldD, pa, ph5D, clk);
 
   process
   begin

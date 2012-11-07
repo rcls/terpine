@@ -6,7 +6,6 @@ library work;
 use work.defs.all;
 
 entity cycle is
-  generic (phase_init : natural range 0 to 3);
   port (R : out word_t;
         Din : in word_t;
         load : in std_logic;
@@ -17,7 +16,7 @@ end cycle;
 
 -- 'load' to 'A' is 6 cycle latency.
 -- 'Din' to 'A' is 5 cycle latency.
--- 'phase_advance' to 'A' is 5 cycle latency.
+-- 'phase_advance' to 'A' is 7 cycle latency.
 -- Then 79 cycles to first result.
 architecture cycle of cycle is
   function F0(B : word_t; C : word_t; D : word_t) return word_t is
@@ -46,7 +45,7 @@ architecture cycle of cycle is
   constant k2 : word_t := x"8f1bbcdc";
   constant k3 : word_t := x"ca62c1d6";
 
-  signal phase4, phase5 : natural range 0 to 3 := phase_init;
+  signal phase4, phase5 : natural range 0 to 3 := 3;
   signal munged_phase2, munged_phase3 : natural range 0 to 3;
 
   signal A, A30 : word_t;
@@ -68,8 +67,7 @@ architecture cycle of cycle is
   signal W8 : word_t;
   signal W14 : word_t;
 
-  signal pa5, pa6 : std_logic;
-  signal ld : std_logic;
+  signal pa5, pa6, ld : std_logic := '0';
 
   attribute keep_hierarchy of cycle : architecture is "true";
 

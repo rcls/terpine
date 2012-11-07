@@ -19,13 +19,10 @@ entity phase is
 end phase;
 
 architecture behavioral of phase is
-  signal pa : std_logic;
-  signal ldA : std_logic;
-  signal ldB : std_logic;
-  signal ldC : std_logic;
-  signal ldD : std_logic;
-  signal count : natural range 0 to 19;
-  signal phase : natural range 0 to 3;
+  signal pa : std_logic := '0';
+  signal ldA, ldB, ldC, ldD : std_logic := '0';
+  signal count : natural range 0 to 19 := 0;
+  signal phase : natural range 0 to 3 := 0;
 
   attribute rloc of ldA, ldB, ldC, ldD : signal is "X0Y0";
   attribute rloc of count : signal is "X0Y1";
@@ -60,9 +57,9 @@ begin
     end if;
 
     pa <= b_to_l(count = 19);
-    ldA <= b_to_l(phase = 1 and count < 16);
-    ldB <= b_to_l(phase = 2 and count < 16);
-    ldC <= b_to_l(phase = 3 and count < 16);
-    ldD <= b_to_l(phase = 0 and count < 16);
+    ldA <= b_to_l(phase = 0 and count < 16);
+    ldB <= b_to_l(phase = 1 and count < 16);
+    ldC <= b_to_l(phase = 2 and count < 16);
+    ldD <= b_to_l(phase = 3 and count < 16);
   end process;
 end behavioral;
