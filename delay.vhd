@@ -17,7 +17,7 @@ entity delay is
 end delay;
 
 architecture delay of delay is
-  signal a : unsigned (3 downto 0) := to_unsigned (len - 2, 4);
+  constant a : unsigned (3 downto 0) := to_unsigned (len - 2, 4);
 begin
   l : for i in 0 to 31 generate
     signal b, r : std_logic;

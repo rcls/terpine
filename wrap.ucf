@@ -6,7 +6,7 @@ NET "clk" TNM_NET = clk;
 #TIMESPEC ts_clk = PERIOD "clk" 3 ns HIGH 50%;
 #TIMESPEC ts_clk = PERIOD "clk" 3.333 ns HIGH 50%;
 # Artix -2...
-TIMESPEC ts_clk = PERIOD "clk" 2.6 ns HIGH 50%;
+TIMESPEC ts_clk = PERIOD "clk" 2.65 ns HIGH 50%;
 
 INST "R_0" RLOC_ORIGIN = "X29Y51";
 

@@ -31,9 +31,9 @@ architecture quad of quad is
   attribute rloc of cD : label is "X8Y8";
 
   attribute rloc of R : signal is
-    col(3,5,8) & col(11,5,8) & col(3,13,8) & col(11,13,8);
+    col(11,13,8) & col(3,13,8) & col(11,5,8) & col(3,5,8);
   attribute rloc of Db : signal is
-    col(3,5,8) & col(11,5,8) & col(3,13,8) & col(11,13,8);
+    col(11,13,8) & col(3,13,8) & col(11,5,8) & col(3,5,8);
 
   function choose(m : natural range 0 to 3; n : natural;
                   A, B, C, D : word_t) return byte_t is
