@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="/home/ralph/fpga/terpine/ise/cycle_test_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="cycle_test" />
+            <top_module name="defs" />
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+            <top_module name="textio" />
+            <top_module name="vcomponents" />
+            <top_module name="vital_primitives" />
+            <top_module name="vital_timing" />
+            <top_module name="vpkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="25" />
+   <wvobject fp_name="/cycle_test/c/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/r" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">r[31:0]</obj_property>
+      <obj_property name="ObjectShortName">r[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/din" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">din[31:0]</obj_property>
+      <obj_property name="ObjectShortName">din[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/a" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">a[31:0]</obj_property>
+      <obj_property name="ObjectShortName">a[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/c2" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">c2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">c2[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/d2" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">d2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">d2[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/i1" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">i1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">i1[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/i2" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">i2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">i2[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/i3" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">i3[31:0]</obj_property>
+      <obj_property name="ObjectShortName">i3[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/w" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">w[31:0]</obj_property>
+      <obj_property name="ObjectShortName">w[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/load" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">load</obj_property>
+      <obj_property name="ObjectShortName">load</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/ld" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ld</obj_property>
+      <obj_property name="ObjectShortName">ld</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/ldb" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ldb</obj_property>
+      <obj_property name="ObjectShortName">ldb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/phase_advance" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">phase_advance</obj_property>
+      <obj_property name="ObjectShortName">phase_advance</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/pa6" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">pa6</obj_property>
+      <obj_property name="ObjectShortName">pa6</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/pa5" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">pa5</obj_property>
+      <obj_property name="ObjectShortName">pa5</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/pa4" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">pa4</obj_property>
+      <obj_property name="ObjectShortName">pa4</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/init1_to_5" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">init1_to_5</obj_property>
+      <obj_property name="ObjectShortName">init1_to_5</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/init2_to_6" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">init2_to_6</obj_property>
+      <obj_property name="ObjectShortName">init2_to_6</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/init3_to_7" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">init3_to_7</obj_property>
+      <obj_property name="ObjectShortName">init3_to_7</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/init4_to_8" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">init4_to_8</obj_property>
+      <obj_property name="ObjectShortName">init4_to_8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/phase5" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">phase5</obj_property>
+      <obj_property name="ObjectShortName">phase5</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/phase4" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">phase4</obj_property>
+      <obj_property name="ObjectShortName">phase4</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/munged_phase3" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">munged_phase3</obj_property>
+      <obj_property name="ObjectShortName">munged_phase3</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cycle_test/c/munged_phase2" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">munged_phase2</obj_property>
+      <obj_property name="ObjectShortName">munged_phase2</obj_property>
+   </wvobject>
+</wave_config>

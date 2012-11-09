@@ -10,8 +10,6 @@ package defs is
   subtype bv32 is bit_vector (31 downto 0);
 
   type dataset_t is array (natural range <>) of word_t;
-  --subtype words_16_t is dataset_t (0 to 15);
-  --subtype words_5_t is dataset_t (0 to 4);
 
   attribute bel : string;
   attribute hu_set : string;
@@ -20,6 +18,12 @@ package defs is
   attribute use_clock_enable : string;
   attribute use_sync_reset : string;
   attribute use_sync_set : string;
+
+  constant iA : word_t := x"67452301";
+  constant iB : word_t := x"efcdab89";
+  constant iC : word_t := x"98badcfe";
+  constant iD : word_t := x"10325476";
+  constant iE : word_t := x"c3d2e1f0";
 
   function loc(x, y : integer) return string is
   begin
