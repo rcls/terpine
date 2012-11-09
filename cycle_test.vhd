@@ -40,6 +40,7 @@ begin
     wait until rising_edge(clk);
     load <= '1';
     wait until rising_edge(clk);
+    wait until rising_edge(clk);
     for i in 0 to 4 loop
       phase_advance <= b_to_l (i = 3);
       Din <= init(i);
@@ -48,7 +49,7 @@ begin
     phase_advance <= '0';
     for i in 0 to 15 loop
       Din <= data(i);
-      load <= b_to_l (i < 15);
+      load <= b_to_l (i < 14);
       wait until rising_edge(clk);
     end loop;
     Din <= (others => 'U');

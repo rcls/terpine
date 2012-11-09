@@ -42,14 +42,15 @@ architecture cycle of cycle is
   signal phase4, phase5 : natural range 0 to 3 := 3;
   signal munged_phase2, munged_phase3 : natural range 0 to 3;
 
-  signal A, A30 : word_t;
+  signal A : word_t;
   signal C2 : word_t;
   signal D2 : word_t;
   signal I1 : word_t;
   signal I2 : word_t;
   signal I3 : word_t;
 
-  signal init1_to_5, init2_to_6, init3_to_7, init4_to_8 : std_logic := '0';
+  signal init1_to_5, init2_to_6, init3_to_7, init4_to_8, init5_to_9
+    : std_logic := '0';
 
   signal W : word_t;
   signal W2_15 : word_t;
@@ -83,7 +84,7 @@ architecture cycle of cycle is
 
   attribute rloc of munged_phase2 : signal is "X1Y-1";
 
-  attribute rloc of phase5, pa6 : signal is "X3Y4";
+  attribute rloc of phase5, pa6, init5_to_9 : signal is "X3Y4";
   attribute rloc of phase4 : signal is "X6Y0";
   attribute rloc of pa5, ld, ldb : signal is "X3Y3";
   attribute rloc of munged_phase3 : signal is "X3Y2";
@@ -105,33 +106,36 @@ begin
   d13 : entity work.delay generic map (13) port map (w, w14, clk);
 
   process
-    variable kk : word_t;
+    variable kk, addendA, addend1, addend2 : word_t;
   begin
     wait until rising_edge(clk);
 
     -- 1 cycle latency into A.
-    A <= (A rol 5) + I1;
+    addendA := A rol 5;
     if init1_to_5 = '1' then
-      A <= 0 + I1;
+      addendA := x"00000000";
     end if;
+    A <= addendA + I1;
 
     -- 2 cycle latency into A.
     case munged_phase2 is -- 1 instead of 3; 3 means init2_to_6.
-      when 0 => I1 <= F0(A, C2, D2) + I2;
-      when 1 => I1 <= F1(A, C2, D2) + I2;
-      when 2 => I1 <= F2(A, C2, D2) + I2;
-      when 3 => I1 <= 0 + I2;
+      when 0 => addend1 := F0(A, C2, D2);
+      when 1 => addend1 := F1(A, C2, D2);
+      when 2 => addend1 := F2(A, C2, D2);
+      when 3 => addend1 := x"00000000";
     end case;
+    I1 <= addend1 + I2;
 
     -- Look aheads for these, and set up for init 1.
     C2 <= A rol 30;
     D2 <= C2;
 
     -- 3 cycle latency into A.
-    I2 <= D2 + I3;
+    addend2 := D2;
     if init3_to_7 = '1' then -- init3
-      I2 <= 0 + I3;
+      addend2 := x"00000000";
     end if;
+    I2 <= addend2 + I3;
 
     -- 4 cycle latency into A.
     case phase4 is
@@ -155,15 +159,16 @@ begin
     W3_16 <= W2_15;
 
     -- Control signals.
-    ld <= load;
-    ldb <= ld;
-    -- 'init' is just before phase, so we want init4_to_8 to go back 0 on the
-    -- same cycle phase4 advances.
-    if ld = '1' and ldb = '0' then
-      init4_to_8 <= '1';
-    elsif pa5 = '1' then
-      init4_to_8 <= '0';
+    ldb <= load;
+    ld <= ldb;
+    -- 'init' is just before phase, so we want init5_to_9 to go back 0 on the
+    -- same cycle phase5 advances.
+    if ldb = '1' and ld = '0' then
+      init5_to_9 <= '1';
+    elsif pa6 = '1' then
+      init5_to_9 <= '0';
     end if;
+    init4_to_8 <= init5_to_9;
     init3_to_7 <= init4_to_8;
     init2_to_6 <= init3_to_7;
     init1_to_5 <= init2_to_6;
