@@ -70,7 +70,7 @@ architecture cycle of cycle is
   attribute rloc of I1 : signal is col32(2,0);
 
   --attribute rloc of D2 : signal is col32(4,1);
-  attribute rloc of D2 : signal is col(4,2,24) & col(3,0,8);
+  attribute rloc of D2 : signal is col(4,1,28) & col(3,0,4);
 
   attribute rloc of I2 : signal is col32(4,0);
   attribute rloc of init3_to_7 : signal is "X4Y0";
