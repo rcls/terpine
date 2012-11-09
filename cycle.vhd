@@ -79,7 +79,7 @@ architecture cycle of cycle is
   attribute rloc of W3_16 : signal is col(5,1,28) & col(3,2,4);
 
   attribute rloc of I3 : signal is col32(6,0);
-  attribute rloc of init4_to_8 : signal is "X6Y0";
+  attribute rloc of init4_to_8 : signal is "X5Y0";
 
   attribute rloc of d7, d13: label is "X7Y0";
 

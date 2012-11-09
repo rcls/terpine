@@ -16,6 +16,7 @@ end bit5op;
 architecture bit5op of bit5op is
   signal b : std_logic;
   attribute rloc of lut, buf : label is "X0Y0";
+  attribute bel of lut : label is abcd(I) & "5LUT";
   attribute bel of buf : label is abcd(I) & suffix;
 begin
   lut : lut5_l generic map (init=> f)
