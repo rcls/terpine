@@ -105,6 +105,15 @@ begin
   d7 : entity work.delay generic map (7) port map (w, w8, clk);
   d13 : entity work.delay generic map (13) port map (w, w14, clk);
 
+  w2_15s: for I in 0 to 31 generate
+    type int8 is array (0 to 7) of integer;
+    constant col : int8 := (1, 1, 1, 1, 1, 1, 1, 3);
+    attribute rloc of w2_15b : label is loc(col(I/4), I/4);
+  begin
+    w2_15b: entity work.bit5op generic map (M0 xor M1, I, "5FF")
+      port map (W2_15(I), W(I), W14(I), 'X', 'X', 'X', clk);
+  end generate;
+
   process
     variable kk, addendA, addend1, addend2 : word_t;
   begin
@@ -155,7 +164,7 @@ begin
     else
       W <= (W3_16 xor W8 xor W14) rol 1;
     end if;
-    W2_15 <= W xor W14;
+    --W2_15 <= W xor W14;
     W3_16 <= W2_15;
 
     -- Control signals.
