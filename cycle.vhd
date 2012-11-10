@@ -74,18 +74,14 @@ architecture cycle of cycle is
   attribute rloc of A : signal is col32(0,0);
   attribute rloc of init1 : signal is "X0Y0";
 
-  attribute rloc of C2 : signal is col32(1,0);
-  attribute rloc of W2_15 : signal is col32(1,0);
-
   attribute rloc of I1 : signal is col32(2,0);
 
-  --attribute rloc of D2 : signal is col32(4,1);
-  attribute rloc of D2 : signal is col(4,1,24) & col(3,0,8);
+  attribute rloc of D2 : signal is col(4,2,24) & col(3,0,8);
 
   attribute rloc of I2 : signal is col32(4,0);
   attribute rloc of init2_or_3, init2 : signal is "X4Y0";
 
-  attribute rloc of W, W3_16 : signal is col(5, -1, 4) & col(5, 0, 28);
+  attribute rloc of W, W3_16 : signal is col32(5,0);
 
   attribute rloc of I3 : signal is col32(6,0);
 
@@ -95,7 +91,7 @@ architecture cycle of cycle is
 
   attribute rloc of phase5, pa6 : signal is "X3Y4"; -- Has CE.
   attribute rloc of phase4 : signal is "X6Y0";
-  attribute rloc of pa5, ld : signal is "X3Y3";
+  attribute rloc of pa5, ld : signal is "X3Y4";
   attribute rloc of munged_phase3 : signal is "X3Y2";
   attribute rloc of init1_or_2, init3_or_4, init3 : signal is "X3Y2";
 
