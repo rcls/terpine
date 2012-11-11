@@ -76,7 +76,7 @@ architecture cycle of cycle is
 
   attribute rloc of I1 : signal is col32(2,0);
 
-  attribute rloc of D2 : signal is col(4,2,24) & col(3,0,8);
+  attribute rloc of D2 : signal is col(4,1,28) & col(3,0,4);
 
   attribute rloc of I2 : signal is col32(4,0);
   attribute rloc of init2_or_3, init2 : signal is "X4Y0";
@@ -93,7 +93,8 @@ architecture cycle of cycle is
   attribute rloc of phase4 : signal is "X6Y0";
   attribute rloc of pa5, ld : signal is "X3Y4";
   attribute rloc of munged_phase3 : signal is "X3Y2";
-  attribute rloc of init1_or_2, init3_or_4, init3 : signal is "X3Y2";
+  attribute rloc of init3_or_4, init3 : signal is "X3Y2";
+  attribute rloc of init1_or_2 : signal is "X1Y-1";
 
   attribute use_sync_set of phase5, munged_phase3 : signal is "no";
   attribute use_sync_reset of phase5, munged_phase3 : signal is "no";
@@ -112,19 +113,16 @@ begin
 
   A30 <= A rol 30;
   c2w2_15s: for I in 0 to 31 generate
-    constant kA : bv32 := const(iA rol 30, I);
-    constant kB : bv32 := const(iB rol 30, I);
-    constant kC : bv32 := const(iC, I);
-    type ia is array (0 to 7) of integer;
-    constant col : ia := (1, 1, 1, 1, 1, 1, 1, 3);
+    type int8 is array (0 to 7) of integer;
+    constant col : int8 := (1, 1, 1, 1, 1, 1, 1, 3);
     attribute rloc of c2_w2_15 : label is loc(col(I/4), I/4);
   begin
     c2_w2_15 : entity work.bit5op2 generic map (
       M0 xor M1,
       (not M2 and not M3 and M4) or
-      (    M2 and not M3 and kA) or
-      (    M2 and     M3 and kB) or
-      (not M2 and     M3 and kC), I)
+      (    M2 and not M3 and const(iA rol 30, I)) or
+      (    M2 and     M3 and const(iB rol 30, I)) or
+      (not M2 and     M3 and const(iC, I)), I)
       port map (W2_15(I), C2(I),
                 W(I), W14(I), init1_or_2, init2_or_3, A30(I),
                 clk);
