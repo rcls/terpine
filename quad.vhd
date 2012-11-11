@@ -9,11 +9,8 @@ use work.defs.all;
 entity quad is
   port (R : out word_t;
         Din : in word_t;
-        pa : in std_logic;
-        ldA : in std_logic;
-        ldB : in std_logic;
-        ldC : in std_logic;
-        ldD : in std_logic;
+        paA, paB, paC, paD : in std_logic;
+        ldA, ldB, ldC, ldD : in std_logic;
         clk : in std_logic);
 end quad;
 
@@ -49,10 +46,10 @@ architecture quad of quad is
   end choose;
 
 begin
-  cA : entity work.cycle port map (rA, Db, ldA, pa, ph5A, clk);
-  cB : entity work.cycle port map (rB, Db, ldB, pa, ph5B, clk);
-  cC : entity work.cycle port map (rC, Db, ldC, pa, ph5C, clk);
-  cD : entity work.cycle port map (rD, Db, ldD, pa, ph5D, clk);
+  cA : entity work.cycle port map (rA, Db, ldA, paA, ph5A, clk);
+  cB : entity work.cycle port map (rB, Db, ldB, paB, ph5B, clk);
+  cC : entity work.cycle port map (rC, Db, ldC, paC, ph5C, clk);
+  cD : entity work.cycle port map (rD, Db, ldD, paD, ph5D, clk);
 
   process
   begin

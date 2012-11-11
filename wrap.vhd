@@ -20,7 +20,7 @@ architecture behaviour of wrap is
   signal loadB : std_logic;
   signal loadC : std_logic;
   signal loadD : std_logic;
-  signal phase_advance : std_logic;
+  signal phaseA, phaseB, phaseC, phaseD : std_logic;
 
   attribute rloc of q0 : label is "X0Y0";
   attribute rloc of q1 : label is "X16Y0";
@@ -34,15 +34,15 @@ architecture behaviour of wrap is
   attribute rloc of D3 : signal is col32(-9,2);
 begin
   p : entity work.phase port map (
-    phase_advance, loadA, loadB, loadC, loadD, clk);
+    phaseA, phaseB, phaseC, phaseD, loadA, loadB, loadC, loadD, clk);
   q0 : entity work.quad port map (
-    R0, D0, phase_advance, loadA, loadB, loadC, loadD, clk);
+    R0, D0, phaseA, phaseB, phaseC, phaseD, loadA, loadB, loadC, loadD, clk);
   q1 : entity work.quad port map (
-    R1, D1, phase_advance, loadA, loadB, loadC, loadD, clk);
+    R1, D1, phaseA, phaseB, phaseC, phaseD, loadA, loadB, loadC, loadD, clk);
   q2 : entity work.quad port map (
-    R2, D2, phase_advance, loadA, loadB, loadC, loadD, clk);
+    R2, D2, phaseA, phaseB, phaseC, phaseD, loadA, loadB, loadC, loadD, clk);
   q3 : entity work.quad port map (
-    R3, D3, phase_advance, loadA, loadB, loadC, loadD, clk);
+    R3, D3, phaseA, phaseB, phaseC, phaseD, loadA, loadB, loadC, loadD, clk);
   process
   begin
     wait until rising_edge(clk);

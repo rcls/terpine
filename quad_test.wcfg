@@ -17,7 +17,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="22" />
+   <WVObjectSize size="24" />
    <wvobject fp_name="/quad_test/clk" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -27,6 +27,10 @@
       <obj_property name="ObjectShortName">r[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/quad_test/din" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">din[31:0]</obj_property>
+      <obj_property name="ObjectShortName">din[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/quad_test/q/cB/din" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">din[31:0]</obj_property>
       <obj_property name="ObjectShortName">din[31:0]</obj_property>
    </wvobject>
@@ -66,44 +70,48 @@
       <obj_property name="ElementShortName">d2[31:0]</obj_property>
       <obj_property name="ObjectShortName">d2[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/quad_test/q/cB/init1" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">init1</obj_property>
-      <obj_property name="ObjectShortName">init1</obj_property>
-   </wvobject>
-   <wvobject fp_name="/quad_test/q/cB/init2" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">init2</obj_property>
-      <obj_property name="ObjectShortName">init2</obj_property>
-   </wvobject>
-   <wvobject fp_name="/quad_test/q/cB/init3" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">init3</obj_property>
-      <obj_property name="ObjectShortName">init3</obj_property>
-   </wvobject>
-   <wvobject fp_name="/quad_test/q/cB/init1_or_2" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">init1_or_2</obj_property>
-      <obj_property name="ObjectShortName">init1_or_2</obj_property>
-   </wvobject>
-   <wvobject fp_name="/quad_test/q/cB/init2_or_3" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">init2_or_3</obj_property>
-      <obj_property name="ObjectShortName">init2_or_3</obj_property>
-   </wvobject>
-   <wvobject fp_name="/quad_test/q/cB/init3_or_4" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">init3_or_4</obj_property>
-      <obj_property name="ObjectShortName">init3_or_4</obj_property>
-   </wvobject>
    <wvobject fp_name="/quad_test/q/cB/munged_phase2" type="other" db_ref_id="1">
       <obj_property name="ElementShortName">munged_phase2</obj_property>
       <obj_property name="ObjectShortName">munged_phase2</obj_property>
+   </wvobject>
+   <wvobject fp_name="/quad_test/q/cB/munged_phase3" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">munged_phase3</obj_property>
+      <obj_property name="ObjectShortName">munged_phase3</obj_property>
    </wvobject>
    <wvobject fp_name="/quad_test/q/cB/phase4" type="other" db_ref_id="1">
       <obj_property name="ElementShortName">phase4</obj_property>
       <obj_property name="ObjectShortName">phase4</obj_property>
    </wvobject>
-   <wvobject fp_name="/quad_test/q/cB/pa" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">pa</obj_property>
-      <obj_property name="ObjectShortName">pa</obj_property>
+   <wvobject fp_name="/quad_test/q/cB/phase5" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">phase5</obj_property>
+      <obj_property name="ObjectShortName">phase5</obj_property>
    </wvobject>
    <wvobject fp_name="/quad_test/q/cB/pa5" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">pa5</obj_property>
       <obj_property name="ObjectShortName">pa5</obj_property>
+   </wvobject>
+   <wvobject fp_name="/quad_test/q/cB/pa6" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">pa6</obj_property>
+      <obj_property name="ObjectShortName">pa6</obj_property>
+   </wvobject>
+   <wvobject fp_name="/quad_test/q/cB/init1_to_5" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">init1_to_5</obj_property>
+      <obj_property name="ObjectShortName">init1_to_5</obj_property>
+   </wvobject>
+   <wvobject fp_name="/quad_test/q/cB/init2_to_6" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">init2_to_6</obj_property>
+      <obj_property name="ObjectShortName">init2_to_6</obj_property>
+   </wvobject>
+   <wvobject fp_name="/quad_test/q/cB/init3_to_7" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">init3_to_7</obj_property>
+      <obj_property name="ObjectShortName">init3_to_7</obj_property>
+   </wvobject>
+   <wvobject fp_name="/quad_test/q/cB/init4_to_8" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">init4_to_8</obj_property>
+      <obj_property name="ObjectShortName">init4_to_8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/quad_test/q/cB/init5_to_9" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">init5_to_9</obj_property>
+      <obj_property name="ObjectShortName">init5_to_9</obj_property>
    </wvobject>
 </wave_config>

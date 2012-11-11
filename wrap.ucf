@@ -1,14 +1,6 @@
 
 NET "clk" TNM_NET = clk;
-#TIMESPEC ts_clk = PERIOD "clk" 3.75 ns HIGH 50%;
-#TIMESPEC ts_clk = PERIOD "clk" 3.5 ns HIGH 50%;
-# Spartan
-#TIMESPEC ts_clk = PERIOD "clk" 3 ns HIGH 50%;
-#TIMESPEC ts_clk = PERIOD "clk" 3.333 ns HIGH 50%;
 # Artix -2...
 TIMESPEC ts_clk = PERIOD "clk" 2.65 ns HIGH 50%;
 
 INST "R_0" RLOC_ORIGIN = "X29Y51";
-
-#INST "*/munged_phase2_0" BEL = "DFF";
-#INST "*/munged_phase2_1" BEL = "CFF";
