@@ -72,29 +72,26 @@ architecture cycle of cycle is
   attribute keep_hierarchy of cycle : architecture is "true";
 
   attribute rloc of A : signal is col32(0,0);
-  attribute rloc of init1 : signal is "X0Y0";
+  attribute rloc of init1 : signal is loc(0,0);
 
   attribute rloc of I1 : signal is col32(2,0);
 
   attribute rloc of D2 : signal is col(4,1,28) & col(3,0,4);
 
   attribute rloc of I2 : signal is col32(4,0);
-  attribute rloc of init2_or_3, init2 : signal is "X4Y0";
+  attribute rloc of init2_or_3, init2 : signal is loc(4,0);
 
   attribute rloc of W, W3_16 : signal is col32(5,0);
 
   attribute rloc of I3 : signal is col32(6,0);
 
-  attribute rloc of d7, d13: label is "X7Y0";
+  attribute rloc of d7, d13: label is loc(7,0);
 
-  attribute rloc of munged_phase2 : signal is "X1Y-1";
+  attribute rloc of munged_phase2, init1_or_2 : signal is loc(1,-1);
 
-  attribute rloc of phase5, pa6 : signal is "X3Y4"; -- Has CE.
-  attribute rloc of phase4 : signal is "X6Y0";
-  attribute rloc of pa5, ld : signal is "X3Y4";
-  attribute rloc of munged_phase3 : signal is "X3Y2";
-  attribute rloc of init3_or_4, init3 : signal is "X3Y2";
-  attribute rloc of init1_or_2 : signal is "X1Y-1";
+  attribute rloc of phase5, pa5, pa6, ld : signal is loc(3,4); -- Has CE.
+  attribute rloc of phase4 : signal is loc(6,0);
+  attribute rloc of munged_phase3, init3, init3_or_4 : signal is loc(3,2);
 
   attribute use_sync_set of phase5, munged_phase3 : signal is "no";
   attribute use_sync_reset of phase5, munged_phase3 : signal is "no";
