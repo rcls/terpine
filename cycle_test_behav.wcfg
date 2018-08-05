@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="cycle_test_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="cycle_test" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="320640000fs"></ZoomStartTime>
+      <ZoomEndTime time="500355331fs"></ZoomEndTime>
+      <Cursor1Time time="2000000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="237"></NameColumnWidth>
+      <ValueColumnWidth column_width="153"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="15" />
+   <wvobject type="array" fp_name="/cycle_test/data">
+      <obj_property name="ElementShortName">data[0:15][31:0]</obj_property>
+      <obj_property name="ObjectShortName">data[0:15][31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/R">
+      <obj_property name="ElementShortName">R[31:0]</obj_property>
+      <obj_property name="ObjectShortName">R[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/dut/I1">
+      <obj_property name="ElementShortName">I1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">I1[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/dut/I2">
+      <obj_property name="ElementShortName">I2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">I2[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/dut/I3">
+      <obj_property name="ElementShortName">I3[31:0]</obj_property>
+      <obj_property name="ObjectShortName">I3[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/Din">
+      <obj_property name="ElementShortName">Din[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Din[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/load">
+      <obj_property name="ElementShortName">load</obj_property>
+      <obj_property name="ObjectShortName">load</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/phase_advance">
+      <obj_property name="ElementShortName">phase_advance</obj_property>
+      <obj_property name="ObjectShortName">phase_advance</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/phase_out">
+      <obj_property name="ElementShortName">phase_out[1:0]</obj_property>
+      <obj_property name="ObjectShortName">phase_out[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/i">
+      <obj_property name="ElementShortName">i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">i[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/dut/W">
+      <obj_property name="ElementShortName">W[31:0]</obj_property>
+      <obj_property name="ObjectShortName">W[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/dut/ld">
+      <obj_property name="ElementShortName">ld</obj_property>
+      <obj_property name="ObjectShortName">ld</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/dut/munged_phase2">
+      <obj_property name="ElementShortName">munged_phase2[1:0]</obj_property>
+      <obj_property name="ObjectShortName">munged_phase2[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/dut/WS">
+      <obj_property name="ElementShortName">WS[2:17][31:0]</obj_property>
+      <obj_property name="ObjectShortName">WS[2:17][31:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+</wave_config>
