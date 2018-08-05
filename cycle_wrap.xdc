@@ -15,8 +15,7 @@ create_pblock pblock_cycle_CD
 add_cells_to_pblock [get_pblocks pblock_cycle_CD] [get_cells cycle/C2*]
 add_cells_to_pblock [get_pblocks pblock_cycle_CD] [get_cells cycle/D2*]
 resize_pblock [get_pblocks pblock_cycle_CD] -add {SLICE_X32Y90:SLICE_X33Y98}
-#resize_pblock [get_pblocks pblock_cycle_CD] -add {SLICE_X34Y90:SLICE_X35Y90}
-resize_pblock [get_pblocks pblock_cycle_CD] -add {SLICE_X34Y95:SLICE_X35Y98}
+resize_pblock [get_pblocks pblock_cycle_CD] -add {SLICE_X34Y94:SLICE_X35Y98}
 
 set_property PARENT pblock_cycle [get_pblocks pblock_cycle_*]
 

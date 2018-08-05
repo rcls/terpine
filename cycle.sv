@@ -1,4 +1,4 @@
-module cycle(output int unsigned R,
+module cycle(output int unsigned A,
   input int unsigned Din,
   input bit load,
   input bit phase_advance,
@@ -58,7 +58,6 @@ module cycle(output int unsigned R,
    (* dont_touch = "true" *)
    bit [1:0] munged_phase2;
 
-   assign R = A;
    assign phase_out = phase5;
 
    always@(posedge clk) begin
