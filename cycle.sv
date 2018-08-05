@@ -39,8 +39,10 @@ module cycle(output int unsigned R,
 
    uint A;
    uint C2, D2;
+   (* dont_touch = "true" *)
    uint I1, I2, I3;
 
+   (* dont_touch = "true" *)
    bit init1, init2, init3, init4;
    bit init12;
    bit init13;
@@ -53,13 +55,26 @@ module cycle(output int unsigned R,
    bit [1:0] phase5 = 3;
    bit [1:0] phase4 = 3;
    bit [1:0] munged_phase3;
+   (* dont_touch = "true" *)
    bit [1:0] munged_phase2;
 
    assign R = A;
    assign phase_out = phase5;
 
+   // Put a route-through onto init2 so that it can be LUT-combined.
+   bit init2_buf;
+   (* keep = "true" *)
+   LUT1 #(.INIT(2'b10)) init2r(.O(init2_buf), .I0(init2));
+
+   // Ditto C2[3:0]....
+   bit [3:0] C2_buf;
+   (* keep = "true" *) LUT1 #(.INIT(2'b10)) C2r0(.O(C2_buf[0]), .I0(C2[0]));
+   (* keep = "true" *) LUT1 #(.INIT(2'b10)) C2r1(.O(C2_buf[1]), .I0(C2[1]));
+   (* keep = "true" *) LUT1 #(.INIT(2'b10)) C2r2(.O(C2_buf[2]), .I0(C2[2]));
+   (* keep = "true" *) LUT1 #(.INIT(2'b10)) C2r3(.O(C2_buf[3]), .I0(C2[3]));
+
    always@(posedge clk) begin
-      uint WS[2:16];
+      uint WS[2:14];
       uint W_2_15;
       uint W_3_16;
 
@@ -73,9 +88,22 @@ module cycle(output int unsigned R,
       W_2_15 <= W ^ WS[14];
       W_3_16 <= W_2_15;
       WS[2] <= W;
-      for (int i = 2; i < 16; ++i)
+      for (int i = 2; i < 14; ++i)
         WS[i+1] <= WS[i];
    end;
+
+   // Stop control set generation for C2 by breaking it's logic out.
+   (* keep = "true" *)
+   uint C3;
+   always_comb
+     if (init12 && init13)
+       C3 = rol30(iA);
+     else if (init12)
+       C3 = rol30(iB);
+     else if (init13)
+       C3 = iC;
+     else
+       C3 = rol30(A);
 
    always@(posedge clk) begin
       // 1 cycle latency into A.
@@ -93,15 +121,9 @@ module cycle(output int unsigned R,
       endcase
 
       // Look aheads for these, and set up for init 1.
-      D2 <= C2;
-      if (init12 && init13)
-        C2 <= rol30(iA);
-      else if (init12)
-        C2 <= rol30(iB);
-      else if (init13)
-        C2 <= iC;
-      else
-        C2 <= rol30(A);
+      D2[3:0]  <= C2_buf[3:0];
+      D2[31:4] <= C2[31:4];
+      C2 <= C3;
 
       // 3 cycle latency into A.
       if (init2)
@@ -134,18 +156,21 @@ module cycle(output int unsigned R,
       init4 <= (phase4 == 3 && pa5);
       init3 <= init4;
       init2 <= init3;
-      init1 <= init2;
+      init1 <= init2_buf;
 
       init12 <= init2 || init3;
       init13 <= init2 || init4;
 
-      if (init3 || init4)
+      if (init4)
         munged_phase3 <= 3;
       else if (phase4 == 3)
         munged_phase3 <= 1;
       else
         munged_phase3 <= phase4;
 
-      munged_phase2 <= munged_phase3;
+      if (init2)
+        munged_phase2 <= 3;
+      else
+        munged_phase2 <= munged_phase3;
    end
 endmodule
