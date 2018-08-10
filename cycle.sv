@@ -37,7 +37,6 @@ module cycle(output int unsigned A,
      rol30 = (X << 30) | (X >> 2);
    endfunction;
 
-   uint A;
    uint C2, D2;
    (* dont_touch = "true" *)
    uint I1, I2, I3;

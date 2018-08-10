@@ -18,7 +18,3 @@ resize_pblock [get_pblocks pblock_cycle_CD] -add {SLICE_X32Y90:SLICE_X33Y98}
 resize_pblock [get_pblocks pblock_cycle_CD] -add {SLICE_X34Y94:SLICE_X35Y98}
 
 set_property PARENT pblock_cycle [get_pblocks pblock_cycle_*]
-
-
-#set_property BEL BFF [get_cells {cycle/D2_reg[7]}]
-#set_property LOC SLICE_X32Y92 [get_cells {cycle/D2_reg[7]}]
