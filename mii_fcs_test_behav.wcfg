@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="mii_fcs_test_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="mii_fcs_test" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="306566947fs"></ZoomEndTime>
+      <Cursor1Time time="10000000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="237"></NameColumnWidth>
+      <ValueColumnWidth column_width="149"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="10" />
+   <wvobject type="array" fp_name="/mii_fcs_test/test1">
+      <obj_property name="ElementShortName">test1[0:59][7:0]</obj_property>
+      <obj_property name="ObjectShortName">test1[0:59][7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/mii_fcs_test/d">
+      <obj_property name="ElementShortName">d[3:0]</obj_property>
+      <obj_property name="ObjectShortName">d[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/mii_fcs_test/m">
+      <obj_property name="ElementShortName">m[3:0]</obj_property>
+      <obj_property name="ObjectShortName">m[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/mii_fcs_test/q">
+      <obj_property name="ElementShortName">q[3:0]</obj_property>
+      <obj_property name="ObjectShortName">q[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/mii_fcs_test/dv">
+      <obj_property name="ElementShortName">dv</obj_property>
+      <obj_property name="ObjectShortName">dv</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/mii_fcs_test/mv">
+      <obj_property name="ElementShortName">mv</obj_property>
+      <obj_property name="ObjectShortName">mv</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/mii_fcs_test/qv">
+      <obj_property name="ElementShortName">qv</obj_property>
+      <obj_property name="ObjectShortName">qv</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/mii_fcs_test/valid">
+      <obj_property name="ElementShortName">valid</obj_property>
+      <obj_property name="ObjectShortName">valid</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/mii_fcs_test/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/mii_fcs_test/mf/fa/fcs">
+      <obj_property name="ElementShortName">fcs[31:0]</obj_property>
+      <obj_property name="ObjectShortName">fcs[31:0]</obj_property>
+   </wvobject>
+</wave_config>
