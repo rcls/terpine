@@ -1,8 +1,13 @@
 module cycle(output int unsigned A,
-  input int unsigned Din,
-  input bit load,
-  input bit phase_advance,
-  output bit [1:0] phase_out,
+  input int unsigned Din,               // 6-cycle latency to A.
+  input bit load6,
+  input bit [1:0] phase4,
+  input bit [1:0] munged_phase2,
+  input bit init3,
+  input bit init2,
+  input bit init1,
+  input bit init13,
+  input bit init12,
   input bit clk);
 
    typedef int unsigned uint;
@@ -38,26 +43,9 @@ module cycle(output int unsigned A,
    endfunction;
 
    uint C2, D2;
-   (* dont_touch = "true" *)
    uint I1, I2, I3;
 
-   (* dont_touch = "true" *)
-   bit init1, init2, init3, init4;
-   bit init12;
-   bit init13;
-   // bit init_3_4;
-
    uint W;
-
-   bit pa5, pa6, ld;
-
-   bit [1:0] phase5 = 3;
-   bit [1:0] phase4 = 3;
-   bit [1:0] munged_phase3;
-   (* dont_touch = "true" *)
-   bit [1:0] munged_phase2;
-
-   assign phase_out = phase5;
 
    always@(posedge clk) begin
       uint WS[2:14];
@@ -65,7 +53,7 @@ module cycle(output int unsigned A,
       uint W_3_16;
 
       // 5 cycle latency into A.
-      if (ld)
+      if (load6)
         W <= Din;
       else
         W <= rol1(W_3_16 ^ WS[8] ^ WS[14]);
@@ -125,26 +113,57 @@ module cycle(output int unsigned A,
         2: I3 <= W + k2;
         3: I3 <= W + k3;
       endcase
+   end
+endmodule
 
-      // Control signals.
-      ld <= load;
-      pa6 <= phase_advance;
-      pa5 <= pa6;
+module contgen_cycle(
+  input bit load7,
+  input bit phase_advance7,
+  output bit load6,
+  output bit [1:0] phase4,
+  output bit [1:0] munged_phase2,
+  output bit init3,
+  output bit init2,
+  output bit init1,
+  output bit init13,
+  output bit init12,
+  input bit clk);
 
-      if (pa6 && ld)
-        phase5 <= 0;
-      else if (pa6)
-        phase5 <= phase5 + 1;
+   bit phase_advance6, phase_advance5;
+   bit [1:0] phase5 = 3;
+   initial phase4 <= 3;
+   bit [1:0] munged_phase3;
+   bit init4, init23, init24;
 
+   always@(posedge clk) begin
+      load6 <= load7;
       phase4 <= phase5;
+      munged_phase2 <= munged_phase3;
 
-      init4 <= (phase4 == 3 && pa5);
       init3 <= init4;
       init2 <= init3;
       init1 <= init2;
 
-      init12 <= init2 || init3;
-      init13 <= init2 || init4;
+      init12 <= init23;
+      init13 <= init24;
+   end
+
+   always@(posedge clk) begin
+      phase_advance6 <= phase_advance7;
+
+      if (phase_advance6 && load6)
+        phase5 <= 0;
+      else if (phase_advance6)
+        phase5 <= phase5 + 1;
+
+      phase_advance5 <= phase_advance6;
+
+      init23 <= init3 || init4;
+      init24 <= init3 || (phase4 == 3 && phase_advance5);
+
+      phase4 <= phase5;
+      init4 <= (phase4 == 3 && phase_advance5);
+      init3 <= init4;
 
       if (init3 || init4)
         munged_phase3 <= 3;
@@ -152,7 +171,6 @@ module cycle(output int unsigned A,
         munged_phase3 <= 1;
       else
         munged_phase3 <= phase4;
-
-      munged_phase2 <= munged_phase3;
    end
+
 endmodule

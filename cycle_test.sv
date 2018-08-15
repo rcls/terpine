@@ -12,27 +12,41 @@ module cycle_test;
    uint R;
    uint D;
    uint Din;
-   bit load;
-   bit phase_advance;
-   bit [1:0] phase_out;
+
+   // Control lines we generate.
+   bit load7;
+   bit phase_advance7;
    bit clk;
 
-   cycle dut(R, Din, load, phase_advance, phase_out, clk);
+   // Control lines from contgen_cycle.
+   bit load6;
+   bit [1:0] phase4;
+   bit [1:0] munged_phase2;
+   bit init3;
+   bit init2;
+   bit init1;
+   bit init13;
+   bit init12;
 
+   contgen_cycle cg(load7, phase_advance7,
+     load6, phase4, munged_phase2, init3, init2, init1, init13, init12, clk);
 
-   // load and phase_advance has 7 cycle latency to A.
-   // Data starts the cycle after load.
+   cycle dut(R, Din,
+     load6, phase4, munged_phase2, init3, init2, init1, init13, init12, clk);
+
+   // load7 and phase_advance7 has 7 cycle latency to A.
+   // Data starts the cycle after load7.
    integer i = 0;
    initial begin : testit
       for (int i = 60; i < 1000; i = i + 1) begin
          clk = 0;
-         load = (i % 80 < 16);
+         load7 = (i % 80 < 16);
          Din = D;
          if (i % 80 < 16)
            D = data[i % 80];
          else
            D = 1234;
-         phase_advance = (i % 20 == 19);
+         phase_advance7 = (i % 20 == 19);
          #5;
          clk = 1;
          #5;
