@@ -42,8 +42,12 @@ module cycle(output int unsigned A,
      rol30 = (X << 30) | (X >> 2);
    endfunction;
 
-   uint C2, D2;
-   uint I1, I2, I3;
+   (* extract_reset = "false" *)
+   uint C2;
+   uint D2;
+   uint I1;
+   uint I2;
+   uint I3;
 
    uint W;
 
@@ -66,19 +70,6 @@ module cycle(output int unsigned A,
         WS[i+1] <= WS[i];
    end;
 
-   // Stop control set generation for C2 by breaking it's logic out.
-   (* keep = "true" *)
-   uint C3;
-   always_comb
-     if (init12 && init13)
-       C3 = rol30(iA);
-     else if (init12)
-       C3 = rol30(iB);
-     else if (init13)
-       C3 = iC;
-     else
-       C3 = rol30(A);
-
    always@(posedge clk) begin
       // 1 cycle latency into A.
       if (init1)
@@ -95,8 +86,16 @@ module cycle(output int unsigned A,
       endcase
 
       // Look aheads for these, and set up for init 1.
+     if (init12 && init13)
+       C2 <= rol30(iA);
+     else if (init12)
+       C2 <= rol30(iB);
+     else if (init13)
+       C2 <= iC;
+     else
+       C2 <= rol30(A);
+
       D2 <= C2;
-      C2 <= C3;
 
       // 3 cycle latency into A.
       if (init2)
@@ -159,10 +158,10 @@ module contgen_cycle(
       phase_advance5 <= phase_advance6;
 
       init23 <= init3 || init4;
-      init24 <= init3 || (phase4 == 3 && phase_advance5);
+      init24 <= init3 || (phase5 == 0 && phase_advance5);
 
       phase4 <= phase5;
-      init4 <= (phase4 == 3 && phase_advance5);
+      init4 <= (phase5 == 0 && phase_advance5);
       init3 <= init4;
 
       if (init3 || init4)

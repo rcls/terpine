@@ -21,6 +21,7 @@ resize_pblock [get_pblocks pblock_cycle_CD] -add {SLICE_X34Y94:SLICE_X35Y98}
 
 create_pblock pblock_QQ
 add_cells_to_pblock [get_pblocks pblock_QQ] [get_cells QQ_reg*]
-resize_pblock [get_pblocks pblock_QQ] -add {SLICE_X38Y91:SLICE_X39Y98}
+add_cells_to_pblock [get_pblocks pblock_QQ] [get_cells DD_reg*]
+resize_pblock [get_pblocks pblock_QQ] -add {SLICE_X38Y91:SLICE_X41Y98}
 
 set_property PARENT pblock_cycle [get_pblocks pblock_cycle_*]
