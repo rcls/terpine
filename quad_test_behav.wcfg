@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="quad_test_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="quad_test" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="1757931880fs"></ZoomStartTime>
+      <ZoomEndTime time="1974444944fs"></ZoomEndTime>
+      <Cursor1Time time="1831921000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="237"></NameColumnWidth>
+      <ValueColumnWidth column_width="219"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="7" />
+   <wave_markers>
+      <marker label="" time="1840250000" />
+   </wave_markers>
+   <wvobject type="array" fp_name="/quad_test/data">
+      <obj_property name="ElementShortName">data[0:4][31:0]</obj_property>
+      <obj_property name="ObjectShortName">data[0:4][31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/quad_test/R">
+      <obj_property name="ElementShortName">R[31:0]</obj_property>
+      <obj_property name="ObjectShortName">R[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/quad_test/Din">
+      <obj_property name="ElementShortName">Din[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Din[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/quad_test/phase_advance">
+      <obj_property name="ElementShortName">phase_advance</obj_property>
+      <obj_property name="ObjectShortName">phase_advance</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/quad_test/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group103">
+      <obj_property name="label">quad</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/quad_test/q/pa7">
+         <obj_property name="ElementShortName">pa7</obj_property>
+         <obj_property name="ObjectShortName">pa7</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/quad_test/q/count">
+         <obj_property name="ElementShortName">count[4:0]</obj_property>
+         <obj_property name="ObjectShortName">count[4:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group104">
+      <obj_property name="label">cA</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/quad_test/q/cA/A">
+         <obj_property name="ElementShortName">A[31:0]</obj_property>
+         <obj_property name="ObjectShortName">A[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/quad_test/q/cA/I1">
+         <obj_property name="ElementShortName">I1[31:0]</obj_property>
+         <obj_property name="ObjectShortName">I1[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/quad_test/q/cA/I2">
+         <obj_property name="ElementShortName">I2[31:0]</obj_property>
+         <obj_property name="ObjectShortName">I2[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/quad_test/q/cA/I3">
+         <obj_property name="ElementShortName">I3[31:0]</obj_property>
+         <obj_property name="ObjectShortName">I3[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/quad_test/q/cA/W">
+         <obj_property name="ElementShortName">W[31:0]</obj_property>
+         <obj_property name="ObjectShortName">W[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/quad_test/q/cA/Din">
+         <obj_property name="ElementShortName">Din[31:0]</obj_property>
+         <obj_property name="ObjectShortName">Din[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/quad_test/q/cA/load6">
+         <obj_property name="ElementShortName">load6</obj_property>
+         <obj_property name="ObjectShortName">load6</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/quad_test/q/cA/phase4">
+         <obj_property name="ElementShortName">phase4[1:0]</obj_property>
+         <obj_property name="ObjectShortName">phase4[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/quad_test/q/cA/munged_phase2">
+         <obj_property name="ElementShortName">munged_phase2[1:0]</obj_property>
+         <obj_property name="ObjectShortName">munged_phase2[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/quad_test/q/cA/init3">
+         <obj_property name="ElementShortName">init3</obj_property>
+         <obj_property name="ObjectShortName">init3</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/quad_test/q/cA/init2">
+         <obj_property name="ElementShortName">init2</obj_property>
+         <obj_property name="ObjectShortName">init2</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/quad_test/q/cA/init1">
+         <obj_property name="ElementShortName">init1</obj_property>
+         <obj_property name="ObjectShortName">init1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/quad_test/q/cA/init13">
+         <obj_property name="ElementShortName">init13</obj_property>
+         <obj_property name="ObjectShortName">init13</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/quad_test/q/cA/init12">
+         <obj_property name="ElementShortName">init12</obj_property>
+         <obj_property name="ObjectShortName">init12</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>

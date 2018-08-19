@@ -1,6 +1,6 @@
 module cycle(output int unsigned A,
   input int unsigned Din,               // 6-cycle latency to A.
-  input bit load6,
+  input bit load5,
   input bit [1:0] phase4,
   input bit [1:0] munged_phase2,
   input bit init3,
@@ -57,7 +57,7 @@ module cycle(output int unsigned A,
       uint W_3_16;
 
       // 5 cycle latency into A.
-      if (load6)
+      if (load5)
         W <= Din;
       else
         W <= rol1(W_3_16 ^ WS[8] ^ WS[14]);
@@ -116,9 +116,9 @@ module cycle(output int unsigned A,
 endmodule
 
 module contgen_cycle(
-  input bit load7,
+  input bit load6,
   input bit phase_advance7,
-  output bit load6,
+  output bit load5,
   output bit [1:0] phase4,
   output bit [1:0] munged_phase2,
   output bit init3,
@@ -135,7 +135,7 @@ module contgen_cycle(
    bit init4, init23, init24;
 
    always@(posedge clk) begin
-      load6 <= load7;
+      load5 <= load6;
       phase4 <= phase5;
       munged_phase2 <= munged_phase3;
 
