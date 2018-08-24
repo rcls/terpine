@@ -4,9 +4,8 @@ module quad(
   input bit phase_advance,
   input bit clk);
 
-   // phase_advance has 9 cycle latency to the cycle output, 10 cycle latency to
-   // R.
-   // Din has 7 cycle latency to the cycle output, 8 cycle latency to R.
+   // phase_advance is two cycles before the first (E) value in Din.
+   // Din has an 82 cycle latency to output.
 
    int unsigned D;
    int unsigned Aa, Ba, Ca, Da;

@@ -45,8 +45,8 @@ module preamble_prepend(
    bit [3:0] DD;
 
    always@(posedge clk) begin
-      // This assumes the packet is at least 64 bits long.  If it's not you lose.
-      // Don't do short packets, they're meant to be at least 512 bits...
+      // This assumes the packet is at least 64 bits long.  If it's not you
+      // lose.  Don't do short packets, they're meant to be at least 512 bits...
       QV <= 1;
       if (DDV[16])
         Q <= Delay[16];
