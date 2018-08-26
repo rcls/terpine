@@ -11,15 +11,18 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="2540431594fs"></ZoomStartTime>
-      <ZoomEndTime time="2669543982fs"></ZoomEndTime>
-      <Cursor1Time time="2617290000fs"></Cursor1Time>
+      <ZoomStartTime time="1706367370fs"></ZoomStartTime>
+      <ZoomEndTime time="1916552449fs"></ZoomEndTime>
+      <Cursor1Time time="5000000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="237"></NameColumnWidth>
-      <ValueColumnWidth column_width="145"></ValueColumnWidth>
+      <ValueColumnWidth column_width="141"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="15" />
+   <WVObjectSize size="21" />
+   <wave_markers>
+      <marker label="" time="1852067000" />
+   </wave_markers>
    <wvobject type="array" fp_name="/cycle_test/data">
       <obj_property name="ElementShortName">data[0:15][31:0]</obj_property>
       <obj_property name="ObjectShortName">data[0:15][31:0]</obj_property>
@@ -56,21 +59,37 @@
       <obj_property name="ElementShortName">W[31:0]</obj_property>
       <obj_property name="ObjectShortName">W[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/cycle_test/dut/munged_phase2">
-      <obj_property name="ElementShortName">munged_phase2[1:0]</obj_property>
-      <obj_property name="ObjectShortName">munged_phase2[1:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/cycle_test/cg/init4">
-      <obj_property name="ElementShortName">init4</obj_property>
-      <obj_property name="ObjectShortName">init4</obj_property>
+   <wvobject type="logic" fp_name="/cycle_test/cg/load6">
+      <obj_property name="ElementShortName">load6</obj_property>
+      <obj_property name="ObjectShortName">load6</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/cycle_test/cg/phase4">
       <obj_property name="ElementShortName">phase4[1:0]</obj_property>
       <obj_property name="ObjectShortName">phase4[1:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/cycle_test/cg/phase5">
-      <obj_property name="ElementShortName">phase5[1:0]</obj_property>
-      <obj_property name="ObjectShortName">phase5[1:0]</obj_property>
+   <wvobject type="array" fp_name="/cycle_test/dut/munged_phase2">
+      <obj_property name="ElementShortName">munged_phase2[1:0]</obj_property>
+      <obj_property name="ObjectShortName">munged_phase2[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/cg/init3">
+      <obj_property name="ElementShortName">init3</obj_property>
+      <obj_property name="ObjectShortName">init3</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/cg/init2">
+      <obj_property name="ElementShortName">init2</obj_property>
+      <obj_property name="ObjectShortName">init2</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/cg/init1">
+      <obj_property name="ElementShortName">init1</obj_property>
+      <obj_property name="ObjectShortName">init1</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/cg/init13">
+      <obj_property name="ElementShortName">init13</obj_property>
+      <obj_property name="ObjectShortName">init13</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/cg/init12">
+      <obj_property name="ElementShortName">init12</obj_property>
+      <obj_property name="ObjectShortName">init12</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/cycle_test/cg/phase_advance5">
       <obj_property name="ElementShortName">phase_advance5</obj_property>
@@ -79,5 +98,13 @@
    <wvobject type="logic" fp_name="/cycle_test/cg/phase_advance6">
       <obj_property name="ElementShortName">phase_advance6</obj_property>
       <obj_property name="ObjectShortName">phase_advance6</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/cycle_test/cg/phase5">
+      <obj_property name="ElementShortName">phase5[1:0]</obj_property>
+      <obj_property name="ObjectShortName">phase5[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/cycle_test/cg/init4">
+      <obj_property name="ElementShortName">init4</obj_property>
+      <obj_property name="ObjectShortName">init4</obj_property>
    </wvobject>
 </wave_config>

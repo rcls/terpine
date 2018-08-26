@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="block_test_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="block_test" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="166666666fs"></ZoomStartTime>
+      <ZoomEndTime time="1166666667fs"></ZoomEndTime>
+      <Cursor1Time time="1000000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="237"></NameColumnWidth>
+      <ValueColumnWidth column_width="119"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="6" />
+   <wvobject type="logic" fp_name="/block_test/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/block_test/fifo_clk">
+      <obj_property name="ElementShortName">fifo_clk</obj_property>
+      <obj_property name="ObjectShortName">fifo_clk</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group216">
+      <obj_property name="label">stimulus</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/block_test/command">
+         <obj_property name="ElementShortName">command[19:0]</obj_property>
+         <obj_property name="ObjectShortName">command[19:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/opcode">
+         <obj_property name="ElementShortName">opcode[2:0]</obj_property>
+         <obj_property name="ObjectShortName">opcode[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/async_strobe">
+         <obj_property name="ElementShortName">async_strobe</obj_property>
+         <obj_property name="ObjectShortName">async_strobe</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/fifo_empty">
+         <obj_property name="ElementShortName">fifo_empty</obj_property>
+         <obj_property name="ObjectShortName">fifo_empty</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/fifo_req">
+         <obj_property name="ElementShortName">fifo_req</obj_property>
+         <obj_property name="ObjectShortName">fifo_req</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/fifo_bit">
+         <obj_property name="ElementShortName">fifo_bit</obj_property>
+         <obj_property name="ObjectShortName">fifo_bit</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/commands">
+         <obj_property name="ElementShortName">commands[0:7][19:0]</obj_property>
+         <obj_property name="ObjectShortName">commands[0:7][19:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group301">
+      <obj_property name="label">block</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/block_test/dut/inject_cycle">
+         <obj_property name="ElementShortName">inject_cycle[4:0]</obj_property>
+         <obj_property name="ObjectShortName">inject_cycle[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/dut/inject_inject">
+         <obj_property name="ElementShortName">inject_inject</obj_property>
+         <obj_property name="ObjectShortName">inject_inject</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/dut/inject_sample">
+         <obj_property name="ElementShortName">inject_sample</obj_property>
+         <obj_property name="ObjectShortName">inject_sample</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/quint">
+         <obj_property name="ElementShortName">quint[4:0]</obj_property>
+         <obj_property name="ObjectShortName">quint[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/R">
+         <obj_property name="ElementShortName">R[31:0]</obj_property>
+         <obj_property name="ObjectShortName">R[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/cycle16">
+         <obj_property name="ElementShortName">cycle16[4:0]</obj_property>
+         <obj_property name="ObjectShortName">cycle16[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/dut/sample18">
+         <obj_property name="ElementShortName">sample18</obj_property>
+         <obj_property name="ObjectShortName">sample18</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/dut/inject18">
+         <obj_property name="ElementShortName">inject18</obj_property>
+         <obj_property name="ObjectShortName">inject18</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/dut/match18">
+         <obj_property name="ElementShortName">match18</obj_property>
+         <obj_property name="ObjectShortName">match18</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/injectQ">
+         <obj_property name="ElementShortName">injectQ[19:0]</obj_property>
+         <obj_property name="ObjectShortName">injectQ[19:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/block_test/dut/fifo19">
+         <obj_property name="ElementShortName">fifo19</obj_property>
+         <obj_property name="ObjectShortName">fifo19</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/D19">
+         <obj_property name="ElementShortName">D19[19:0]</obj_property>
+         <obj_property name="ObjectShortName">D19[19:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/Din">
+         <obj_property name="ElementShortName">Din[31:0]</obj_property>
+         <obj_property name="ObjectShortName">Din[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group302">
+      <obj_property name="label">qC</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/block_test/dut/qC/phase_advance">
+         <obj_property name="ElementShortName">phase_advance</obj_property>
+         <obj_property name="ObjectShortName">phase_advance</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/qC/Din">
+         <obj_property name="ElementShortName">Din[31:0]</obj_property>
+         <obj_property name="ObjectShortName">Din[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/qC/R">
+         <obj_property name="ElementShortName">R[31:0]</obj_property>
+         <obj_property name="ObjectShortName">R[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group306">
+      <obj_property name="label">qD</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/block_test/dut/qD/phase_advance">
+         <obj_property name="ElementShortName">phase_advance</obj_property>
+         <obj_property name="ObjectShortName">phase_advance</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/qD/Din">
+         <obj_property name="ElementShortName">Din[31:0]</obj_property>
+         <obj_property name="ObjectShortName">Din[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/qD/R">
+         <obj_property name="ElementShortName">R[31:0]</obj_property>
+         <obj_property name="ObjectShortName">R[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>
