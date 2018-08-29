@@ -40,9 +40,8 @@ module block_test;
          command <= commands[i];
          opcode <= i;
          #12.5;
-         async_strobe <= 1;
+         async_strobe <= !async_strobe;
          #12.5;
-         async_strobe <= 0;
       end
    end
 endmodule

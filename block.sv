@@ -58,7 +58,7 @@ module block(input bit [19:0] command,
       strobe1 <= async_strobe;
       strobe2 <= strobe1;
       strobe3 <= strobe2;
-      strobe4 <= strobe2 && !strobe3;
+      strobe4 <= strobe2 ^ strobe3;
       strobe5 <= strobe4;
 
       if (strobe4) begin
