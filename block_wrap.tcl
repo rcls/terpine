@@ -45,6 +45,13 @@ proc squaresquare {P X1 X2 X3 X4 Y1 Y2} {
     square $P/qD $X3 $X4 $Y2
 }
 
+proc column {P X Y1 Y2 Y3 Y4 {locs 1}} {
+    cycle $P/cA $X $Y1 $locs
+    cycle $P/cB $X $Y2 $locs
+    cycle $P/cC $X $Y3 $locs
+    cycle $P/cD $X $Y4 $locs
+}
+
 squaresquare b1  0 28 36 44  117 134
 squaresquare b2 52 60 74 82  117 134
 
@@ -54,18 +61,10 @@ squaresquare b4 52 60 74 82   84 101
 squaresquare b5  0 28 36 44   51  67
 squaresquare b6 52 60 74 82   51  67
 
-proc column {P X Y1 Y2 Y3 Y4 {locs 1}} {
-    cycle $P/cA $X $Y1 $locs
-    cycle $P/cB $X $Y2 $locs
-    cycle $P/cC $X $Y3 $locs
-    cycle $P/cD $X $Y4 $locs
-}
-
 column b7/qA  0 151 159 167 175
 column b7/qB 12 151 159 167 175
 column b7/qC 24 151 159 167 175 0
 column b7/qD 32 151 159 167 175
-
 column b8/qA 40 151 159 167 175
 column b8/qB 48 151 159 167 175
 column b8/qC 56 151 159 167 175

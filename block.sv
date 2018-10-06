@@ -198,17 +198,14 @@ module block(input bit [19:0] command,
 
    bit [35:0] fifo_out, fifo_shift;
    bit fifo_req1;
-   FIFO36E1 #(.DO_REG("TRUE"), .DATA_WIDTH(36)) fifo(
-     .DI({ 32'b0, meta[19][11:0], D19 }),
-     .DIP({ 4'b0, meta[19][15:12] }),
+   fifo_out fifo(
+     .DI({meta[19][11:0], D19 }),
      .WREN(fifo19),
      .WRCLK(clk),
-     .DO(fifo_out[31:0]),
-     .DOP(fifo_out[35:32]),
+     .DO(fifo_out),
      .RDCLK(fifo_clk),
      .RDEN(fifo_req),
      .RST(fifo_rst),
-     .RSTREG(0),
      .EMPTY(fifo_empty));
 
    assign fifo_bit = fifo_shift[0];

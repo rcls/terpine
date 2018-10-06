@@ -13,14 +13,14 @@ module block_wrap(input bit [19:0] command,
    bit clk1, clk2, clk3;
 
    PLLE2_BASE #(
-     .CLKFBOUT_MULT(18),
+     .CLKFBOUT_MULT(12),
      .CLKIN1_PERIOD(10),
-     .CLKOUT0_DIVIDE(6),
-     .CLKOUT1_DIVIDE(6),
-     .CLKOUT2_DIVIDE(6),
+     .CLKOUT0_DIVIDE(2),
+     .CLKOUT1_DIVIDE(2),
+     .CLKOUT2_DIVIDE(2),
      .CLKOUT0_PHASE(0),
-     .CLKOUT1_PHASE(120),
-     .CLKOUT2_PHASE(240)
+     .CLKOUT1_PHASE(180),
+     .CLKOUT2_PHASE(0)
      // .CLKOUT3_PHASE(270)
      ) pll (
      .CLKIN1(sys_clk_i_0),
