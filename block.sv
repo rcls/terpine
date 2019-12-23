@@ -87,7 +87,7 @@ module block(input bit [19:0] command,
    // One-hot encoding of where the first (E) word of the quint is at (mod5).
    // E.g., quint[4] indicates that we have E-words at +4, +9, +14, +19.
    bit [4:0] quint = 1;
-   bit quint4;
+   bit quint4 = 0;
    always@(posedge clk) begin
       quint[4:1] <= quint[3:0];
       quint[0] <= quint4;

@@ -31,9 +31,9 @@ module gear32_20(
         maskA = 32'hffffffff << (32 - width);
    end
 
-   assign Q = state[19:0];
-
    bit [59:0] state;
+
+   assign Q = state[19:0];
 
    always@(posedge clk) begin
       state <= {20'h00000, state[59:20]};

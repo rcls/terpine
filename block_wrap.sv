@@ -3,8 +3,8 @@ module block_wrap(input bit [19:0] command,
   input bit async_strobe,
   input bit sys_clk_i_0,
 
-  output bit fifo_empty[1:12],
-  input bit fifo_req[1:12],
+  output bit [1:12] fifo_empty,
+  input bit [1:12] fifo_req,
   output bit fifo_bit,
   input bit fifo_rst,
   input bit fifo_clk);
