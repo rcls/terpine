@@ -59,19 +59,19 @@ proc square_of_column {P X1 X2 Y1 Y2 Y3 Y4} {
     column $P/qD $X2 $Y3 [expr $Y3+$V] $Y4 [expr $Y4+$V]
 }
 
-square_of_column b1   0  8        140 150 160 170
-squaresquare     b2  16 24 33 41  160 170
-square_of_column b3        33 41  120 130 140 150
-squaresquare     b4   0  8 16 24  120 130
+#square_of_column b1   0  8        200 210 220 230
+#squaresquare     b2  16 24 33 41  160 170
+#square_of_column b3        33 41  120 130 140 150
+#squaresquare     b4   0  8 16 24  120 130
 
 
-square_of_column b5   0  8         80  90 100 110
-squaresquare     b6  16 24 33 41  100 110
-square_of_column b7        33 41   60  70  80  90
-squaresquare     b8   0  8 16 24   60  70
+#square_of_column b5   0  8         80  90 100 110
+#squaresquare     b6  16 24 33 41  100 110
+#square_of_column b7        33 41   60  70  80  90
+#squaresquare     b8   0  8 16 24   60  70
 
 
-square_of_column b9   0  8         20  30  40  50
-squaresquare     b10 16 24 33 41   40  50
-square_of_column b11       33 41    0  10  20  30
-squaresquare     b12  0  8 16 24    0  10
+#square_of_column b9   0  8         20  30  40  50
+#squaresquare     b10 16 24 33 41   40  50
+#square_of_column b11       33 41    0  10  20  30
+#squaresquare     b12  0  8 16 24    0  10

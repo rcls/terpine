@@ -1,3 +1,4 @@
+(* keep_hierarchy = "true" *)
 module quad(
   output int unsigned R,
   input int unsigned Din,

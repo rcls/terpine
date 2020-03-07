@@ -11,12 +11,7 @@ proc slices {X Y W H} {
     return SLICE_X${X}Y${Y}:SLICE_X[expr $X+$W-1]Y[expr $Y+$H-1]
 }
 
-#set_property LOC SLICE_X31Y91 [carry4of {cycle/I3_reg[0]/D}]
-#set_property LOC SLICE_X33Y91 [carry4of {cycle/I2_reg[0]/D}]
-#set_property LOC SLICE_X34Y91 [carry4of {cycle/I1_reg[0]/D}]
-#set_property LOC SLICE_X35Y91 [carry4of {cycle/A_reg[0]/D}]
-
-proc cycle {P X Y {locs 1}} {
+proc cycle {P X Y {locs 0}} {
     create_pblock pblock_$P
     set PB [get_pblocks pblock_$P]
     add_cells_to_pblock $PB [get_cells $P]
@@ -31,61 +26,67 @@ proc cycle {P X Y {locs 1}} {
     }
 }
 
-proc square {P X1 X2 Y} {
-    cycle $P/cA $X1 $Y
-    cycle $P/cB $X2 $Y
-    cycle $P/cC $X1 [expr $Y + 8]
-    cycle $P/cD $X2 [expr $Y + 8]
+proc square {P X Y {DX 8}} {
+    cycle $P/cA       $X              $Y
+    cycle $P/cB [expr $X + $DX]       $Y
+    cycle $P/cC       $X        [expr $Y + 8]
+    cycle $P/cD [expr $X + $DX] [expr $Y + 8]
 }
 
-proc squaresquare {P X1 X2 X3 X4 Y1 Y2} {
-    square $P/qA $X1 $X2 $Y1
-    square $P/qB $X3 $X4 $Y1
-    square $P/qC $X1 $X2 $Y2
-    square $P/qD $X3 $X4 $Y2
+proc column {P X Y1 Y2 {locs 0}} {
+    cycle $P/cA $X       $Y1      $locs
+    cycle $P/cB $X [expr $Y1 + 8] $locs
+    cycle $P/cC $X       $Y2      $locs
+    cycle $P/cD $X [expr $Y2 + 8] $locs
 }
 
-proc column {P X Y1 Y2 Y3 Y4 {locs 1}} {
-    cycle $P/cA $X $Y1 $locs
-    cycle $P/cB $X $Y2 $locs
-    cycle $P/cC $X $Y3 $locs
-    cycle $P/cD $X $Y4 $locs
+proc fullrow {P Q Y FY} {
+    square $P/qA   0 $Y
+    square $P/qB  16 $Y 20
+    square $P/qC  46 $Y
+    square $P/qD  66 $Y
+    square $Q/qA  84 $Y
+    square $Q/qB 108 $Y
+    square $Q/qC 124 $Y
+    square $Q/qD 148 $Y
+
+    set_property LOC RAMB36_X3Y${FY} [get_cells $P/fifo/fifo]
+    set_property LOC RAMB36_X6Y${FY} [get_cells $Q/fifo/fifo]
 }
 
-squaresquare b1  0 28 36 44  117 134
-squaresquare b2 52 60 74 82  117 134
+proc nonet {P Q X1 X2 X3 Y} {
+    square $P/qA $X1 [expr $Y +  1]
+    square $P/qB $X1 [expr $Y + 17]
+    square $P/qC $X1 [expr $Y + 34]
+    square $P/qD $X2 [expr $Y + 34]
 
-squaresquare b3  0 28 36 44   84 101
-squaresquare b4 52 60 74 82   84 101
+    square $Q/qA $X3 [expr $Y +  1]
+    square $Q/qB $X3 [expr $Y + 17]
+    square $Q/qC $X3 [expr $Y + 34]
+    square $Q/qD $X2 [expr $Y +  1]
+}
 
-squaresquare b5  0 28 36 44   51  67
-squaresquare b6 52 60 74 82   51  67
+nonet b1 b2 116 132 148   0
+nonet b3 b4 116 132 148 200
 
-column b7/qA  0 151 159 167 175
-column b7/qB 12 151 159 167 175
-column b7/qC 24 151 159 167 175 0
-column b7/qD 32 151 159 167 175
-column b8/qA 40 151 159 167 175
-column b8/qB 48 151 159 167 175
-column b8/qC 56 151 159 167 175
-column b8/qD 72 151 159 167 175
+column b5/qA   0   1  17
+column b5/qB   8   1  17
+column b5/qC  16   1  17
+square b5/qD   0 34
 
-square b9/qA  0 12 184
-square b9/qB 28 36 184
-square b9/qC 44 52 184
-square b9/qD 60 72 184
+column b6/qA   0 217 234
+column b6/qB   8 217 234
+column b6/qC  16 217 234
+square b6/qD   0 200
 
-square b10/qA  0 12 1
-square b10/qB 28 36 1
-square b10/qC 44 52 1
-square b10/qD 60 72 1
+fullrow b7  b8   51 11
+fullrow b9  b10  67 14
+fullrow b11 b12  84 17
 
-column b11/qA  0 18 26 34 42
-column b11/qB 12 18 26 34 42
-column b11/qC 24 18 26 34 42 0
-column b11/qD 32 18 26 34 42
+fullrow b13 b14 101 21
+fullrow b15 b16 117 24
+fullrow b17 b18 134 27
 
-column b12/qA 40 18 26 34 42
-column b12/qB 48 18 26 34 42
-column b12/qC 56 18 26 34 42
-column b12/qD 72 18 26 34 42
+fullrow b19 b20 151 31
+fullrow b21 b22 167 34
+fullrow b23 b24 184 37
