@@ -1,4 +1,3 @@
-(* keep_hierarchy = "true" *)
 module quad(
   output int unsigned R,
   input int unsigned Din,
@@ -6,10 +5,11 @@ module quad(
   input bit clk);
 
    // phase_advance is two cycles before the first (E) value in Din.
-   // Din has an 82 cycle latency to output.
+   // Din has an 83 cycle latency to output.
 
    int unsigned D;
    int unsigned Aa, Ba, Ca, Da;
+   int unsigned Rint;
 
    bit Ald6, Ald5, Ai3, Ai2, Ai1, Ai13, Ai12;
    bit Bld6, Bld5, Bi3, Bi2, Bi1, Bi13, Bi12;
@@ -66,15 +66,17 @@ module quad(
       // unit&count have 7 cycle to A, 86 cycles to final A, 82 cycles to
       // final 'E'.
       case (unit)
-        0: R <= Aa;
-        1: R <= Ba;
-        2: R <= Ca;
-        3: R <= Da;
+        0: Rint <= Aa;
+        1: Rint <= Ba;
+        2: Rint <= Ca;
+        3: Rint <= Da;
       endcase
 
       out_zero <= (count < 1 || count > 5);
       if (out_zero)
-        R <= 0;
+        Rint <= 0;
+
+      R <= Rint;
 
       pa7 <= (count >= 19);
 
