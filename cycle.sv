@@ -87,14 +87,14 @@ module cycle(output int unsigned A,
       endcase
 
       // Look aheads for these, and set up for init 1.
-     if (init12 && init13)
-       C2 <= rol30(iA);
-     else if (init12)
-       C2 <= rol30(iB);
-     else if (init13)
-       C2 <= iC;
-     else
-       C2 <= rol30(A);
+      if (init12 && init13)
+        C2 <= rol30(iA);
+      else if (init12)
+        C2 <= rol30(iB);
+      else if (init13)
+        C2 <= iC;
+      else
+        C2 <= rol30(A);
 
       D2 <= C2;
 
