@@ -11,14 +11,14 @@ module block(input bit [19:0] command,
 
    parameter id = 0;
    parameter mask_bits = 32;
-   bit [31:0] mask = 32'hfffffff << (32 - mask_bits);
+   bit [31:0] mask = 32'hffffffff << (32 - mask_bits);
 
    typedef int unsigned uint;
    uint Ar, Br, Cr, Dr, Din;
    bit Apa, Bpa, Cpa, Dpa;
 
-   bit [19:0] D6, D18, D19, injectQ;
-   bit [19:0] Dshift [7:17];
+   bit [19:0] D8, D18, D19, injectQ;
+   bit [19:0] Dshift [9:17];
 
    // The quad has 82 cycles from Din to *r, and the block adds 18 cycles
    // latency for a total of 100.  We define Din to be at +20 === -80.  So Ar
@@ -36,7 +36,7 @@ module block(input bit [19:0] command,
    (* retiming_backward = 1 *)
    bit match_int;
    bit match;
-   bit match_shift[10:17];
+   bit match_shift[11:17];
 
    bit sample18, inject18, match18, fifo19;
 
@@ -87,11 +87,19 @@ module block(input bit [19:0] command,
    // One-hot encoding of where the first (E) word of the quint is at (mod5).
    // E.g., quint[4] indicates that we have E-words at +4, +9, +14, +19.
    bit [4:0] quint = 1;
-   bit quint4 = 0;
+   bit [2:0] quint_count = 0;
+   bit quint_0_2, quint_1_2;
    always@(posedge clk) begin
+      if (quint_count < 4)
+        quint_count <= quint_count + 1;
+      else
+        quint_count <= quint_count + 4;
+
+      quint[0] <= quint_count[2];
       quint[4:1] <= quint[3:0];
-      quint[0] <= quint4;
-      quint4 <= !(quint[0] | quint[1] | quint[2] | quint[4]);
+
+      quint_0_2 <= quint[4] || quint[1];
+      quint_1_2 <= quint[0] || quint[1];
    end
 
    bit [4:0] cycle16;
@@ -119,14 +127,24 @@ module block(input bit [19:0] command,
         meta[i] <= meta[i-1];
    end
 
-   // R has E on quint[3], A on quint[2], B on quint[1] and C on quint[0].
-   bit quint_0_2, quint_1_2;
-   bit [31:0] R;
+   function int unsigned rol30(int unsigned X);
+     rol30 = (X << 30) | (X >> 2);
+   endfunction
+
+   // R4 has E on quint[4], A on [3], B [2], C on [1] and D in [0].
+   bit [31:0] R4, R5;
    always@(posedge clk) begin
-      quint_0_2 <= quint[4] | quint[1];
-      quint_1_2 <= quint[0] | quint[1];
+      R4 <= Ar | Br | Cr | Dr;
+      case (quint_count)
+        0: R5 <= rol30(R4) + 32'h10325476; // D
+        1: R5 <= rol30(R4) + 32'h98badcfe; // C
+        2: R5 <=       R4  + 32'hefcdab89; // B
+        3: R5 <=       R4  + 32'h67452301; // A
+        default:
+          R5 <= rol30(R4) + 32'hc3d2e1f0; // E
+      endcase
    end
-   gear32_20 gear(D6, R, quint_0_2, quint_1_2, clk);
+   gear32_20 gear(D8, R5, quint_0_2, quint_1_2, clk);
 
    function bit[7:0] expand5(bit [4:0] v);
       if (v < 10)
@@ -136,23 +154,21 @@ module block(input bit [19:0] command,
    endfunction
 
    always@(posedge clk) begin
-      // R is at +3
-      R <= Ar | Br | Cr | Dr;
+      // match_int is at +6
+      match_int <= (mask & R5) == 0;
 
-      match_int <= (mask & R) == (mask & -32'h67452301);
-
-      // match is at +5.  Note that it is on the A word of the quint, so it
-      // is effectively at +9 w.r.t. the E word of the quint.
+      // match is at +7.  Note that it is on the A word of the quint, so it
+      // is effectively at +11 w.r.t. the E word of the quint.
       match <= match_int;
 
-      match_shift[10] <= match;
-      for (int i = 11; i <= 17; ++i)
+      match_shift[12] <= match;
+      for (int i = 13; i <= 17; ++i)
         match_shift[i] <= match_shift[i-1];
       match18 <= match_shift[17];
 
-      // Delay an extra 11 stages through a shift register between D6 and D18.
-      Dshift[7] <= D6;
-      for (int i = 8; i <= 17; ++i)
+      // Delay an extra 9 stages through a shift register between D8 and D18.
+      Dshift[9] <= D8;
+      for (int i = 10; i <= 17; ++i)
         Dshift[i] <= Dshift[i-1];
       D18 <= Dshift[17];
 
