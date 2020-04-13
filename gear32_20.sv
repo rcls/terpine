@@ -20,19 +20,19 @@ module gear32_20(
    always@(posedge clk) begin
       W[31:0] <= Din;
 
-      if (!A_or_B)
+      if (!A_or_B)                      // E,A,B (& others)
         QQ <= W[31:12];                 // output A on in C+1 = in E->D
-      else if (A_or_C)
+      else if (A_or_C)                  // A,B,C
         QQ <= W[43:24];                 // output B on in D+1 = in A->E
-      else
+      else                              // B,C,D
         QQ <= W[55:36];                 // output C on in E+1 = in B->A
 
-      Q <= QQ;
-      if (A_or_B && !A_or_C)
+      if (A_or_B && !A_or_C)            // B,C,D
         Q <= W[35:16];                  // output D on in A (B->A)
-
-      if (A_or_C && !A_or_B)
+      else if (A_or_C && !A_or_B)       // C,D,E
         Q <= W[47:28];                  // output E on in B (C->B)
+      else
+        Q <= QQ;                        // D,E,A & others
    end
 
 endmodule

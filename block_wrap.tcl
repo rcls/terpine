@@ -38,21 +38,7 @@ proc cycle {P X Y} {
             set_property LOC [slice $XX $YY] [get_cells $P/${RR}_reg[$J]_i_1]
         }
     }
-    # Put the bottom quarter of CD where it's needed...
-#    foreach I $EIGHT {
-#        set L [slice $X4 [expr $I / 4 + $Y]]
-#        set_property LOC $L [get_cells $P/C2_reg[$I]]
-#        set_property LOC $L [get_cells $P/D2_reg[$I]]
-#    }
-
-#    set PG [string replace $P end-1 end-1 g]
-#    set_property LOC [slice $X7 $Y] [get_cells $PG/init1_reg]
-#    set_property LOC [slice $X5 $Y] [get_cells $PG/munged_phase2_reg*]
 }
-
-#set_property BEL A5FF [get_cells b*/q*/g*/init1_reg]
-#set_property BEL A5FF [get_cells b*/q*/g*/munged_phase2_reg[0]]
-#set_property BEL ABFF [get_cells b*/q*/g*/munged_phase2_reg[1]]
 
 proc square {P X Y {DX 8}} {
     cycle $P/cA       $X              $Y
@@ -94,30 +80,30 @@ proc nonet {P Q X1 X2 X3 Y} {
     square $Q/qD $X1 [expr $Y + 17]
 }
 
-nonet b1 b2 114 132 148   0
-nonet b3 b4 114 132 148 200
+nonet b[1].b b[2].b 114 132 148   0
+nonet b[3].b b[4].b 114 132 148 200
 
-column b5/qA   0   1  17
-column b5/qB   8   1  17
-column b5/qC  16   1  17
-square b5/qD   0 34
+column b[5].b/qA   0   1  17
+column b[5].b/qB   8   1  17
+column b[5].b/qC  16   1  17
+square b[5].b/qD   0 34
 
-column b6/qA   0 217 234
-column b6/qB   8 217 234
-column b6/qC  16 217 234
-square b6/qD   0 200
+column b[6].b/qA   0 217 234
+column b[6].b/qB   8 217 234
+column b[6].b/qC  16 217 234
+square b[6].b/qD   0 200
 
-fullrow b7  b8   51 11
-fullrow b9  b10  67 14
-fullrow b11 b12  84 17
+fullrow b[7].b  b[8].b   51 11
+fullrow b[9].b  b[10].b  67 14
+fullrow b[11].b b[12].b  84 17
 
-fullrow b13 b14 101 21
-fullrow b15 b16 117 24
-fullrow b17 b18 134 27
+fullrow b[13].b b[14].b 101 21
+fullrow b[15].b b[16].b 117 24
+fullrow b[17].b b[18].b 134 27
 
-fullrow b19 b20 151 31
-fullrow b21 b22 167 34
-fullrow b23 b24 184 37
+fullrow b[19].b b[20].b 151 31
+fullrow b[21].b b[22].b 167 34
+fullrow b[23].b b[24].b 184 37
 
 for {set i 0} {$i < 32} {incr i 2} {
     set j [expr $i + 1]
@@ -128,13 +114,27 @@ for {set i 0} {$i < 32} {incr i 2} {
     set_property HLUTNM "lut_srl6_$i" [get_cells "b*/q*/c*/W*[$j]_srl6"]
 }
 
-set_property IS_ENABLED 0 [get_drc_checks *]
+set_property LOC RAMB36_X7Y5 [get_cells b[1].b/fifo/fifo]
+set_property LOC RAMB36_X7Y4 [get_cells b[2].b/fifo/fifo]
 
-set_property LOC RAMB36_X7Y5 [get_cells b1/fifo/fifo]
-set_property LOC RAMB36_X7Y4 [get_cells b2/fifo/fifo]
+set_property LOC RAMB36_X7Y45 [get_cells b[3].b/fifo/fifo]
+set_property LOC RAMB36_X7Y44 [get_cells b[4].b/fifo/fifo]
 
-set_property LOC RAMB36_X7Y45 [get_cells b3/fifo/fifo]
-set_property LOC RAMB36_X7Y44 [get_cells b4/fifo/fifo]
+set_property LOC RAMB36_X1Y8 [get_cells b[5].b/fifo/fifo]
+set_property LOC RAMB36_X1Y41 [get_cells b[6].b/fifo/fifo]
 
-set_property LOC RAMB36_X1Y8 [get_cells b5/fifo/fifo]
-set_property LOC RAMB36_X1Y41 [get_cells b6/fifo/fifo]
+
+
+set_false_path -to [get_pins -filter {REF_PIN_NAME == RST} -of_objects [get_cells -hierarchical -filter {REF_NAME =~ FIFO*}]]
+
+foreach i {0 1 2 3 4 5} {
+    set_false_path \
+        -from [get_clocks -of_objects [get_pins pll/CLKOUT6]] \
+        -to [get_clocks -of_objects [get_pins pll/CLKOUT$i]]
+}
+
+foreach i {0 1 2 3 4 5} j {3 4 5 0 1 2} {
+    set_false_path \
+        -from [get_clocks -of_objects [get_pins pll/CLKOUT$i]] \
+        -to [get_clocks -of_objects [get_pins pll/CLKOUT$j]]
+}

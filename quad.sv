@@ -1,3 +1,5 @@
+`default_nettype none
+
 module quad(
   output int unsigned R,
   input int unsigned Din,

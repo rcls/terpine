@@ -1,3 +1,5 @@
+`default_nettype none
+
 (* keep_hierarchy = "true" *)
 module cycle(output int unsigned A,
   input int unsigned Din,               // 6-cycle latency to A.

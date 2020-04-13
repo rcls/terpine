@@ -1,108 +1,106 @@
-module block_wrap(input bit [19:0] command,
-  input bit [2:0] opcode,
-  input bit async_strobe,
-  input bit sys_clk_i_0,
+`default_nettype none
 
-  output bit [1:24] fifo_empty,
-  input bit [1:24] fifo_req,
-  output bit fifo_bit,
-  input bit fifo_rst,
-  input bit fifo_clk);
+module block_wrap(
+  input bit[1:0] rmii_RX,
+  input bit rmii_RX_CRS_DV,
 
-   bit [1:24] fifo_bits;
-   bit clk1, clk2, clk3, clk4, clk5, clk6;
+  output bit eth_rst,
+  output bit[1:0] rmii_TX,
+  output bit rmii_TX_EN,
+  input bit link_led,
+  input bit sys_diff_clock_clk_p,
+  input bit sys_diff_clock_clk_n);
+
+   bit [19:0] command;
+   bit [2:0] opcode;
+   bit strobe;
+   bit rmii_CLK_pad;
+
+   bit [24:1] fifo_req;
+   bit [24:1] fifo_empty;
+   bit [24:1] fifo_oflow;
+   bit [24:1] fifo_bits;
+   bit pllfb, rmii_CLK, mii_clk;
+   bit [2:0] fast_clk, slow_clk, clk;
+   bit fifo_rst;
+   bit xadc_alarm;
+
+   IBUFDS sys_clock(.I(sys_diff_clock_clk_p), .IB(sys_diff_clock_clk_n),
+     .O(rmii_CLK_pad));
+
+   BUFGMUX_CTRL clkmux0(.S(xadc_alarm), .I0(fast_clk[0]), .I1(slow_clk[0]), .O(clk[0]));
+   BUFGMUX_CTRL clkmux1(.S(xadc_alarm), .I0(fast_clk[1]), .I1(slow_clk[1]), .O(clk[1]));
+   BUFGMUX_CTRL clkmux2(.S(xadc_alarm), .I0(fast_clk[2]), .I1(slow_clk[2]), .O(clk[2]));
 
    MMCME2_BASE #(
-     .CLKFBOUT_MULT_F(10.5),
-     .CLKIN1_PERIOD(10),
+     .CLKFBOUT_MULT_F(21),
+     .CLKIN1_PERIOD(20),
      .CLKOUT0_DIVIDE_F(3),
      .CLKOUT1_DIVIDE(3),
      .CLKOUT2_DIVIDE(3),
-     //.CLKOUT3_DIVIDE(4),
-     //.CLKOUT4_DIVIDE(4),
-     //.CLKOUT5_DIVIDE(4),
+     .CLKOUT3_DIVIDE(6),
+     .CLKOUT4_DIVIDE(6),
+     .CLKOUT5_DIVIDE(6),
+     .CLKOUT6_DIVIDE(42),
      .CLKOUT0_PHASE(0),
      .CLKOUT1_PHASE(120),
-     .CLKOUT2_PHASE(240)
+     .CLKOUT2_PHASE(240),
+     .CLKOUT3_PHASE(0),
+     .CLKOUT4_PHASE(240),
+     .CLKOUT5_PHASE(120)
      ) pll (
-     .CLKIN1(sys_clk_i_0),
-     .CLKOUT0(clk1), .CLKOUT1(clk2), .CLKOUT2(clk3),
-     .CLKOUT0B(clk4), .CLKOUT1B(clk5), .CLKOUT2B(clk6),
-     .CLKFBOUT(pllfb), .CLKFBIN(pllfb), .PWRDWN(0), .RST(0));
+     .CLKIN1(rmii_CLK_pad),
+     .CLKOUT0(fast_clk[0]), .CLKOUT1(fast_clk[1]), .CLKOUT2(fast_clk[2]),
+     .CLKOUT3(slow_clk[0]), .CLKOUT4(slow_clk[1]), .CLKOUT5(slow_clk[2]),
+     .CLKOUT6(mii_clk),
+     .CLKFBOUT(rmii_CLK), .CLKFBIN(pllfb), .PWRDWN(0), .RST(0));
 
-   block #(1) b1(command, opcode, async_strobe, clk1,
-     fifo_empty[1], fifo_req[1], fifo_bits[1], fifo_rst, fifo_clk);
+   BUFG rmii_bufg(.I(rmii_CLK), .O(pllfb));
 
-   block #(2) b2(command, opcode, async_strobe, clk2,
-     fifo_empty[2], fifo_req[2], fifo_bits[2], fifo_rst, fifo_clk);
+   genvar i;
+   for (i = 1; i <= 24; i = i + 1) begin:b
+      block #(i) b(command, opcode, strobe, clk[i % 3],
+     fifo_empty[i], fifo_oflow[i], fifo_req[i], fifo_bits[i],
+     fifo_rst, mii_clk);
+   end
 
-   block #(3) b3(command, opcode, async_strobe, clk3,
-     fifo_empty[3], fifo_req[3], fifo_bits[3], fifo_rst, fifo_clk);
+   // "At least 1µs" for the PHY.
+   bit [7:0] fifo_rst_count = 8'h80;
+   assign fifo_rst = fifo_rst_count[7];
+   assign eth_rst = !fifo_rst_count[7];
+   always@(posedge mii_clk)
+     fifo_rst_count <= fifo_rst_count + fifo_rst;
 
-   block #(4) b4(command, opcode, async_strobe, clk4,
-     fifo_empty[4], fifo_req[4], fifo_bits[4], fifo_rst, fifo_clk);
+   bit [3:0] rmii_D;
+   bit [3:0] mii_Q;
+   bit [1:0] rmii_DV;
+   bit mii_QV;
 
-   block #(5) b5(command, opcode, async_strobe, clk5,
-     fifo_empty[5], fifo_req[5], fifo_bits[5], fifo_rst, fifo_clk);
+   // The IDDR in "same edge mode" has Q2 earlier than Q1!
+   IDDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_RX0
+     (.D(rmii_RX[0]), .Q2(rmii_D[0]), .Q1(rmii_D[2]), .C(mii_clk));
+   IDDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_RX1
+     (.D(rmii_RX[1]), .Q2(rmii_D[1]), .Q1(rmii_D[3]), .C(mii_clk));
+   IDDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_RDV
+     (.D(rmii_RX_CRS_DV), .Q2(rmii_DV[0]), .Q1(rmii_DV[1]), .C(mii_clk));
 
-   block #(6) b6(command, opcode, async_strobe, clk6,
-     fifo_empty[6], fifo_req[6], fifo_bits[6], fifo_rst, fifo_clk);
+   ODDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_TX0
+     (.Q(rmii_TX[0]), .D1(mii_Q[0]), .D2(mii_Q[2]), .C(mii_clk));
+   ODDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_O1
+     (.Q(rmii_TX[1]), .D1(mii_Q[1]), .D2(mii_Q[3]), .C(mii_clk));
+   ODDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_TXDV
+     (.Q(rmii_TX_EN), .D1(mii_QV), .D2(mii_QV), .C(mii_clk));
 
-   block #(7) b7(command, opcode, async_strobe, clk2,
-     fifo_empty[7], fifo_req[7], fifo_bits[7], fifo_rst, fifo_clk);
+   bit [7:0] seqnum;
+   bit tx_strobe;
 
-   block #(8) b8(command, opcode, async_strobe, clk3,
-     fifo_empty[8], fifo_req[8], fifo_bits[8], fifo_rst, fifo_clk);
+   read_out ro(command, opcode, strobe, seqnum, tx_strobe,
+     fifo_empty, fifo_oflow, fifo_req, fifo_bits,
+     mii_Q, mii_QV, mii_clk);
 
-   block #(9) b9(command, opcode, async_strobe, clk4,
-     fifo_empty[9], fifo_req[9], fifo_bits[9], fifo_rst, fifo_clk);
+   control con(rmii_D, rmii_DV,
+     command, opcode, strobe, seqnum, tx_strobe, mii_clk);
 
-   block #(10) b10(command, opcode, async_strobe, clk5,
-     fifo_empty[10], fifo_req[10], fifo_bits[10], fifo_rst, fifo_clk);
-
-   block #(11) b11(command, opcode, async_strobe, clk6,
-     fifo_empty[11], fifo_req[11], fifo_bits[11], fifo_rst, fifo_clk);
-
-   block #(12) b12(command, opcode, async_strobe, clk1,
-     fifo_empty[12], fifo_req[12], fifo_bits[12], fifo_rst, fifo_clk);
-
-
-   block #(13) b13(command, opcode, async_strobe, clk3,
-     fifo_empty[13], fifo_req[13], fifo_bits[13], fifo_rst, fifo_clk);
-
-   block #(14) b14(command, opcode, async_strobe, clk4,
-     fifo_empty[14], fifo_req[14], fifo_bits[14], fifo_rst, fifo_clk);
-
-   block #(15) b15(command, opcode, async_strobe, clk5,
-     fifo_empty[15], fifo_req[15], fifo_bits[15], fifo_rst, fifo_clk);
-
-   block #(16) b16(command, opcode, async_strobe, clk6,
-     fifo_empty[16], fifo_req[16], fifo_bits[16], fifo_rst, fifo_clk);
-
-   block #(17) b17(command, opcode, async_strobe, clk1,
-     fifo_empty[17], fifo_req[17], fifo_bits[17], fifo_rst, fifo_clk);
-
-   block #(18) b18(command, opcode, async_strobe, clk2,
-     fifo_empty[18], fifo_req[18], fifo_bits[18], fifo_rst, fifo_clk);
-
-   block #(19) b19(command, opcode, async_strobe, clk4,
-     fifo_empty[19], fifo_req[19], fifo_bits[19], fifo_rst, fifo_clk);
-
-   block #(20) b20(command, opcode, async_strobe, clk5,
-     fifo_empty[20], fifo_req[20], fifo_bits[20], fifo_rst, fifo_clk);
-
-   block #(21) b21(command, opcode, async_strobe, clk6,
-     fifo_empty[21], fifo_req[21], fifo_bits[21], fifo_rst, fifo_clk);
-
-   block #(22) b22(command, opcode, async_strobe, clk1,
-     fifo_empty[22], fifo_req[22], fifo_bits[22], fifo_rst, fifo_clk);
-
-   block #(23) b23(command, opcode, async_strobe, clk2,
-     fifo_empty[23], fifo_req[23], fifo_bits[23], fifo_rst, fifo_clk);
-
-   block #(24) b24(command, opcode, async_strobe, clk3,
-     fifo_empty[24], fifo_req[24], fifo_bits[24], fifo_rst, fifo_clk);
-
-   always@(posedge fifo_clk) fifo_bit = |fifo_bits;
+   xadc_temp mon(.dclk_in(mii_clk), .alarm_out(xadc_alarm));
 
 endmodule

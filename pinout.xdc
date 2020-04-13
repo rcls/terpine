@@ -1,4 +1,4 @@
-
+# TE0710 on TE0703
 # IO pins.
 
 #set_property IOSTANDARD LVCMOS33 [get_ports {BASE_UART0_rxd BASE_UART0_txd}]

@@ -34,6 +34,8 @@ module block_test;
               20'h12345, 20'h6789a, 20'hcdef0, 20'h97531, 20'heb852, 0, 0,
               20'h00077 };
 
+   // Expands to pnng 28q5 cu4q it9h te2i
+
    initial begin
       #12.5;
       for (int i = 0; i < 8; ++i) begin

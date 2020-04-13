@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="166666666fs"></ZoomStartTime>
-      <ZoomEndTime time="1166666667fs"></ZoomEndTime>
-      <Cursor1Time time="1000000000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="1000001fs"></ZoomEndTime>
+      <Cursor1Time time="712500fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="237"></NameColumnWidth>
-      <ValueColumnWidth column_width="119"></ValueColumnWidth>
+      <NameColumnWidth column_width="236"></NameColumnWidth>
+      <ValueColumnWidth column_width="139"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="6" />
    <wvobject type="logic" fp_name="/block_test/clk">
@@ -81,10 +81,6 @@
          <obj_property name="ElementShortName">quint[4:0]</obj_property>
          <obj_property name="ObjectShortName">quint[4:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/block_test/dut/R">
-         <obj_property name="ElementShortName">R[31:0]</obj_property>
-         <obj_property name="ObjectShortName">R[31:0]</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/block_test/dut/cycle16">
          <obj_property name="ElementShortName">cycle16[4:0]</obj_property>
          <obj_property name="ObjectShortName">cycle16[4:0]</obj_property>
@@ -109,6 +105,18 @@
          <obj_property name="ElementShortName">fifo19</obj_property>
          <obj_property name="ObjectShortName">fifo19</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/R4">
+         <obj_property name="ElementShortName">R4[31:0]</obj_property>
+         <obj_property name="ObjectShortName">R4[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/R5">
+         <obj_property name="ElementShortName">R5[31:0]</obj_property>
+         <obj_property name="ObjectShortName">R5[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/D8">
+         <obj_property name="ElementShortName">D8[19:0]</obj_property>
+         <obj_property name="ObjectShortName">D8[19:0]</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/block_test/dut/D19">
          <obj_property name="ElementShortName">D19[19:0]</obj_property>
          <obj_property name="ObjectShortName">D19[19:0]</obj_property>
@@ -121,6 +129,7 @@
    <wvobject type="group" fp_name="group302">
       <obj_property name="label">qC</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/block_test/dut/qC/phase_advance">
          <obj_property name="ElementShortName">phase_advance</obj_property>
          <obj_property name="ObjectShortName">phase_advance</obj_property>
@@ -149,6 +158,26 @@
       <wvobject type="array" fp_name="/block_test/dut/qD/R">
          <obj_property name="ElementShortName">R[31:0]</obj_property>
          <obj_property name="ObjectShortName">R[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/qD/D">
+         <obj_property name="ElementShortName">D[31:0]</obj_property>
+         <obj_property name="ObjectShortName">D[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/qD/Aa">
+         <obj_property name="ElementShortName">Aa[31:0]</obj_property>
+         <obj_property name="ObjectShortName">Aa[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/qD/Ba">
+         <obj_property name="ElementShortName">Ba[31:0]</obj_property>
+         <obj_property name="ObjectShortName">Ba[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/qD/Ca">
+         <obj_property name="ElementShortName">Ca[31:0]</obj_property>
+         <obj_property name="ObjectShortName">Ca[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/block_test/dut/qD/Da">
+         <obj_property name="ElementShortName">Da[31:0]</obj_property>
+         <obj_property name="ObjectShortName">Da[31:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
