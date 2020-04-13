@@ -13,7 +13,7 @@ module fifo_out(
   output bit ALMOSTEMPTY);
 
    FIFO36E1 #(.DO_REG(1), .DATA_WIDTH(36),
-     .FIRST_WORD_FALL_THROUGH(1), .ALMOST_EMPTY_OFFSET(500))
+     .FIRST_WORD_FALL_THROUGH("TRUE"), .ALMOST_EMPTY_OFFSET(500))
    fifo(
      .DI({ 32'b0, DI[31:0] }),
      .DIP({ 4'b0, DI[35:32] }),

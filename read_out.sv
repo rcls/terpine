@@ -26,6 +26,9 @@ module read_out
    typedef bit [35:0] word;
    word memory[0:1023];
 
+   bit [B:1] fifo_nempty;
+   assign fifo_nempty = ~fifo_empty;
+
    bit strobe1, strobe;
 
    always@(posedge clk) strobe1 <= strobe_in;
@@ -49,12 +52,11 @@ module read_out
    always@(posedge clk) begin
       if (strobe && opcode == 5 && !reading_fifo) begin
          reading_fifo <= 1;
-         fifo_read_count <= 0;
          fifo_unit <= command[4:0];
       end
 
       fifo_req <= 0;
-      if (fifo_read_count[5:0] == 3)
+      if (fifo_read_count[5:0] == 2)
         fifo_req[fifo_unit] <= 1;
 
       fifo_shift <= { |fifo_bits, fifo_shift[35:1] };
@@ -71,8 +73,10 @@ module read_out
            fifo_read_count <= fifo_read_count + 1;
       end
 
-      if (fifo_read_count >= 320)
-        reading_fifo <= 0;
+      if (fifo_read_count >= 320) begin
+         reading_fifo <= 0;
+         fifo_read_count <= 0;
+      end
    end
 
    // (R)MII sequencer.
@@ -207,17 +211,17 @@ module read_out
       end
       case (phase == PHASE3 ? read_op : opSHIFT)
         opDATA:     mii_word <= param;
-        opFLAGS:    mii_word <= 2;
+        opFLAGS:    mii_word <= { 7'b0, reading_fifo, 8'h2 };
         opSEQUENCE: mii_word <= { 8'b0, seqnum };
         opWADDR:    mii_word <= write_count;
-        opRADDR:    mii_word <= internal_raddr;
+        opRADDR:    mii_word <= read_address;
         opREAD:     mii_word <= read_latch[15:0];
-        opREAD1:    mii_word <= read_latch[31:0];
+        opREAD1:    mii_word <= read_latch[31:16];
         opREAD2:    mii_word <= {12'b0, read_latch[35:32]};
-        opEMPTY0:   mii_word <= fifo_empty[16:1];
-        opEMPTY1:   mii_word <= fifo_empty[B:17];
-        opEMPTY2:   mii_word <= fifo_oflow[16:1];
-        opEMPTY3:   mii_word <= fifo_oflow[B:17];
+        opEMPTY0:   mii_word <= { fifo_nempty[15:1], 1'b0};
+        opEMPTY1:   mii_word <= fifo_nempty[B:16];
+        opEMPTY2:   mii_word <= { fifo_oflow[15:1], 1'b0 };
+        opEMPTY3:   mii_word <= fifo_oflow[B:16];
         opSHIFT:    mii_word <= mii_word >> 4;
         default:    mii_word <= 0;
       endcase

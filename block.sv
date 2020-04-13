@@ -84,10 +84,10 @@ module block(input bit [19:0] command,
          inject_inject <= command_sync[5];
          inject_sample <= command_sync[6];
       end
-      if (sample18) begin
-         inject_inject <= 0;
-         inject_sample <= 0;
-      end
+      if (sample18)
+        inject_sample <= 0;
+      if (inject18)
+        inject_inject <= 0;
    end
 
    // One-hot encoding of where the first (E) word of the quint is at (mod5).
@@ -193,8 +193,8 @@ module block(input bit [19:0] command,
       if (quint[2]) begin
          // We should use 'cycle17' here.  But 'cycle16' is good enough.  When
          // the first (E) word is at +17, +16 has the same cycle number.
-         inject18 <= cycle16 == inject_cycle && inject_sample && inject_inject;
-         sample18 <= cycle16 == inject_cycle && inject_sample;
+         inject18 <= cycle16 == inject_cycle && inject_inject;
+         sample18 <= cycle16 == inject_cycle && inject_sample && !inject_inject;
       end
 
       if (inject18)
@@ -223,9 +223,9 @@ module block(input bit [19:0] command,
    always@(posedge clk) begin
       bit [2:0] inject_idx;
       // injectQ is at +18 so we produce the signals for it at +17, the signals
-      // for inject_idx at +16.
-      inject_idx[2] <= quint[1];            // E
-      inject_idx[1] <= quint[2] | quint[3]; // D or C
+      // for inject_idx at +16 equiv. +1.  I.e. quint[1] is index 0.
+      inject_idx[2] <= quint[0];            // E
+      inject_idx[1] <= quint[3] | quint[4]; // D or C
       inject_idx[0] <= quint[2] | quint[4]; // D or B
       injectQ <= inject[inject_idx];
    end
