@@ -20,7 +20,7 @@ module block_wrap(
    bit [24:1] fifo_empty;
    bit [24:1] fifo_oflow;
    bit [24:1] fifo_bits;
-   bit pllfb, rmii_CLK, mii_clk;
+   bit pllfb, mii_clk;
    bit [2:0] fast_clk, slow_clk, clk;
    bit fifo_rst;
    bit xadc_alarm;
@@ -53,9 +53,7 @@ module block_wrap(
      .CLKOUT0(fast_clk[0]), .CLKOUT1(fast_clk[1]), .CLKOUT2(fast_clk[2]),
      .CLKOUT3(slow_clk[0]), .CLKOUT4(slow_clk[1]), .CLKOUT5(slow_clk[2]),
      .CLKOUT6(mii_clk),
-     .CLKFBOUT(rmii_CLK), .CLKFBIN(pllfb), .PWRDWN(0), .RST(0));
-
-   BUFG rmii_bufg(.I(rmii_CLK), .O(pllfb));
+     .CLKFBOUT(pllfb), .CLKFBIN(pllfb), .PWRDWN(0), .RST(0));
 
    genvar i;
    for (i = 1; i <= 24; i = i + 1) begin:b

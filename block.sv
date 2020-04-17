@@ -13,7 +13,7 @@ module block(input bit [19:0] command,
   input bit fifo_clk);
 
    parameter id = 0;
-   parameter mask_bits = 32;
+   parameter mask_bits = 30; // mask was 32.
    bit [31:0] mask = 32'hffffffff << (32 - mask_bits);
 
    typedef int unsigned uint;
