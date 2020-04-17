@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="1000001fs"></ZoomEndTime>
-      <Cursor1Time time="712500fs"></Cursor1Time>
+      <ZoomStartTime time="245280fs"></ZoomStartTime>
+      <ZoomEndTime time="263190fs"></ZoomEndTime>
+      <Cursor1Time time="258535fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="236"></NameColumnWidth>
-      <ValueColumnWidth column_width="139"></ValueColumnWidth>
+      <NameColumnWidth column_width="265"></NameColumnWidth>
+      <ValueColumnWidth column_width="280"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="6" />
+   <WVObjectSize size="7" />
    <wvobject type="logic" fp_name="/block_test/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -31,7 +31,6 @@
    <wvobject type="group" fp_name="group216">
       <obj_property name="label">stimulus</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/block_test/command">
          <obj_property name="ElementShortName">command[19:0]</obj_property>
          <obj_property name="ObjectShortName">command[19:0]</obj_property>
@@ -113,10 +112,6 @@
          <obj_property name="ElementShortName">R5[31:0]</obj_property>
          <obj_property name="ObjectShortName">R5[31:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/block_test/dut/D8">
-         <obj_property name="ElementShortName">D8[19:0]</obj_property>
-         <obj_property name="ObjectShortName">D8[19:0]</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/block_test/dut/D19">
          <obj_property name="ElementShortName">D19[19:0]</obj_property>
          <obj_property name="ObjectShortName">D19[19:0]</obj_property>
@@ -129,7 +124,6 @@
    <wvobject type="group" fp_name="group302">
       <obj_property name="label">qC</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/block_test/dut/qC/phase_advance">
          <obj_property name="ElementShortName">phase_advance</obj_property>
          <obj_property name="ObjectShortName">phase_advance</obj_property>
@@ -146,7 +140,6 @@
    <wvobject type="group" fp_name="group306">
       <obj_property name="label">qD</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/block_test/dut/qD/phase_advance">
          <obj_property name="ElementShortName">phase_advance</obj_property>
          <obj_property name="ObjectShortName">phase_advance</obj_property>
@@ -179,5 +172,9 @@
          <obj_property name="ElementShortName">Da[31:0]</obj_property>
          <obj_property name="ObjectShortName">Da[31:0]</obj_property>
       </wvobject>
+   </wvobject>
+   <wvobject type="array" fp_name="/block_test/dut/fifo/DI">
+      <obj_property name="ElementShortName">DI[35:0]</obj_property>
+      <obj_property name="ObjectShortName">DI[35:0]</obj_property>
    </wvobject>
 </wave_config>
