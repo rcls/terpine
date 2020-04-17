@@ -46,6 +46,10 @@ struct __attribute__((packed)) read_out_t {
         return r;
     }
 
+    void set100(int e, int d, int c, int b, int a);
+    void set_count(uint64_t count);
+    void set_meta(int meta) { set16(4, meta); }
+
     int print(FILE * f = stdout) const;
 
     bool is_match()  const { return get16(4) & (1 << 13); }
@@ -59,6 +63,8 @@ private:
         return read[i][0] + ((read[i][1] & 15) << 16); }
     uint16_t get16(int i) const {
         return (read[i][1] + (read[i][2] << 16)) >> 4; }
+    void set16(int i, int v);
+    void set20(int i, int v);
 };
 
 extern read_out_t last;

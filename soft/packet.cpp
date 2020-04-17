@@ -128,3 +128,38 @@ int read_out_t::print(FILE * f) const
                    unit(), cycle(), count(),
                    is_sample(), is_inject(), is_match(), text().text);
 }
+
+
+void read_out_t::set100(int e, int d, int c, int b, int a)
+{
+    set20(0, e);
+    set20(1, d);
+    set20(2, c);
+    set20(3, b);
+    set20(4, a);
+}
+
+
+void read_out_t::set_count(uint64_t c)
+{
+    set16(0, c);
+    set16(1, c >> 16);
+    set16(1, c >> 32);
+    set16(1, c >> 48);
+}
+
+
+void read_out_t::set16(int i, int v)
+{
+    // 12 bits go in [1], 4 in [2].
+    read[i][2] = (v >> 12) & 0xf;
+    read[i][1] = (read[i][1] & 0xf) | (v << 4);
+}
+
+
+void read_out_t::set20(int i, int v)
+{
+    // 16 bits go in [0], 4 in [1].
+    read[i][0] = v;
+    read[i][1] = (read[i][1] & 0xfff0) | ((v >> 16) && 0xf);
+}
