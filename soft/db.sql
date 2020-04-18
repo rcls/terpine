@@ -1,0 +1,20 @@
+-- match rows: run/unit/cycle id, count, sha1
+
+CREATE TABLE multiplicity(
+    value CHARACTER(20) NOT NULL PRIMARY KEY,
+    count INTEGER NOT NULL);
+
+CREATE INDEX multiplicity_by_count ON multiplicity(count);
+
+CREATE TABLE samples(
+    id INTEGER NOT NULL,
+    count INTEGER NOT NULL,
+    value CHARACTER(20) NOT NULL,
+    is_inject BOOLEAN NOT NULL,
+    mult INTEGER NOT NULL,
+    PRIMARY KEY (id ASC, count ASC));
+
+CREATE INDEX samples_by_text ON samples(value);
+
+CREATE INDEX samples_ordered ON samples(id ASC, count ASC);
+CREATE UNIQUE INDEX samples_mult ON samples(value, mult);

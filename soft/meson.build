@@ -2,7 +2,8 @@
 project('terpine', ['c', 'cpp'],
         default_options : ['werror=True', 'b_staticpic=false'])
 
-add_project_arguments('-D_GNU_SOURCE', language : 'cpp')
+add_project_arguments('-D_GNU_SOURCE', '-Wno-format-zero-length',
+                      language : 'cpp')
 
 openssl = dependency('openssl')
 sqlite3 = dependency('sqlite3')
@@ -23,6 +24,6 @@ executable('single'    , 'single.cpp'    , link_with: trpne80)
 executable('check80'   , 'check80.cpp'   , link_with: trpne80)
 
 executable('sha1test', 'sha1test.c')
-executable('ethsum', 'ethsum.c')
+executable('ethsum'  , 'ethsum.c')
 
 executable('db_check', 'db_check.cpp', link_with: terpine)
