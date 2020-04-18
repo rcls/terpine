@@ -9,7 +9,7 @@ int main(void)
     // block_wrap test...
     const uint32_t bt20[] = { 0x12345, 0x6789a, 0xcdef0, 0x97531, 0xeb852 };
     text_code_t bt = b20to32(bt20);
-    run(bt.text, 0, 1);
+    run(bt, 0, 1);
 
     // Inject test...
     // G Unit  1: 5    127376731 s1 i0 m0 2o6m8kbn9a9rqjujnqkv

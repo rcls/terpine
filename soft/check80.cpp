@@ -46,7 +46,7 @@ int main(void)
         }
         auto nA = once(A);
         auto nB = once(B);
-        if (strcmp(nA.text, nB.text) == 0) {
+        if (strcmp(nA, nB) == 0) {
             printf("Hit @ %lu\n", i);
             printf("%s -> %s\n", A.text, nA.text);
             printf("%s -> %s\n", B.text, nB.text);

@@ -20,6 +20,7 @@
 #define COMMAND_UNIT(unit) ((unit) << COMMAND_UNIT_SHIFT)
 
 struct text_code_t {
+    operator const char *() const { return text; }
     char text[21];
 };
 

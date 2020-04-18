@@ -4,7 +4,33 @@
 #include "packet.h"
 
 #include <err.h>
+#include <sys/time.h>
 #include <unistd.h>
+
+static void insert_and_process(const read_out_t & item)
+{
+    srunf(s_begin);
+    int r = insert_read_out(item);
+    if (r < 0) {
+        srunf(s_rollback);
+        return;
+    }
+
+    // Restart the channel.  We don't commit the transaction until this is done!
+    if (r > 0) {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        transact(0, tv.tv_usec);
+        transact(1, tv.tv_sec);
+        transact(2, tv.tv_sec >> 20);
+        transact(3, item.unit());
+        transact(4, item.cycle());
+        transact(OP_EXECUTE,
+                 COMMAND_INJECT | item.cycle() | COMMAND_UNIT(item.unit()));
+    }
+
+    srunf(s_commit);
+}
 
 int main()
 {
@@ -23,7 +49,7 @@ int main()
         if (r.raddr != addr)
             errx(1, "read address mismatch %i %i\n", r.raddr, addr);
         if (r.count() != 0)
-            insert_read_out(r);
+            insert_and_process(r);
     }
 
     // Check for overflow.
@@ -39,7 +65,7 @@ int main()
         for (int unit = 1; unit <= 24; ++unit) {
             if (last.nempty & 1 << unit) {
                 read_out_t item = fifo_read(unit);
-                insert_read_out(item);
+                insert_and_process(item);
             }
         }
     }

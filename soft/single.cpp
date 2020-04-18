@@ -24,7 +24,7 @@ static void do_one(int unit)
         return;
     }
 
-    auto ss = hashes.emplace(item.text().text, &rr.first->second);
+    auto ss = hashes.emplace(item.text(), &rr.first->second);
     if (!ss.second)
         printf("********* COLLIDE *********\n");
 }

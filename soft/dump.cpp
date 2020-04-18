@@ -5,7 +5,7 @@
 #include <err.h>
 #include <stdio.h>
 
-void transaction_check()
+static void transaction_check()
 {
     // Do a double sample of unit 1 cycle 5.
     transact(OP_EXECUTE, COMMAND_SAMPLE | 5 | (1 << COMMAND_UNIT_SHIFT));
@@ -18,7 +18,7 @@ void transaction_check()
     unit1[0].print();
     unit1[1].print();
 
-    run(unit1[0].text().text, unit1[0].count(), unit1[1].count());
+    run(unit1[0].text(), unit1[0].count(), unit1[1].count());
 
     // Inject on unit 2 cycle 6.
     static const uint32_t bt20[] = {
@@ -37,8 +37,8 @@ void transaction_check()
     unit2[0].print();
     unit2[1].print();
     unit2[2].print();
-    run(unit2[0].text().text, unit2[0].count(), unit2[1].count());
-    run(unit2[0].text().text, unit2[0].count(), unit2[2].count());
+    run(unit2[0].text(), unit2[0].count(), unit2[1].count());
+    run(unit2[0].text(), unit2[0].count(), unit2[2].count());
 }
 
 

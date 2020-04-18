@@ -1,6 +1,8 @@
 // See if we can reproduce...
 //
 
+#include "check.h"
+
 #include "packet.h"
 
 #include <openssl/sha.h>

@@ -1,15 +1,20 @@
 # -*- python -*-
 project('terpine', ['c', 'cpp'],
-        default_options : ['werror=True', 'b_staticpic=false'])
+        default_options: [
+            'werror=True', 'b_staticpic=false', 'optimization=3'])
 
-add_project_arguments('-D_GNU_SOURCE', '-Wno-format-zero-length',
-                      language : 'cpp')
+add_project_arguments(
+    '-D_GNU_SOURCE',
+    '-Wno-format-zero-length', '-Wno-psabi', '-Wmissing-declarations',
+    '-march=skylake', '-mtune=skylake', '-fstack-protector',
+    language : 'cpp')
 
 openssl = dependency('openssl')
 sqlite3 = dependency('sqlite3')
+threads = dependency('threads')
 terpine = static_library(
     'terpine', 'database.cpp', 'check.cpp', 'fifo.cpp', 'packet.cpp',
-    dependencies: [openssl, sqlite3])
+    dependencies: [openssl, sqlite3, threads])
 trpne80 = static_library(
     'trpne80', 'database.cpp', 'check.cpp', 'fifo.cpp', 'packet.cpp',
     dependencies: openssl, cpp_args: '-DMASK80')

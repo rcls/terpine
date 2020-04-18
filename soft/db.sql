@@ -18,3 +18,4 @@ CREATE INDEX samples_by_text ON samples(value);
 
 CREATE INDEX samples_ordered ON samples(id ASC, count ASC);
 CREATE UNIQUE INDEX samples_mult ON samples(value, mult);
+CREATE INDEX samples_hits ON samples(mult);

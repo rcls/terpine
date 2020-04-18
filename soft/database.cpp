@@ -1,17 +1,20 @@
+
+#include "database.h"
+
 #include "packet.h"
 
 #include <err.h>
-#include <sqlite3.h>
 #include <stdarg.h>
 #include <string.h>
 
 static sqlite3 * the_db;
 
-static sqlite3_stmt * s_begin;
+sqlite3_stmt * s_begin;
+sqlite3_stmt * s_commit;
+sqlite3_stmt * s_rollback;
+
 static sqlite3_stmt * s_insert;
 static sqlite3_stmt * s_last;
-static sqlite3_stmt * s_commit;
-static sqlite3_stmt * s_rollback;
 static sqlite3_stmt * s_last_count;
 static sqlite3_stmt * s_mult;
 
@@ -60,9 +63,7 @@ static void svbindf(sqlite3_stmt * stmt, const char * f, va_list ap)
     }
 }
 
-static void sbindf(sqlite3_stmt * stmt, const char * f = "", ...)
-    __attribute__((format(printf,2,3)));
-static void sbindf(sqlite3_stmt * stmt, const char * f, ...)
+void sbindf(sqlite3_stmt * stmt, const char * f, ...)
 {
     va_list ap;
     va_start(ap, f);
@@ -71,9 +72,7 @@ static void sbindf(sqlite3_stmt * stmt, const char * f, ...)
 }
 
 
-static int srunf(sqlite3_stmt * stmt, const char * f = "", ...)
-    __attribute__((format(printf,2,3)));
-static int srunf(sqlite3_stmt * stmt, const char * f, ...)
+int srunf(sqlite3_stmt * stmt, const char * f, ...)
 {
     va_list ap;
     va_start(ap, f);
@@ -88,9 +87,7 @@ static int srunf(sqlite3_stmt * stmt, const char * f, ...)
 }
 
 
-static bool scolumnf(sqlite3_stmt * stmt, const char * f, ...)
-    __attribute__((format(scanf,2,3)));
-static bool scolumnf(sqlite3_stmt * stmt, const char * f, ...)
+bool scolumnf(sqlite3_stmt * stmt, const char * f, ...)
 {
     int e = sqlite3_step(stmt);
     if (e == SQLITE_DONE)
@@ -144,7 +141,7 @@ static bool scolumnf(sqlite3_stmt * stmt, const char * f, ...)
 }
 
 
-static sqlite3_stmt * prep(const char * s)
+sqlite3_stmt * sprep(const char * s)
 {
     sqlite3_stmt * stmt;
     int r = sqlite3_prepare_v2(the_db, s, -1, &stmt, NULL);
@@ -165,27 +162,25 @@ void open_db(const char * filename)
         errx(1, "sqlite3_extended_result_codes failed %s",
              sqlite3_errmsg(the_db));
 
-    s_begin = prep("BEGIN");
-    s_commit = prep("COMMIT");
-    s_rollback = prep("ROLLBACK");
-    s_insert = prep(
+    s_begin = sprep("BEGIN");
+    s_commit = sprep("COMMIT");
+    s_rollback = sprep("ROLLBACK");
+    s_insert = sprep(
         "INSERT INTO samples(id,count,value,is_inject,mult) VALUES(?,?,?,?,?)");
-    s_last_count = prep(
+    s_last_count = sprep(
         "SELECT MAX(count) FROM samples WHERE id = ?");
-    s_mult = prep("SELECT MAX(mult) FROM samples WHERE value = ?");
+    s_mult = sprep("SELECT MAX(mult) FROM samples WHERE value = ?");
 
-    s_last = prep(
+    s_last = sprep(
         "SELECT count,value,is_inject,mult FROM samples "
         "WHERE id = ? and count <= ? ORDER BY count DESC LIMIT 1");
 }
 
 
-void insert_read_out(const read_out_t & r)
+int insert_read_out(const read_out_t & r)
 {
     text_code_t t = r.text();
     r.print();
-
-    srunf(s_begin);
 
     // Get the most recent row not after this one, for this unit.
     sbindf(s_last, "%i %li", r.unit_cycle(), r.count());
@@ -197,11 +192,10 @@ void insert_read_out(const read_out_t & r)
              &p_count, &p_value, &p_is_inject, &p_mult);
 
     // Check for a duplicate...
-    if (p_count == r.count() && strcmp(p_value, t.text) == 0
+    if (p_count == r.count() && strcmp(p_value, t) == 0
         && p_is_inject == r.is_inject()) {
         printf(".... duplicate row, ignore\n");
-        srunf(s_rollback);
-        return;
+        return -1;
     }
 
     // Check whether or not to insert the row.  We discard if this is not
@@ -212,13 +206,11 @@ void insert_read_out(const read_out_t & r)
     if (!r.is_inject()) {
         if (p_count == 0) {
             printf(".... unit not initialized, ignore\n");
-            srunf(s_rollback);
-            return;
+            return -1;
         }
         if (p_mult > 1) {
             printf(".... unit not reinitialized since hit, ignore\n");
-            srunf(s_rollback);
-            return;
+            return -1;
         }
     }
 
@@ -241,5 +233,5 @@ void insert_read_out(const read_out_t & r)
     srunf(s_insert, "%i %li %s %i %i",
           r.unit_cycle(), r.count(), t.text, r.is_inject(), mult + 1);
 
-    srunf(s_commit);
+    return mult;
 }
