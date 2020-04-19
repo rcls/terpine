@@ -1,3 +1,4 @@
+#include "fifo.h"
 #include "packet.h"
 
 #include <time.h>
@@ -7,6 +8,15 @@ int main(void)
 {
     uint64_t t = time(NULL);
     open_socket();
+
+    // Flush all the fifos...
+    while (last.nempty) {
+        for (int unit = 1; unit <= 24; ++unit) {
+            if (last.nempty & (1 << unit))
+                fifo_read(unit).print();
+        }
+    }
+
     for (int unit = 1; unit <= 24; ++unit) {
         for (int cycle = CYCLE_BASE; cycle < CYCLE_LIMIT; ++cycle) {
             transact(0, t);

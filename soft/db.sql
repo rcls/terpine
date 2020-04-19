@@ -12,10 +12,11 @@ CREATE TABLE samples(
     value CHARACTER(20) NOT NULL,
     is_inject BOOLEAN NOT NULL,
     mult INTEGER NOT NULL,
+    hit BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY (id ASC, count ASC));
 
 CREATE INDEX samples_by_text ON samples(value);
 
 CREATE INDEX samples_ordered ON samples(id ASC, count ASC);
 CREATE UNIQUE INDEX samples_mult ON samples(value, mult);
-CREATE INDEX samples_hits ON samples(mult);
+CREATE INDEX sample_hits ON samples(hit);

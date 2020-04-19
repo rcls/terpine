@@ -9,10 +9,11 @@
 
 static void insert_and_process(const read_out_t & item)
 {
-    srunf(s_begin);
+    runSQL("BEGIN EXCLUSIVE");
+
     int r = insert_read_out(item);
     if (r < 0) {
-        srunf(s_rollback);
+        runSQL("ROLLBACK");
         return;
     }
 
@@ -29,7 +30,7 @@ static void insert_and_process(const read_out_t & item)
                  COMMAND_INJECT | item.cycle() | COMMAND_UNIT(item.unit()));
     }
 
-    srunf(s_commit);
+    runSQL("COMMIT");
 }
 
 int main()

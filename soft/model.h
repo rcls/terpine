@@ -8,4 +8,3 @@ text_code_t once(const text_code_t & t);
 text_code_t run(const char * text, long s, long e);
 
 #endif
-
