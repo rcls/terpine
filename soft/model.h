@@ -1,5 +1,5 @@
-#ifndef CHECK_H_
-#define CHECK_H_
+#ifndef MODEL_H_
+#define MODEL_H_
 
 #include "packet.h"
 

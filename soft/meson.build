@@ -13,22 +13,23 @@ openssl = dependency('openssl')
 sqlite3 = dependency('sqlite3')
 threads = dependency('threads')
 terpine = static_library(
-    'terpine', 'database.cpp', 'check.cpp', 'fifo.cpp', 'packet.cpp',
+    'terpine',
+    'database.cpp', 'fifo.cpp', 'model.cpp', 'packet.cpp', 'server.cpp',
     dependencies: [openssl, sqlite3, threads])
 trpne80 = static_library(
-    'trpne80', 'database.cpp', 'check.cpp', 'fifo.cpp', 'packet.cpp',
-    dependencies: openssl, cpp_args: '-DMASK80')
+    'trpne80',
+    'database.cpp', 'fifo.cpp', 'model.cpp', 'packet.cpp', 'server.cpp',
+    dependencies: [openssl, sqlite3, threads],
+    cpp_args: '-DMASK80')
 
 executable('start'     , 'start.cpp'     , link_with: terpine)
 executable('record'    , 'record.cpp'    , link_with: terpine)
 
 executable('dump'      , 'dump.cpp'      , link_with: terpine)
-executable('ping_board', 'ping_board.cpp', link_with: terpine)
-executable('run_check' , 'run_check.cpp' , link_with: terpine)
+executable('db_check', 'db_check.cpp'    , link_with: terpine)
+
 executable('single'    , 'single.cpp'    , link_with: trpne80)
 executable('check80'   , 'check80.cpp'   , link_with: trpne80)
 
 executable('sha1test', 'sha1test.c')
 executable('ethsum'  , 'ethsum.c')
-
-executable('db_check', 'db_check.cpp', link_with: terpine)

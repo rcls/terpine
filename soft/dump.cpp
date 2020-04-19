@@ -1,5 +1,5 @@
-#include "check.h"
 #include "fifo.h"
+#include "model.h"
 #include "packet.h"
 
 #include <err.h>

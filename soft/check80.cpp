@@ -1,60 +1,60 @@
-#include "check.h"
+
+#include "model.h"
+#include "server.h"
 
 #include <string.h>
 
+static bool callback1(const text_code_t * in, uint64_t count, text_code_t * out)
+{
+    printf(".");
+    fflush(NULL);
+    return false;
+}
+
+
+static bool callback2(const text_code_t * in, uint64_t count, text_code_t * out)
+{
+    if (strcmp(out[0], out[1]) == 0) {
+        printf("Hit at @%lu + 1: %s,%s -> %s,%s\n",
+               count, in[0].text, in[1].text, out[0].text, out[1].text);
+        return true;
+    }
+
+    printf(".");
+    fflush(NULL);
+    return false;
+}
+
+
 int main(void)
 {
-    text_code_t A = { "00008icvopj700lv0000" };
-    uint64_t As = 12996530530;
-    uint64_t Ae = 14200470893; // 18:10
-    text_code_t B = { "0000ilj1a3mc00sn0000" };
-    uint64_t Bs = 16145714848;
-    uint64_t Be = 16707594314; // 19:21
+    IterationServer::bist();
 
-    Ae -= As;
-    Be -= Bs;
+    text_code_t A[4] = {
+        {"00008icvopj700lv0000"}, {"0000ilj1a3mc00sn0000"}, {"A"}, {"B"} };
+    uint64_t S0 = 12996530530;
+    uint64_t E0 = 14200470893; // 18:10
+    uint64_t S1 = 16145714848;
+    uint64_t E1 = 16707594314; // 19:21
 
-    if (Ae < Be) {
-        printf("Catchup B %li\n", Be - Ae);
-        for (uint64_t i = 0; i < Be - Ae; ++i) {
-            if ((i & 0xfffff) == 0) {
-                printf(".");
-                fflush(stdout);
-            }
-            B = once(B);
-        }
-        Be = Ae;
+    E0 -= S0;
+    E1 -= S1;
+
+    if (E1 > E0) {
+        printf("Catchup 1 %li\n", E1 - E0);
+        cycle<1>(&A[1], E1 - E0, callback1);
+        E1 = E0;
     }
-    if (Be < Ae) {
-        printf("Catchup A %li\n", Ae - Be);
-        for (uint64_t i = 0; i < Ae - Be; ++i) {
-            if ((i & 0xffffff) == 0) {
-                printf(".");
-                fflush(stdout);
-            }
-            A = once(A);
-        }
-        Ae = Be;
+    if (E0 > E1) {
+        printf("Catchup 0 %li\n", E0 - E1);
+        cycle<1>(&A[0], E0 - E1, callback1);
+        E0 = E1;
     }
 
-    printf("Compare (up to %li)\n", Ae);
-
-    for (uint64_t i = 0; i < Ae; ++i) {
-        if ((i & 0xffffff) == 0) {
-            printf(".");
-            fflush(stdout);
-        }
-        auto nA = once(A);
-        auto nB = once(B);
-        if (strcmp(nA, nB) == 0) {
-            printf("Hit @ %lu\n", i);
-            printf("%s -> %s\n", A.text, nA.text);
-            printf("%s -> %s\n", B.text, nB.text);
-            break;
-        }
-        A = nA;
-        B = nB;
-    }
+    printf("Compare (up to %li)\n", E0);
+    uint64_t done = cycle<4>(A, E0, callback2);
+    if (done == E0)
+        printf("These are not the 'droids you are looking for.\n");
 
     return 0;
 }

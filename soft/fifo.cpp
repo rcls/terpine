@@ -1,7 +1,6 @@
 
 #include "fifo.h"
 
-#include "check.h"
 #include "packet.h"
 
 #include <err.h>
