@@ -236,6 +236,7 @@ static void cycle(T out[16], T in [5])
 #endif
 }
 
+
 template<typename T, int WIDTH>
 void pack(T W[5], const text_code_t t[WIDTH])
 {

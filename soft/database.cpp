@@ -20,15 +20,6 @@ SQL::SQL(const char * sql) :
 }
 
 
-SQL::SQL(const char * sql, const char * f, ...) : SQL(sql)
-{
-    va_list args;
-    va_start(args, f);
-    bind(f, args);
-    va_end(args);
-}
-
-
 SQL::~SQL()
 {
     int e = sqlite3_finalize(stmt);
@@ -64,49 +55,17 @@ void SQL::error(const char * what)
 }
 
 
-void SQL::bind(const char * f, ...)
+void SQL::bindat(int n, int64_t v)
 {
-    va_list args;
-    va_start(args, f);
-    bind(f, args);
-    va_end(args);
+    if (sqlite3_bind_int64(stmt, n, v) != 0)
+        error("bind int");
 }
 
 
-void SQL::bind(const char * f, va_list ap)
+void SQL::bindat(int n, const char * v)
 {
-    sqlite3_reset(stmt);
-
-    int i = 0;
-    for (const char * p = f; *p; ++p) {
-        if (*p != '%')
-            continue;
-
-        if (p[1] == 's') {
-            ++p;
-            const char * v = va_arg(ap, const char *);
-            if (sqlite3_bind_text(stmt, ++i, v, -1, SQLITE_TRANSIENT) != 0)
-                error("bind text");
-            continue;
-        }
-
-        int longs = 0;
-        while (*++p == 'l')
-            ++longs;
-        if (*p != 'i')
-            errx(1, "unsupported format %s", f);
-
-        int64_t v;
-        if (longs == 0)
-            v = va_arg(ap, int);
-        else if (longs == 1)
-            v = va_arg(ap, long);
-        else
-            v = va_arg(ap, long long);
-
-        if (sqlite3_bind_int64(stmt, ++i, v) != 0)
-            error("bind int64");
-    }
+    if (sqlite3_bind_text(stmt, n, v, -1, SQLITE_TRANSIENT) != 0)
+        error("bind text");
 }
 
 
@@ -171,17 +130,6 @@ bool SQL::row(const char * f, va_list args)
 }
 
 
-bool runSQL(const char * sql, const char * f, ...)
-{
-    SQL s(sql);
-    va_list args;
-    va_start(args, f);
-    s.bind(f, args);
-    va_end(args);
-    return s.run();
-}
-
-
 static int busy(void *, int iters)
 {
     printf(" .... db busy %i\n", iters);
@@ -219,7 +167,7 @@ int insert_read_out(const read_out_t & r)
     // Check for a duplicate...
     SQL("SELECT count,value,is_inject,mult FROM samples "
         "WHERE id = ? and count <= ? ORDER BY count DESC LIMIT 1",
-        "%i %li", r.unit_cycle(), r.count())
+        r.unit_cycle(), r.count())
         .row("%li %20s %i %i", &p_count, p_value.text, &p_is_inject, &p_mult);
 
     if (p_count == r.count()
@@ -247,7 +195,7 @@ int insert_read_out(const read_out_t & r)
 
     // Get the last count.  Attempting to insert with a count going backwards is
     // always an error.
-    if (SQL("SELECT MAX(count) FROM samples WHERE id = ?", "%i", r.unit_cycle())
+    if (SQL("SELECT MAX(count) FROM samples WHERE id = ?", r.unit_cycle())
         .row("%li", &p_count)
         && p_count >= r.count())
         errx(1, "count jumps backwards, old %lu after new %lu",
@@ -255,17 +203,16 @@ int insert_read_out(const read_out_t & r)
 
     // Now find the multiplicity to use.
     int mult = 0;
-    if (SQL("SELECT MAX(mult) FROM samples WHERE value = ?", "%s", t.text)
+    if (SQL("SELECT MAX(mult) FROM samples WHERE value = ?", t.text)
         .row("%i", &mult) && mult > 0)
         printf("***** HIT (%i) *****\n", mult);
 
     runSQL(
         "INSERT INTO samples(id,count,value,is_inject,mult) VALUES(?,?,?,?,?)",
-        "%i %li %s %i %i",
         r.unit_cycle(), r.count(), t.text, r.is_inject(), mult + 1);
 
     if (mult > 0)
-        runSQL("UPDATE samples SET hit = 1 WHERE value = ?", "%s", t.text);
+        runSQL("UPDATE samples SET hit = 1 WHERE value = ?", t.text);
 
     return mult;
 }

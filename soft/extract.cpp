@@ -20,7 +20,7 @@ typedef std::vector<PartPair> PartPairs;
 
 static void get_mults(PartPairs & pp)
 {
-    SQL query("SELECT id,count,sample,is_inject,mult "
+    SQL query("SELECT id,count,value,is_inject,mult "
               "FROM samples WHERE mult > 1");
     Part p = {};
     int is_inject;
@@ -39,14 +39,14 @@ static void get_mults(PartPairs & pp)
 
 static void get_partners(PartPairs & pp)
 {
-    SQL sql("SELECT id,count,sample,is_inject FROM samples "
-            "WHERE sample = ? AND mult = 1");
+    SQL sql("SELECT id,count,value,is_inject FROM samples "
+            "WHERE value = ? AND mult = 1");
 
     for (auto & p : pp) {
         auto & f = p.second;
         auto & s = p.second;
         int is_inject;
-        sql.bind("%s", f.sample.text);
+        sql.bind(f.sample.text);
         sql.get("%i %li %20s %i", &s.id, &s.count, s.sample.text, &is_inject);
 
         if (is_inject)
@@ -59,12 +59,12 @@ static void get_partners(PartPairs & pp)
 
 static void get_preceed(PartPairs & pps)
 {
-    SQL sql("SELECT count,sample FROM samples WHERE id = ? AND count < ? "
+    SQL sql("SELECT count,value FROM samples WHERE id = ? AND count < ? "
             "ORDER BY count DESC LIMIT 1");
 
     for (auto & pp : pps) {
         for (auto * p : { &pp.first, &pp.second }) {
-            sql.bind("%li %20s", &p->id, &p->count);
+            sql.bind(p->id, p->count);
             sql.get("%li %20s", &p->p_count, p->p_sample.text);
         }
     }

@@ -48,7 +48,7 @@ static bool start(void)
     text_code_t text2;
     int is_inject;
     if (!SQL("SELECT id,count,value,is_inject FROM samples "
-             "WHERE value < ? ORDER BY value DESC LIMIT 1", "%s", key.text)
+             "WHERE value < ? ORDER BY value DESC LIMIT 1", key.text)
         .row("%i %li %20s %i", &id, &count2, text2.text, &is_inject)) {
         printf("Got nothing, try again.\n");
         return false;
@@ -62,8 +62,7 @@ static bool start(void)
     uint64_t count1;
     text_code_t text1;
     SQL("SELECT count,value FROM samples "
-        "WHERE id = ? AND count < ? ORDER BY count DESC LIMIT 1",
-        "%i %li", id, count2)
+        "WHERE id = ? AND count < ? ORDER BY count DESC LIMIT 1", id, count2)
         .get("%li %20s", &count1, text1.text);
 
     IterationServer::it.pending.push(
