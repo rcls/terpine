@@ -25,8 +25,7 @@ static void get_mults(PartPairs & pp)
     Part p = {};
     int is_inject;
     int mult;
-    while (query.row("%i %li %20s %i %i",
-                     &p.id, &p.count, p.sample.text, &is_inject, &mult)) {
+    while (query.row(&p.id, &p.count, &p.sample, &is_inject, &mult)) {
         if (is_inject)
             errx(1, "Inject set on %i %li %s\n", p.id, p.count, p.sample.text);
         if (mult != 2)
@@ -47,7 +46,7 @@ static void get_partners(PartPairs & pp)
         auto & s = p.second;
         int is_inject;
         sql.bind(f.sample.text);
-        sql.get("%i %li %20s %i", &s.id, &s.count, s.sample.text, &is_inject);
+        sql.get(&s.id, &s.count, &s.sample, &is_inject);
 
         if (is_inject)
             errx(1, "Inject set on %i %li %s\n", f.id, f.count, f.sample.text);
@@ -65,7 +64,7 @@ static void get_preceed(PartPairs & pps)
     for (auto & pp : pps) {
         for (auto * p : { &pp.first, &pp.second }) {
             sql.bind(p->id, p->count);
-            sql.get("%li %20s", &p->p_count, p->p_sample.text);
+            sql.get(&p->p_count, &p->p_sample);
         }
     }
 }

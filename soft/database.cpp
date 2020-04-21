@@ -4,7 +4,6 @@
 #include "packet.h"
 
 #include <err.h>
-#include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -25,26 +24,6 @@ SQL::~SQL()
     int e = sqlite3_finalize(stmt);
     if (e != 0)
         errx(1, "sqlite3_finalize error: %s", sqlite3_errstr(e));
-}
-
-
-bool SQL::row(const char * f, ...)
-{
-    va_list args;
-    va_start(args, f);
-    bool r = row(f, args);
-    va_end(args);
-    return r;
-}
-
-
-void SQL::get(const char * f, ...)
-{
-    va_list args;
-    va_start(args, f);
-    if (!row(f, args))
-        errx(1, "nothing found for sql %s", sqlite3_sql(stmt));
-    va_end(args);
 }
 
 
@@ -69,64 +48,29 @@ void SQL::bindat(int n, const char * v)
 }
 
 
-bool SQL::row(const char * f, va_list args)
+bool SQL::run()
 {
-    int e = sqlite3_step(stmt);
-    if (e == SQLITE_DONE)
+    switch (sqlite3_step(stmt)) {
+    case SQLITE_ROW:
+        return true;
+    case SQLITE_DONE:
         return false;
-
-    if (e != SQLITE_ROW)
+    default:
         error("step");
-
-    int i = 0;
-
-    for (const char * p = f; *p; ++p) {
-        if (*p != '%')
-            continue;
-
-        ++p;
-        int width = 0;
-        for (; *p >= '0' && *p <= '9'; ++p)
-            width = width * 10 + *p - '0';
-
-        int longs = 0;
-        for (; *p == 'l'; ++p)
-            ++longs;
-
-        if (p[0] == 'm' && p[1] == 's') {
-            ++p;
-            const char ** v = va_arg(args, const char **);
-            *v = (const char *) sqlite3_column_text(stmt, i++);
-            continue;
-        }
-        else if (*p == 's') {
-            char * v = va_arg(args, char *);
-            snprintf(v, width + 1, "%s", sqlite3_column_text(stmt, i++));
-            continue;
-        }
-
-        if (*p != 'i')
-            errx(1, "unknown format character in %s", f);
-
-        switch (longs) {
-        case 0: {
-            int * v = va_arg(args, int *);
-            *v = sqlite3_column_int64(stmt, i++);
-            break;
-        }
-        case 1: {
-            long * v = va_arg(args, long *);
-            *v = sqlite3_column_int64(stmt, i++);
-            break;
-        }
-        default:
-            long long * v = va_arg(args, long long *);
-            *v = sqlite3_column_int64(stmt, i++);
-            break;
-        }
     }
+}
 
-    return true;
+
+void SQL::exists()
+{
+    if (sqlite3_step(stmt) != SQLITE_ROW)
+        error("exists");
+}
+
+
+void SQL_column(sqlite3_stmt * stmt, int n, text_code_t * t)
+{
+    snprintf(t->text, sizeof t->text, "%s", sqlite3_column_text(stmt, n));
 }
 
 
@@ -168,7 +112,7 @@ int insert_read_out(const read_out_t & r)
     SQL("SELECT count,value,is_inject,mult FROM samples "
         "WHERE id = ? and count <= ? ORDER BY count DESC LIMIT 1",
         r.unit_cycle(), r.count())
-        .row("%li %20s %i %i", &p_count, p_value.text, &p_is_inject, &p_mult);
+        .row(&p_count, &p_value, &p_is_inject, &p_mult);
 
     if (p_count == r.count()
         && strcmp(p_value, t) == 0
@@ -196,7 +140,7 @@ int insert_read_out(const read_out_t & r)
     // Get the last count.  Attempting to insert with a count going backwards is
     // always an error.
     if (SQL("SELECT MAX(count) FROM samples WHERE id = ?", r.unit_cycle())
-        .row("%li", &p_count)
+        .row(&p_count)
         && p_count >= r.count())
         errx(1, "count jumps backwards, old %lu after new %lu",
              p_count, r.count());
@@ -204,7 +148,7 @@ int insert_read_out(const read_out_t & r)
     // Now find the multiplicity to use.
     int mult = 0;
     if (SQL("SELECT MAX(mult) FROM samples WHERE value = ?", t.text)
-        .row("%i", &mult) && mult > 0)
+        .row(&mult) && mult > 0)
         printf("***** HIT (%i) *****\n", mult);
 
     runSQL(
