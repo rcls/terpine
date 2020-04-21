@@ -8,7 +8,7 @@
 #include <openssl/sha.h>
 #include <stdio.h>
 
-text_code_t b20to32(const uint32_t by20[5])
+static text_code_t b20to32(const uint32_t by20[5])
 {
     text_code_t result;
     char * r = result.text;
@@ -25,7 +25,7 @@ text_code_t b20to32(const uint32_t by20[5])
     return result;
 }
 
-text_code_t once(const text_code_t & t)
+text_code_t m_once(const text_code_t & t)
 {
     uint8_t bytes[20];
     SHA1((const uint8_t *) t.text, 20, (uint8_t *) bytes);
@@ -67,15 +67,4 @@ text_code_t once(const text_code_t & t)
 #endif
     // Now convert to base32.
     return b20to32(by20);
-}
-
-text_code_t run(const char * text, long s, long e)
-{
-    text_code_t result;
-    snprintf(result.text, sizeof result.text, "%s", text);
-    for (long i = s; i < e; ++i)
-        result = once(result);
-
-    printf("%s -> %s (%li -> %li)\n", text, result.text, s, e);
-    return result;
 }

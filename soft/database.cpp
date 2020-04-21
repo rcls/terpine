@@ -6,6 +6,7 @@
 #include <err.h>
 #include <stdarg.h>
 #include <string.h>
+#include <unistd.h>
 
 static sqlite3 * the_db;
 
@@ -46,10 +47,29 @@ bool SQL::row(const char * f, ...)
 }
 
 
+void SQL::get(const char * f, ...)
+{
+    va_list args;
+    va_start(args, f);
+    if (!row(f, args))
+        errx(1, "nothing found for sql %s", sqlite3_sql(stmt));
+    va_end(args);
+}
+
+
 void SQL::error(const char * what)
 {
     errx(1, "%s on sql %s failed: %s",
          what, sqlite3_sql(stmt), sqlite3_errmsg(the_db));
+}
+
+
+void SQL::bind(const char * f, ...)
+{
+    va_list args;
+    va_start(args, f);
+    bind(f, args);
+    va_end(args);
 }
 
 
@@ -105,13 +125,24 @@ bool SQL::row(const char * f, va_list args)
         if (*p != '%')
             continue;
 
+        ++p;
+        int width = 0;
+        for (; *p >= '0' && *p <= '9'; ++p)
+            width = width * 10 + *p - '0';
+
         int longs = 0;
-        while (*++p == 'l')
+        for (; *p == 'l'; ++p)
             ++longs;
 
         if (p[0] == 'm' && p[1] == 's') {
+            ++p;
             const char ** v = va_arg(args, const char **);
             *v = (const char *) sqlite3_column_text(stmt, i++);
+            continue;
+        }
+        else if (*p == 's') {
+            char * v = va_arg(args, char *);
+            snprintf(v, width + 1, "%s", sqlite3_column_text(stmt, i++));
             continue;
         }
 
@@ -124,7 +155,7 @@ bool SQL::row(const char * f, va_list args)
             *v = sqlite3_column_int64(stmt, i++);
             break;
         }
-        case 2: {
+        case 1: {
             long * v = va_arg(args, long *);
             *v = sqlite3_column_int64(stmt, i++);
             break;
@@ -150,6 +181,15 @@ bool runSQL(const char * sql, const char * f, ...)
     return s.run();
 }
 
+
+static int busy(void *, int iters)
+{
+    printf(" .... db busy %i\n", iters);
+    sleep(iters);
+    return true;
+}
+
+
 void open_db(const char * filename)
 {
     int r = sqlite3_open(filename, &the_db);
@@ -157,27 +197,30 @@ void open_db(const char * filename)
         errx(1, "sqlite open %s failed: %i", filename, r);
 
     if (sqlite3_extended_result_codes(the_db, true) != 0)
-        errx(1, "sqlite3_extended_result_codes failed %s",
+        errx(1, "sqlite3_extended_result_codes failed: %s",
+             sqlite3_errmsg(the_db));
+
+    if (sqlite3_busy_handler(the_db, busy, NULL) != 0)
+        errx(1, "sqlite3_busy_handler failed: %s",
              sqlite3_errmsg(the_db));
 }
 
 
 int insert_read_out(const read_out_t & r)
 {
-    text_code_t t = r.text();
     r.print();
+    text_code_t t = r.text();
 
     uint64_t p_count = 0;
-    const char * p_value = "";
+    text_code_t p_value = {};
     int p_is_inject = 0;
     int p_mult = 0;
 
     // Check for a duplicate...
-    SQL last(
-        "SELECT count,value,is_inject,mult FROM samples "
+    SQL("SELECT count,value,is_inject,mult FROM samples "
         "WHERE id = ? and count <= ? ORDER BY count DESC LIMIT 1",
-        "%i %li", r.unit_cycle(), r.count());
-    last.row("%li %ms %i %i", &p_count, &p_value, &p_is_inject, &p_mult);
+        "%i %li", r.unit_cycle(), r.count())
+        .row("%li %20s %i %i", &p_count, p_value.text, &p_is_inject, &p_mult);
 
     if (p_count == r.count()
         && strcmp(p_value, t) == 0

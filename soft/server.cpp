@@ -221,7 +221,7 @@ static void cycle(T out[16], T in [5])
         out[i] = in[i];
     out[5] = T() + 0x80000000;
     for (int i = 6; i < 15; ++i)
-        out[i] = T() + 0;
+        out[i] = T();
     out[15] = T() + 160;
 
     sha1chunk<T>(out, state);
@@ -254,6 +254,23 @@ void unpack(text_code_t t[WIDTH], const T W[5])
     }
     for (int j = 0; j < WIDTH; ++j)
         t[j].text[20] = 0;
+}
+
+
+void raw(uint32_t out[5], const text_code_t & in)
+{
+    v1u state[5] = {
+        {0x67452301}, {0xefcdab89}, {0x98badcfe}, {0x10325476}, {0xc3d2e1f0} };
+
+    v1u W[16];
+    pack<v1u, 1>(W, &in);
+    W[5] = v1u() + 0x80000000;
+    for (int i = 6; i < 15; ++i)
+        W[i] = v1u();
+    W[15] = v1u() + 160;
+
+    sha1chunk<v1u>(W, state);
+    memcpy(out, state, sizeof state);
 }
 
 
@@ -307,9 +324,9 @@ static void bist(text_code_t & start)
     text_code_t TT[WIDTH];
     text_code_t RR[WIDTH];
     for (int i = 0; i < WIDTH; ++i) {
-        start = once(start);
+        start = m_once(start);
         TT[i] = start;
-        RR[i] = once(once(start));
+        RR[i] = m_once(m_once(start));
     }
     cycle<WIDTH>(TT, 2);
     for (int i = 0; i < WIDTH; ++i)
@@ -363,15 +380,20 @@ void IterationServer::thread()
         else
             cycle<8>(texts, iterations);
 
+        __atomic_fetch_add(&total, iterations * processing.size(),
+                           __ATOMIC_RELAXED);
+
         i = 0;
         std::vector<IterationRequest *> next;
         for (auto p : processing) {
             p->done += iterations;
             p->text = texts[i++];
-            if (p->done == p->end)
-                condvar.notify_all();
-            else
+            if (p->done != p->end)
                 next.push_back(p);
+            else if (p->callback)
+                p->callback(p);
+            else
+                condvar.notify_all();
         }
         processing = std::move(next);
     }
@@ -394,31 +416,3 @@ void IterationServer::bist()
     ::bist<4>(start);
     ::bist<8>(start);
 }
-
-
-#if 0
-int main()
-{
-    text_code_t TT[8];
-    for (auto & tt : TT) {
-        start = once(start);
-        tt = start;
-    }
-    cycle<8>(TT, 10000000, false);
-    printf("+ %s\n", TT[0].text);
-
-    IterationServer s;
-    s.start_threads(7);
-
-    IterationRequest r(TT[0], 0, 10000002);
-    {
-        std::unique_lock<std::mutex> lock(s.mutex);
-        s.pending.push(&r);
-        s.condvar.notify_all();
-        s.condvar.wait(lock, [&r]() { return r.done == r.end; });
-    }
-    printf("! %s\n", r.text.text);
-
-    exit(0);
-}
-#endif

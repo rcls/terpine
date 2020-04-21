@@ -13,18 +13,24 @@ typedef std::function<
     bool(const text_code_t *, uint64_t, text_code_t *)> checkpoint_fn;
 
 template<int WIDTH>
-extern uint64_t cycle(text_code_t t[WIDTH], uint64_t count,
-                      checkpoint_fn cp = NULL);
+uint64_t cycle(text_code_t t[WIDTH], uint64_t count,
+               checkpoint_fn cp = NULL);
+
+void raw(uint32_t out[5], const text_code_t & in);
 
 struct IterationRequest {
-    IterationRequest(const text_code_t & t, uint64_t s, uint64_t e) :
-        text(t), start(s), end(e), done(s) { }
+    typedef std::function<void(IterationRequest*)> callback_t;
+    IterationRequest(const text_code_t & t, uint64_t s, uint64_t e,
+                     callback_t cb = NULL) :
+        text(t), start(s), end(e), done(s), callback(cb) { }
 
     text_code_t text;
     uint64_t start;
     uint64_t end;
 
     uint64_t done;
+
+    std::function<void(IterationRequest*)> callback;
 };
 
 struct IterationServer {
@@ -36,6 +42,7 @@ struct IterationServer {
     std::queue<IterationRequest *> pending;
     std::mutex mutex;
     std::condition_variable condvar;
+    uint64_t total = 0;
 
     static IterationServer it;
 
