@@ -28,7 +28,6 @@ executable('check'   , 'check.cpp'   , link_with: terpine)
 executable('extract' , 'extract.cpp' , link_with: terpine)
 
 executable('dump'    , 'dump.cpp'    , link_with: terpine)
-executable('db_check', 'db_check.cpp', link_with: terpine)
 
 executable('single'  , 'single.cpp'  , link_with: trpne80)
 executable('check80' , 'check80.cpp' , link_with: trpne80)

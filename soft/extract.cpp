@@ -14,8 +14,7 @@ struct Part {
     uint64_t p_count;
     text_code_t p_sample;
 };
-
-typedef std::pair<Part,Part> PartPair;
+typedef std::array<Part,2> PartPair;
 typedef std::vector<PartPair> PartPairs;
 
 static void get_mults(PartPairs & pp)
@@ -31,27 +30,26 @@ static void get_mults(PartPairs & pp)
         if (mult != 2)
             errx(1, "Mult %i on %i %li %s\n",
                  mult, p.id, p.count, p.sample.text);
-        pp.emplace_back(p, Part{});
+        pp.emplace_back(PartPair{p, Part{}});
     }
 }
 
 
-static void get_partners(PartPairs & pp)
+static void get_partners(PartPairs & pps)
 {
     SQL sql("SELECT id,count,value,is_inject FROM samples "
             "WHERE value = ? AND mult = 1");
 
-    for (auto & p : pp) {
-        auto & f = p.second;
-        auto & s = p.second;
+    for (auto & p : pps) {
         int is_inject;
-        sql.bind(f.sample.text);
-        sql.get(&s.id, &s.count, &s.sample, &is_inject);
+        sql.bind(p[0].sample);
+        sql.get(&p[1].id, &p[1].count, &p[1].sample, &is_inject);
 
         if (is_inject)
-            errx(1, "Inject set on %i %li %s\n", f.id, f.count, f.sample.text);
+            errx(1, "Inject set on %i %li %s\n",
+                 p[1].id, p[1].count, p[1].sample.text);
 
-        assert(strcmp(f.sample, s.sample) == 0);
+        assert(strcmp(p[0].sample, p[1].sample) == 0);
     }
 }
 
@@ -62,9 +60,9 @@ static void get_preceed(PartPairs & pps)
             "ORDER BY count DESC LIMIT 1");
 
     for (auto & pp : pps) {
-        for (auto * p : { &pp.first, &pp.second }) {
-            sql.bind(p->id, p->count);
-            sql.get(&p->p_count, &p->p_sample);
+        for (auto & p : pp) {
+            sql.bind(p.id, p.count);
+            sql.get(&p.p_count, &p.p_sample);
         }
     }
 }
@@ -88,15 +86,15 @@ static bool bang(const text_code_t *, uint64_t, text_code_t * next)
 
 static void extract(const PartPair & pp)
 {
-    auto & f = pp.first;
-    auto & s = pp.second;
+    auto & f = pp[0];
+    auto & s = pp[1];
 
     uint64_t delta_f = f.count - f.p_count;
     uint64_t delta_s = s.count - f.p_count;
     uint64_t delta;
 
     text_code_t text[4] = { f.p_sample, s.p_sample, "A", "B" };
-    uint64_t counts[2] = { f.p_count, s.p_count };
+    uint64_t counts[2]  = { f.p_count, s.p_count };
 
     printf("Catch-up");
     if (delta_f < delta_s) {
@@ -119,13 +117,20 @@ static void extract(const PartPair & pp)
         errx(1, "Failed on %s (got %s,%s)\n",
              f.sample.text, text[0].text, text[1].text);
 
-    uint32_t res[2][5];
-    raw(res[0], text[0]);
-    raw(res[1], text[1]);
-
-    for (int i : {0,1})
+    runSQL("BEGIN EXCLUSIVE");
+    for (int i : {0,1}) {
+        uint32_t res[5];
+        raw(res, text[i]);
         printf("%s -> %08x %08x %08x %08x %08x\n", text[i].text,
-               res[i][0], res[i][1], res[i][2], res[i][3], res[i][5]);
+               res[0], res[1], res[2], res[3], res[5]);
+        char image[41];
+        snprintf(image, sizeof image, "%08x%08x%08x%08x%08x",
+                 res[0], res[1], res[2], res[3], res[5]);
+        runSQL(
+            "INSERT INTO hits(id,count,preceed,value,image) VALUES(?,?,?,?,?)",
+            pp[i].id, pp[i].count, delta - done, text[i], image);
+    }
+    runSQL("COMMIT");
 }
 
 

@@ -4,11 +4,9 @@
 #include <stdint.h>
 #include <sqlite3.h>
 
-struct read_out_t;
 struct text_code_t;
 
 void open_db(const char * filename);
-int insert_read_out(const read_out_t & r);
 
 
 struct SQL {
@@ -24,20 +22,19 @@ struct SQL {
 
     SQL(const SQL & other) = delete;
 
+    bool row();
     template<typename... Args>
     bool row(Args*... args) {
-        if (!run())
-            return false;
-        columns(0, args...);
-        return true;
+        bool r = row();
+        if (r)
+            columns(0, args...);
+        return r;
     }
 
-    bool run();
-
-    void exists();                      // Like row() but error if none.
+    void get();                         // Like row() but error if none.
     template<typename... Args>
     void get(Args*... args) {
-        exists();
+        get();
         columns(0, args...);
     }
 
@@ -75,7 +72,7 @@ private:
 template<typename... Args>
 bool runSQL(const char * sql, const Args &... args)
 {
-    return SQL(sql, args...).run();
+    return SQL(sql, args...).row();
 }
 
 inline void SQL_column(sqlite3_stmt * stmt, int n, int * p) {
@@ -83,5 +80,21 @@ inline void SQL_column(sqlite3_stmt * stmt, int n, int * p) {
 inline void SQL_column(sqlite3_stmt * stmt, int n, uint64_t * p) {
     *p = sqlite3_column_int64(stmt, n); }
 void SQL_column(sqlite3_stmt * stmt, int n, text_code_t * t);
+
+struct Transaction {
+    Transaction(const char * b = "BEGIN EXCLUSIVE") {
+        runSQL(b);
+    }
+    ~Transaction() {
+        if (pending)
+            runSQL("ROLLBACK");
+    }
+    void commit() {
+        runSQL("COMMIT");
+        pending = false;
+    }
+private:
+    bool pending = true;
+};
 
 #endif
