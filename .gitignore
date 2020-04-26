@@ -3,3 +3,5 @@ Terpine.*/
 EthTest.*/
 *.pdf
 *.PDF
+build/
+test_board/

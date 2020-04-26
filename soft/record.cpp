@@ -8,8 +8,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-static int id_base;
-
 static void restart(const read_out_t & item)
 {
     struct timeval tv;
@@ -24,7 +22,7 @@ static void restart(const read_out_t & item)
 }
 
 
-static void insert_read_out(const read_out_t & r)
+static void insert_read_out(int id, const read_out_t & r)
 {
     r.print();
     text_code_t t = r.text();
@@ -39,7 +37,7 @@ static void insert_read_out(const read_out_t & r)
     // Check for a duplicate...
     SQL("SELECT count,value,is_inject,mult FROM samples "
         "WHERE id = ? and count <= ? ORDER BY count DESC LIMIT 1",
-        id_base + r.unit_cycle(), r.count())
+        id, r.count())
         .row(&p_count, &p_value, &p_is_inject, &p_mult);
 
     if (p_count == r.count()
@@ -67,8 +65,7 @@ static void insert_read_out(const read_out_t & r)
 
     // Get the last count.  Attempting to insert with a count going backwards is
     // always an error.
-    if (SQL("SELECT MAX(count) FROM samples WHERE id = ?",
-            id_base + r.unit_cycle())
+    if (SQL("SELECT MAX(count) FROM samples WHERE id = ?", id)
         .row(&p_count)
         && p_count >= r.count())
         errx(1, "count jumps backwards, old %lu after new %lu",
@@ -83,8 +80,14 @@ static void insert_read_out(const read_out_t & r)
     }
 
     runSQL(
-        "INSERT INTO samples(id,count,value,is_inject,mult) VALUES(?,?,?,?,?)",
-        id_base + r.unit_cycle(), r.count(), t.text, r.is_inject(), mult + 1);
+        "INSERT INTO samples(id,count,value,is_inject,mult) "
+        "VALUES(?,?,?,?,?)", id, r.count(), t.text, r.is_inject(), mult + 1);
+
+    if (!r.is_inject()) {
+        runSQL("UPDATE misc SET value = value + 1 WHERE key = \"matches\"");
+        runSQL("UPDATE misc SET value = value + ? WHERE key = \"count\"",
+               r.count() - p_count);
+    }
 
     transaction.commit();
 }
@@ -95,6 +98,7 @@ int main()
     setlinebuf(stdout);
     open_db("log100.db");
 
+    int id_base;
     SQL("SELECT value FROM misc WHERE KEY = 'id_base'").row(&id_base);
 
     open_socket();
@@ -110,7 +114,7 @@ int main()
         if (r.raddr != addr)
             errx(1, "read address mismatch %i %i\n", r.raddr, addr);
         if (r.count() != 0)
-            insert_read_out(r);
+            insert_read_out(id_base + r.unit_cycle(), r);
     }
 
     // Check for overflow.
@@ -126,7 +130,7 @@ int main()
         for (int unit = 1; unit <= 24; ++unit) {
             if (last.nempty & 1 << unit) {
                 read_out_t item = fifo_read(unit);
-                insert_read_out(item);
+                insert_read_out(id_base + item.unit_cycle(), item);
             }
         }
     }

@@ -34,12 +34,12 @@ static inline v1u vrotate(v1u v)
 
 static inline v4u vrotate(v4u v)
 {
-    return __builtin_shuffle(v, (v4u) {1, 2, 3, 0});
+    return __builtin_shuffle(v, v4u{1, 2, 3, 0});
 }
 
 static inline v8u vrotate(v8u v)
 {
-    return __builtin_shuffle(v, (v8u) {1, 2, 3, 4, 5, 6, 7, 0});
+    return __builtin_shuffle(v, v8u{1, 2, 3, 4, 5, 6, 7, 0});
 }
 
 static inline bool is_zero(v1u v)
@@ -49,13 +49,13 @@ static inline bool is_zero(v1u v)
 static bool is_zero(v4u v)
 {
     typedef long long v2du __attribute__((vector_size(16)));
-    auto d = reinterpret_cast<v2du>(v);
+    auto d = (v2du) v;
     return __builtin_ia32_ptestz128(d, d);
 }
 static inline bool is_zero(v8u v)
 {
     typedef long long v4du __attribute__((vector_size(32)));
-    auto d = reinterpret_cast<v4du>(v);
+    auto d = (v4du) v;
     return __builtin_ia32_ptestz256(d, d);
 }
 
@@ -94,6 +94,7 @@ static const uint32_t K3 = 0xca62c1d6;
         C = leftrot(B, 30);                                     \
         B = A;                                                  \
         A = nextA;                                              \
+        ++i;                                                    \
     } while (0)
 
 
@@ -106,102 +107,12 @@ static void sha1chunk(T __restrict__ W[16], T __restrict__ state[5])
     T D = state[3];
     T E = state[4];
 
-#if 0
-    for (int i = 0; i < 16; ++i)
-        ROUND(i, F0, K0);
-    for (int i = 16; i < 20; ++i)
-        ROUND(i, F0, K0);
-    for (int i = 20; i < 40; ++i)
-        ROUND(i, F1, K1);
-    for (int i = 40; i < 60; ++i)
-        ROUND(i, F2, K2);
-    for (int i = 60; i < 80; ++i)
-        ROUND(i, F3, K3);
-#else
-    ROUND( 0, F0, K0);
-    ROUND( 1, F0, K0);
-    ROUND( 2, F0, K0);
-    ROUND( 3, F0, K0);
-    ROUND( 4, F0, K0);
-    ROUND( 5, F0, K0);
-    ROUND( 6, F0, K0);
-    ROUND( 7, F0, K0);
-    ROUND( 8, F0, K0);
-    ROUND( 9, F0, K0);
-    ROUND(10, F0, K0);
-    ROUND(11, F0, K0);
-    ROUND(12, F0, K0);
-    ROUND(13, F0, K0);
-    ROUND(14, F0, K0);
-    ROUND(15, F0, K0);
-    ROUND(16, F0, K0);
-    ROUND(17, F0, K0);
-    ROUND(18, F0, K0);
-    ROUND(19, F0, K0);
-
-    ROUND(20, F1, K1);
-    ROUND(21, F1, K1);
-    ROUND(22, F1, K1);
-    ROUND(23, F1, K1);
-    ROUND(24, F1, K1);
-    ROUND(25, F1, K1);
-    ROUND(26, F1, K1);
-    ROUND(27, F1, K1);
-    ROUND(28, F1, K1);
-    ROUND(29, F1, K1);
-    ROUND(30, F1, K1);
-    ROUND(31, F1, K1);
-    ROUND(32, F1, K1);
-    ROUND(33, F1, K1);
-    ROUND(34, F1, K1);
-    ROUND(35, F1, K1);
-    ROUND(36, F1, K1);
-    ROUND(37, F1, K1);
-    ROUND(38, F1, K1);
-    ROUND(39, F1, K1);
-
-    ROUND(40, F2, K2);
-    ROUND(41, F2, K2);
-    ROUND(42, F2, K2);
-    ROUND(43, F2, K2);
-    ROUND(44, F2, K2);
-    ROUND(45, F2, K2);
-    ROUND(46, F2, K2);
-    ROUND(47, F2, K2);
-    ROUND(48, F2, K2);
-    ROUND(49, F2, K2);
-    ROUND(50, F2, K2);
-    ROUND(51, F2, K2);
-    ROUND(52, F2, K2);
-    ROUND(53, F2, K2);
-    ROUND(54, F2, K2);
-    ROUND(55, F2, K2);
-    ROUND(56, F2, K2);
-    ROUND(57, F2, K2);
-    ROUND(58, F2, K2);
-    ROUND(59, F2, K2);
-
-    ROUND(60, F3, K3);
-    ROUND(61, F3, K3);
-    ROUND(62, F3, K3);
-    ROUND(63, F3, K3);
-    ROUND(64, F3, K3);
-    ROUND(65, F3, K3);
-    ROUND(66, F3, K3);
-    ROUND(67, F3, K3);
-    ROUND(68, F3, K3);
-    ROUND(69, F3, K3);
-    ROUND(70, F3, K3);
-    ROUND(71, F3, K3);
-    ROUND(72, F3, K3);
-    ROUND(73, F3, K3);
-    ROUND(74, F3, K3);
-    ROUND(75, F3, K3);
-    ROUND(76, F3, K3);
-    ROUND(77, F3, K3);
-    ROUND(78, F3, K3);
-    ROUND(79, F3, K3);
-#endif
+    int i = 0;
+#define ICOSA(F) F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F
+    ICOSA(ROUND(i, F0, K0));
+    ICOSA(ROUND(i, F1, K1));
+    ICOSA(ROUND(i, F2, K2));
+    ICOSA(ROUND(i, F3, K3));
 
     state[0] += A;
     state[1] += B;
@@ -325,11 +236,13 @@ static void bist(text_code_t & start)
     text_code_t TT[WIDTH];
     text_code_t RR[WIDTH];
     for (int i = 0; i < WIDTH; ++i) {
-        start = m_once(start);
+        start = model(start);
         TT[i] = start;
-        RR[i] = m_once(m_once(start));
+        for (int j = 0; j < 100; ++j)
+            start = model(start);
+        RR[i] = start;
     }
-    cycle<WIDTH>(TT, 2);
+    cycle<WIDTH>(TT, 100);
     for (int i = 0; i < WIDTH; ++i)
         assert(strcmp(TT[i], RR[i]) == 0);
 
@@ -352,7 +265,7 @@ void IterationServer::thread()
         if (processing.size() < 8) {
             std::unique_lock<std::mutex> lock(mutex);
             if (processing.empty())
-                condvar.wait(lock, [this]() { return !pending.empty(); });
+                condvar.wait(lock, [=]() { return !pending.empty(); });
             while (!pending.empty()) {
                 processing.push_back(pending.front());
                 pending.pop();
@@ -406,7 +319,7 @@ void IterationServer::start_threads(int n)
     bist();
 
     for (int i = 0; i < n; ++i)
-        std::thread([this]() { thread(); }).detach();
+        std::thread([=]() { thread(); }).detach();
 }
 
 

@@ -121,11 +121,10 @@ static void extract(const PartPair & pp)
     for (int i : {0,1}) {
         uint32_t res[5];
         raw(res, text[i]);
-        printf("%s -> %08x %08x %08x %08x %08x\n", text[i].text,
-               res[0], res[1], res[2], res[3], res[5]);
-        char image[41];
-        snprintf(image, sizeof image, "%08x%08x%08x%08x%08x",
+        char image[45];
+        snprintf(image, sizeof image, "%08x %08x %08x %08x %08x",
                  res[0], res[1], res[2], res[3], res[5]);
+        printf("%s -> %s\n", text[i].text, image);
         runSQL(
             "INSERT INTO hits(id,count,preceed,value,image) VALUES(?,?,?,?,?)",
             pp[i].id, pp[i].count, delta - done, text[i], image);

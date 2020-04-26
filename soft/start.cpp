@@ -14,7 +14,7 @@ int main(void)
     SQL("BEGIN");
     SQL("SELECT value + 65536 FROM misc WHERE KEY = 'id_base'")
         .row(&id_base);
-    SQL("INSERT OR REPLACE INTO misc(value) VALUES (?) WHERE KEY = 'id_base'",
+    SQL("INSERT OR REPLACE INTO misc(key,value) VALUES (\"id_base\",?)",
         id_base).row();
     SQL("COMMIT");
 

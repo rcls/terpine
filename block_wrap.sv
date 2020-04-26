@@ -33,7 +33,7 @@ module block_wrap(
    BUFGMUX_CTRL clkmux2(.S(xadc_alarm), .I0(fast_clk[2]), .I1(slow_clk[2]), .O(clk[2]));
 
    MMCME2_BASE #(
-     .CLKFBOUT_MULT_F(21),
+     .CLKFBOUT_MULT_F(24),
      .CLKIN1_PERIOD(20),
      .CLKOUT0_DIVIDE_F(3),
      .CLKOUT1_DIVIDE(3),
@@ -41,7 +41,7 @@ module block_wrap(
      .CLKOUT3_DIVIDE(6),
      .CLKOUT4_DIVIDE(6),
      .CLKOUT5_DIVIDE(6),
-     .CLKOUT6_DIVIDE(42),
+     .CLKOUT6_DIVIDE(48),
      .CLKOUT0_PHASE(0),
      .CLKOUT1_PHASE(120),
      .CLKOUT2_PHASE(240),
@@ -57,7 +57,7 @@ module block_wrap(
 
    genvar i;
    for (i = 1; i <= 24; i = i + 1) begin:b
-      block #(i) b(command, opcode, strobe, clk[i % 3],
+      block #(i) b(command, opcode, strobe, clk[0],
      fifo_empty[i], fifo_oflow[i], fifo_req[i], fifo_bits[i],
      fifo_rst, mii_clk);
    end

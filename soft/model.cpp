@@ -25,7 +25,7 @@ static text_code_t b20to32(const uint32_t by20[5])
     return result;
 }
 
-text_code_t m_once(const text_code_t & t)
+text_code_t model(const text_code_t & t)
 {
     uint8_t bytes[20];
     SHA1((const uint8_t *) t.text, 20, (uint8_t *) bytes);

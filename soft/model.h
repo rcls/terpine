@@ -1,8 +1,8 @@
 #ifndef MODEL_H_
 #define MODEL_H_
 
-#include "packet.h"
+struct text_code_t;
 
-text_code_t m_once(const text_code_t & t);
+text_code_t model(const text_code_t & t);
 
 #endif

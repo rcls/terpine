@@ -5,8 +5,8 @@ project('terpine', ['c', 'cpp'],
 
 add_project_arguments(
     '-D_GNU_SOURCE',
-    '-Wno-format-zero-length', '-Wno-psabi', '-Wmissing-declarations',
-    '-march=skylake', '-mtune=skylake', '-fstack-protector', '-flto',
+    '-Wno-unused-parameter', '-Wno-psabi', '-Wmissing-declarations',
+    '-march=skylake', '-mtune=skylake', '-flto',
     language : 'cpp')
 
 openssl = dependency('openssl')
