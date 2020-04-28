@@ -91,7 +91,7 @@ square b[5].b/qD   0 34
 column b[6].b/qA   0 217 234
 column b[6].b/qB   8 217 234
 column b[6].b/qC  16 217 234
-square b[6].b/qD   0 200
+square b[6].b/qD   0 201
 
 fullrow b[7].b  b[8].b   51 11
 fullrow b[9].b  b[10].b  67 14
@@ -124,16 +124,15 @@ set_property LOC RAMB36_X1Y8 [get_cells b[5].b/fifo/fifo]
 set_property LOC RAMB36_X1Y41 [get_cells b[6].b/fifo/fifo]
 
 
-
 set_false_path -to [get_pins -filter {REF_PIN_NAME == RST} -of_objects [get_cells -hierarchical -filter {REF_NAME =~ FIFO*}]]
 
-foreach i {0 1 2 3 4 5} {
+foreach i {0 1} {
     set_false_path \
         -from [get_clocks -of_objects [get_pins pll/CLKOUT6]] \
         -to [get_clocks -of_objects [get_pins pll/CLKOUT$i]]
 }
 
-foreach i {0 1 2 3 4 5} j {3 4 5 0 1 2} {
+foreach i {0 1} j {1 0} {
     set_false_path \
         -from [get_clocks -of_objects [get_pins pll/CLKOUT$i]] \
         -to [get_clocks -of_objects [get_pins pll/CLKOUT$j]]
