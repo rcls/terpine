@@ -6,10 +6,6 @@ proc get_slice {X Y} {
     return [get_sites SLICE_X${X}Y${Y}]
 }
 
-proc slices {X Y W H} {
-    return SLICE_X${X}Y${Y}:SLICE_X[expr $X+$W-1]Y[expr $Y+$H-1]
-}
-
 proc cycle {P X Y} {
 #    create_pblock pblock_$P
 #    set PB [get_pblocks pblock_$P]

@@ -1,6 +1,6 @@
 `default_nettype none
 
-module block_wrap(
+module terpine(
   input bit[1:0] rmii_RX,
   input bit rmii_RX_CRS_DV,
 
