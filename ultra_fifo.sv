@@ -10,6 +10,8 @@ module fifo_out(
   output bit EMPTY,
   output bit ALMOSTEMPTY);
 
+   // These guys can ignore the fifo reset.
+
    FIFO36E2
      #(.REGISTER_MODE("REGISTERED"), .WRITE_WIDTH(36), .READ_WIDTH(36),
        .FIRST_WORD_FALL_THROUGH("TRUE"), .PROG_EMPTY_THRESH(1000))
@@ -22,7 +24,7 @@ module fifo_out(
      .DOUTP(DO[35:32]),
      .RDCLK(RDCLK),
      .RDEN(RDEN),
-     .RST(RST),
+     .RST(0),
      .EMPTY(EMPTY),
      .PROGEMPTY(ALMOSTEMPTY));
 

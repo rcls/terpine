@@ -16,48 +16,34 @@ module ultrapine(
    bit strobe;
    bit rmii_CLK_pad;
 
-   bit [24:1] fifo_req;
-   bit [24:1] fifo_empty;
-   bit [24:1] fifo_oflow;
-   bit [24:1] fifo_bits;
+   bit [191:0] fifo_req;
+   bit [191:0] fifo_empty;
+   bit [191:0] fifo_oflow;
+   bit [191:0] fifo_bits;
    bit pllfb, mii_clk;
-   bit [2:0] fast_clk, slow_clk, clk;
+   bit fast_clk, slow_clk, clk;
    bit fifo_rst;
    bit xadc_alarm;
 
    IBUFDS sys_clock(.I(sys_diff_clock_clk_p), .IB(sys_diff_clock_clk_n),
      .O(rmii_CLK_pad));
 
-   BUFGMUX_CTRL clkmux0(.S(xadc_alarm), .I0(fast_clk[0]), .I1(slow_clk[0]), .O(clk[0]));
-   BUFGMUX_CTRL clkmux1(.S(xadc_alarm), .I0(fast_clk[1]), .I1(slow_clk[1]), .O(clk[1]));
-   BUFGMUX_CTRL clkmux2(.S(xadc_alarm), .I0(fast_clk[2]), .I1(slow_clk[2]), .O(clk[2]));
+   BUFGMUX_CTRL clkmux(.S(xadc_alarm), .I0(fast_clk), .I1(slow_clk), .O(clk));
 
    MMCME2_BASE #(
-     .CLKFBOUT_MULT_F(21),
+     .CLKFBOUT_MULT_F(30),
      .CLKIN1_PERIOD(20),
      .CLKOUT0_DIVIDE_F(3),
-     .CLKOUT1_DIVIDE(3),
-     .CLKOUT2_DIVIDE(3),
-     .CLKOUT3_DIVIDE(6),
-     .CLKOUT4_DIVIDE(6),
-     .CLKOUT5_DIVIDE(6),
-     .CLKOUT6_DIVIDE(42),
-     .CLKOUT0_PHASE(0),
-     .CLKOUT1_PHASE(120),
-     .CLKOUT2_PHASE(240),
-     .CLKOUT3_PHASE(0),
-     .CLKOUT4_PHASE(240),
-     .CLKOUT5_PHASE(120)
+     .CLKOUT1_DIVIDE(6),
+     .CLKOUT6_DIVIDE(60)
      ) pll (
      .CLKIN1(rmii_CLK_pad),
-     .CLKOUT0(fast_clk[0]), .CLKOUT1(fast_clk[1]), .CLKOUT2(fast_clk[2]),
-     .CLKOUT3(slow_clk[0]), .CLKOUT4(slow_clk[1]), .CLKOUT5(slow_clk[2]),
-     .CLKOUT6(mii_clk),
+     .CLKOUT0(fast_clk), .CLKOUT1(slow_clk), .CLKOUT6(mii_clk),
      .CLKFBOUT(pllfb), .CLKFBIN(pllfb), .PWRDWN(0), .RST(0));
 
    genvar i;
-   for (i = 1; i <= 24; i = i + 1) begin:b
-      block #(i) b(command, opcode, strobe, clk[i % 3],
+   for (i = 0; i <= 191; i = i + 1) begin:b
+      block #(i) b(command, opcode, strobe, clk,
      fifo_empty[i], fifo_oflow[i], fifo_req[i], fifo_bits[i],
      fifo_rst, mii_clk);
    end
@@ -92,8 +78,24 @@ module ultrapine(
    bit [7:0] seqnum;
    bit tx_strobe;
 
+   bit [23:0] folded_empty, folded_oflow, folded_req, folded_bits;
+   assign folded_empty = fifo_empty  [ 23:  0] | fifo_empty[ 47: 24]
+                         | fifo_empty[ 71: 48] | fifo_empty[ 95: 72]
+                         | fifo_empty[119: 96] | fifo_empty[143:120]
+                         | fifo_empty[167:144] | fifo_empty[191:168];
+   assign folded_oflow = fifo_oflow  [ 23:  0] | fifo_oflow[ 47: 24]
+                         | fifo_oflow[ 71: 48] | fifo_oflow[ 95: 72]
+                         | fifo_oflow[119: 96] | fifo_oflow[143:120]
+                         | fifo_oflow[167:144] | fifo_oflow[191:168];
+   assign folded_bits = fifo_bits   [ 23:  0] | fifo_bits[ 47: 24]
+                         | fifo_bits[ 71: 48] | fifo_bits[ 95: 72]
+                         | fifo_bits[119: 96] | fifo_bits[143:120]
+                         | fifo_bits[167:144] | fifo_bits[191:168];
+   assign fifo_req = {folded_req, folded_req, folded_req, folded_req,
+     folded_req, folded_req, folded_req, folded_req};
+
    read_out ro(command, opcode, strobe, seqnum, tx_strobe,
-     fifo_empty, fifo_oflow, fifo_req, fifo_bits,
+     folded_empty, folded_oflow, folded_req, folded_bits,
      mii_Q, mii_QV, mii_clk);
 
    control con(rmii_D, rmii_DV,
