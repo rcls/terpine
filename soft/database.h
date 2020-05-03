@@ -39,6 +39,11 @@ struct SQL {
     }
 
     template<typename... Args>
+    void columns(Args*... args) {
+        columns(0, args...);
+    }
+
+    template<typename... Args>
     void bind(const Args&... args) {
         sqlite3_reset(stmt);
         return bind_(1, args...);

@@ -1,9 +1,16 @@
 #include "fifo.h"
-#include "model.h"
 #include "packet.h"
+#include "server.h"
 
 #include <err.h>
 #include <stdio.h>
+
+static void run(text_code_t text, int64_t c0, int64_t c1)
+{
+    cycle<1>(&text, c1 - c0);
+    printf("Recompute: %s\n", text.text);
+}
+
 
 static void transaction_check()
 {
@@ -38,7 +45,7 @@ static void transaction_check()
     unit2[1].print();
     unit2[2].print();
     run(unit2[0].text(), unit2[0].count(), unit2[1].count());
-    run(unit2[0].text(), unit2[0].count(), unit2[2].count());
+    run(unit2[0].text(), unit2[1].count(), unit2[2].count());
 }
 
 
