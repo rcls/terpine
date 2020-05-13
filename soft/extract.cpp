@@ -19,8 +19,9 @@ typedef std::vector<PartPair> PartPairs;
 
 static void get_mults(PartPairs & pp)
 {
-    SQL query("SELECT id,count,value,is_inject,mult "
-              "FROM samples WHERE mult > 1");
+    SQL query("SELECT id,count,value,is_inject,mult FROM samples "
+              "WHERE mult > 1 AND NOT EXISTS (SELECT 1 FROM hits "
+              "WHERE hits.id == samples.id AND hits.count == samples.count)");
     Part p = {};
     int is_inject;
     int mult;
@@ -86,36 +87,43 @@ static bool bang(const text_code_t *, uint64_t, text_code_t * next)
 
 static void extract(const PartPair & pp)
 {
-    auto & f = pp[0];
-    auto & s = pp[1];
+    for (auto & p : pp)
+        printf("%i %lu %s %lu %s\n",
+               p.id, p.count, p.sample.text,
+               p.p_count, p.p_sample.text);
 
-    uint64_t delta_f = f.count - f.p_count;
-    uint64_t delta_s = s.count - f.p_count;
+    auto & p0 = pp[0];
+    auto & p1 = pp[1];
+    uint64_t delta0 = p0.count - p0.p_count;
+    uint64_t delta1 = p1.count - p1.p_count;
+    printf("%lu %lu\n", delta0, delta1);
     uint64_t delta;
 
-    text_code_t text[4] = { f.p_sample, s.p_sample, "A", "B" };
-    uint64_t counts[2]  = { f.p_count, s.p_count };
+    text_code_t text[4] = { p0.p_sample, p1.p_sample, "A", "B" };
 
-    printf("Catch-up");
-    if (delta_f < delta_s) {
-        // Catch up s...
-        cycle<1>(&text[0], delta_s - delta_f, dot);
-        counts[0] += delta_s - delta_f;
-        delta = delta_f;
+    if (delta0 < delta1) {
+        // Catch up p1...
+        uint64_t gap = delta1 - delta0;
+        printf("Catch-up 1 %lu ", gap);
+        cycle<1>(&text[1], gap, dot);
+        delta = delta0;
     }
     else {
-        // Catch up f...
-        cycle<1>(&text[1], delta_f - delta_s, dot);
-        counts[1] += delta_f - delta_s;
-        delta = delta_s;
+        // Catch up p0...
+        uint64_t gap = delta0 - delta1;
+        printf("Catch-up 0 %lu ", gap);
+        cycle<1>(&text[0], gap, dot);
+        delta = delta1;
     }
 
+    printf("\nSearch %lu ", delta);
     // Now iterate...
     uint64_t done = cycle<4>(text, delta, bang);
+    printf("\n");
 
     if (done == delta)
         errx(1, "Failed on %s (got %s,%s)\n",
-             f.sample.text, text[0].text, text[1].text);
+             p0.sample.text, text[0].text, text[1].text);
 
     runSQL("BEGIN EXCLUSIVE");
     for (int i : {0,1}) {
@@ -123,7 +131,7 @@ static void extract(const PartPair & pp)
         raw(res, text[i]);
         char image[45];
         snprintf(image, sizeof image, "%08x %08x %08x %08x %08x",
-                 res[0], res[1], res[2], res[3], res[5]);
+                 res[0], res[1], res[2], res[3], res[4]);
         printf("%s -> %s\n", text[i].text, image);
         runSQL(
             "INSERT INTO hits(id,count,preceed,value,image) VALUES(?,?,?,?,?)",

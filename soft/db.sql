@@ -15,19 +15,16 @@ CREATE TABLE samples(
     verified  BOOLEAN,
     PRIMARY KEY (id ASC, count ASC));
 
-CREATE INDEX samples_by_text ON samples(value);
-
-CREATE INDEX samples_ordered ON samples(id ASC, count ASC);
 CREATE UNIQUE INDEX samples_mult ON samples(value, mult);
-CREATE UNIQUE INDEX samples_mult_value ON samples(mult, value);
-CREATE INDEX samples_verified ON samples(verified,id,count);
+CREATE UNIQUE INDEX samples_mult_value ON samples(mult, value) WHERE mult > 1;
+CREATE INDEX samples_verified ON samples(verified,id,count) WHERE verified IS NOT NULL;
 
 CREATE TABLE hits(
     id      INTEGER       NOT NULL,
     count   INTEGER       NOT NULL,
     preceed INTEGER       NOT NULL,
     value   CHARACTER(20) NOT NULL,
-    image   CHARACTER(40) NOT NULL,
+    image   CHARACTER(44) NOT NULL,
     PRIMARY KEY(id ASC, count ASC),
     FOREIGN KEY(id, count) REFERENCES samples)
 

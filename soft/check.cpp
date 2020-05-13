@@ -44,7 +44,7 @@ static void start(int id)
     text_code_t text2;
     if (!SQL("SELECT count,value FROM samples "
              "WHERE verified IS NULL AND id = ? AND is_inject = 0 "
-             "ORDER BY value DESC LIMIT 1", id).row(&count2, &text2)) {
+             "ORDER BY count DESC LIMIT 1", id).row(&count2, &text2)) {
         printf("Got nothing for id %i\n", id);
         return;
     }
@@ -67,14 +67,17 @@ int main()
     setlinebuf(stdout);
     open_db("log100.db");
 
+    int id_base;
+    SQL("SELECT value FROM misc WHERE key = \"id_base\"").get(&id_base);
+
     int id;
-    for (SQL units("SELECT distinct id FROM samples WHERE id > 131072");
+    for (SQL units("SELECT distinct id FROM samples WHERE id > ?", id_base);
          units.row(&id); )
         start(id);
 
     printf("Start...\n");
     // Start the server...
-    IterationServer::it.start_threads(7);
+    IterationServer::it.start_threads(8);
     uint64_t last_total = 0;
     while (1) {
         sleep(10);
