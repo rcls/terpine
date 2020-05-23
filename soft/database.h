@@ -12,6 +12,7 @@ void open_db(const char * filename);
 struct SQL {
     SQL() = delete;
     SQL(const char * sql);
+    SQL(SQL && other) : stmt(other.stmt) { other.stmt = nullptr; }
 
     template<typename... Args>
     SQL(const char * sql, const Args&... args) : SQL(sql) {

@@ -32,3 +32,8 @@ CREATE INDEX hits_value ON hits(value);
 CREATE INDEX hits_image ON hits(image);
 
 CREATE TABLE misc(key TEXT PRIMARY KEY, value INTEGER);
+
+CREATE TABLE prior(value CHARACTER(20) PRIMARY KEY,
+                   prior CHARACTER(20),
+                   image CHARACTER(40));
+CREATE INDEX prior_image ON prior(image);

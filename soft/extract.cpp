@@ -4,6 +4,8 @@
 
 #include <assert.h>
 #include <err.h>
+#include <mutex>
+#include <thread>
 #include <string.h>
 
 struct Part {
@@ -85,7 +87,7 @@ static bool bang(const text_code_t *, uint64_t, text_code_t * next)
 }
 
 
-static void extract(const PartPair & pp)
+static void extract(const PartPair & pp, std::mutex * mutex)
 {
     for (auto & p : pp)
         printf("%i %lu %s %lu %s\n",
@@ -125,6 +127,7 @@ static void extract(const PartPair & pp)
         errx(1, "Failed on %s (got %s,%s)\n",
              p0.sample.text, text[0].text, text[1].text);
 
+    std::unique_lock<std::mutex> lock(*mutex);
     runSQL("BEGIN EXCLUSIVE");
     for (int i : {0,1}) {
         uint32_t res[5];
@@ -150,6 +153,10 @@ int main()
     get_partners(pps);
     get_preceed(pps);
 
+    std::mutex mutex;
+    std::vector<std::thread> threads;
     for (auto & pp : pps)
-        extract(pp);
+        threads.emplace_back(&extract, pp, &mutex);
+    for (auto & t : threads)
+        t.join();
 }

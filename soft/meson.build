@@ -26,11 +26,10 @@ executable('start'   , 'start.cpp'   , link_with: terpine)
 executable('record'  , 'record.cpp'  , link_with: terpine)
 executable('check'   , 'check.cpp'   , link_with: terpine)
 executable('extract' , 'extract.cpp' , link_with: terpine)
-
+executable('cheat'   , 'cheat.cpp'   , link_with: terpine)
 executable('dump'    , 'dump.cpp'    , link_with: terpine)
 
 executable('single'  , 'single.cpp'  , link_with: trpne80)
 executable('check80' , 'check80.cpp' , link_with: trpne80)
-
 executable('sha1test', 'sha1test.c')
 executable('ethsum'  , 'ethsum.c')

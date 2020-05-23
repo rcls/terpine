@@ -3,6 +3,7 @@
 #include <err.h>
 #include <errno.h>
 #include <linux/if_packet.h>
+#include <net/if.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -18,7 +19,12 @@ const read_out_t & open_socket()
     if (s < 0)
         err(1, "socket");
 
-    if (setsockopt(s, SOL_SOCKET, SO_BINDTODEVICE, "eth0", 4) < 0)
+    sockaddr_ll sll = {};
+    sll.sll_family = AF_PACKET;
+    sll.sll_ifindex = if_nametoindex("eth0");
+    if (!sll.sll_ifindex)
+        err(1, "lookup eth0");
+    if (bind(s, (sockaddr *) &sll, sizeof sll) < 0)
         err(1, "bind to device");
 
     struct timeval tv;
@@ -70,23 +76,31 @@ const read_out_t & transact(control_t & req, bool seq_match)
 
     // Flush any extraneous packets...
     while (recv(s, &r, sizeof r, MSG_DONTWAIT) > 0);
+    bool tx = true;
 
-    for (int i = 0; i < 10; ++i) {
-        if (sendto(s, &req, sizeof req,
-                   0, (struct sockaddr *) &a, sizeof a) < 0)
+    for (int i = 0; i < 20; ++i) {
+        if (tx && sendto(s, &req, sizeof req,
+                         0, (struct sockaddr *) &a, sizeof a) < 0)
             err(1, "sendto");
 
         int l = recv(s, &r, sizeof r, 0);
         if (l < 0 && errno == EAGAIN) {
             warnx("Time out");
+            tx = true;
             continue;
         }
+
+        tx = false;
+
+        // We may receive our own requests, so ignore those packets.
+        if (l > 0 && r.resp.id != 2)
+            continue;
 
         if (l < 0)
             err(1, "recv");
 
         if (l < (int) sizeof r.resp)
-            errx(1, "short packet (%i < %zi)\n", l, sizeof r.resp);
+            errx(1, "short packet (%i < %zi)", l, sizeof r.resp);
 
         if (!seq_match || r.resp.sequence == ((next_sequence + 1) & 0xff)) {
             next_sequence = r.resp.sequence;
@@ -94,10 +108,10 @@ const read_out_t & transact(control_t & req, bool seq_match)
             return last;
         }
 
-        warnx("sequence %i expected %i\n", r.resp.sequence, next_sequence);
-
-        // Do a waiting flush, just to catch up...
-        while (recv(s, &r, sizeof r, 0) > 0);
+        // Silently ignore duplicates, but warn on other sequence misses.
+        if (r.resp.sequence != next_sequence)
+            warnx("sequence %i expected %i",
+                  r.resp.sequence, (next_sequence + 1) & 0xff);
     }
     errx(1, "failed to transact");
 }

@@ -34,9 +34,6 @@ struct IterationRequest {
 };
 
 struct IterationServer {
-    void request(IterationRequest * req);
-    void wait(IterationRequest * req);
-    void run(IterationRequest * req);
     static void bist();
 
     std::queue<IterationRequest *> pending;
