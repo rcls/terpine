@@ -1,6 +1,6 @@
 `default_nettype none
 
-module block(input bit [19:0] command,
+module block (input bit [19:0] command,
   input bit [2:0] opcode,
   input bit async_strobe,
   input bit clk,
@@ -13,6 +13,8 @@ module block(input bit [19:0] command,
   input bit fifo_clk);
 
    parameter id = 0;
+   parameter id_width = 8;
+   parameter FIFO_RWIDTH = 36;
    parameter mask_bits = 30; // mask was 32.
    bit [31:0] mask = 32'hffffffff << (32 - mask_bits);
 
@@ -77,7 +79,7 @@ module block(input bit [19:0] command,
          inject[opcode_sync] <= command_sync;
 
       opcode_command <= strobe5 && opcode_sync == 7
-                        && command_sync[15:8] == id;
+                        && command_sync[7+id_width:8] == id;
 
       if (opcode_command) begin
          inject_cycle <= command_sync[4:0];
@@ -230,7 +232,7 @@ module block(input bit [19:0] command,
       injectQ <= inject[inject_idx];
    end
 
-   bit [35:0] fifo_out, fifo_shift;
+   bit [FIFO_RWIDTH-1:0] fifo_out, fifo_shift;
    bit fifo_almost_empty;
    fifo_out fifo(
      .DI({meta[19], D19 }),

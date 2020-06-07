@@ -2,11 +2,8 @@ proc slice {X Y} {
     return SLICE_X${X}Y${Y}
 }
 
-proc slices {X Y W H} {
-    return SLICE_X${X}Y${Y}:SLICE_X[expr $X+$W-1]Y[expr $Y+$H-1]
-}
-
-set laguna_cols {111 124 139 152 164 182 19 194 214 225 37 50 63 8 85 97}
+#set laguna_cols {111 124 139 152 164 182 19 194 214 225 37 50 63 8 85 97}
+set laguna_cols [lsort {8 19 33 47 62 78 90 104 119 135 150 161}]
 
 proc not_laguna {X} {
     variable laguna_cols
@@ -14,8 +11,8 @@ proc not_laguna {X} {
 }
 
 set slicem_cols {}
-for {set X 0} {$X <= 232} {incr X} {
-    set T [get_property SITE_TYPE [get_sites SLICE_X${X}Y0]]
+for {set X 0} {$X <= 168} {incr X} {
+    set T [get_property SITE_TYPE [get_sites SLICE_X${X}Y150]]
     if {$T eq "SLICEM"} {
         lappend slicem_cols $X
     }
@@ -34,7 +31,7 @@ proc cycle {P X Y} {
             lappend SIX $C
         }
     }
-    puts $SIX
+    #puts $SIX
 
     # Select which columns to avoid.  Find the leftmost and rightmost SLICEMs.
     # Maybe we should try and avoid both at edges?
@@ -52,7 +49,7 @@ proc cycle {P X Y} {
             lappend USE $C
         }
     }
-    puts $USE
+    #puts $USE
     foreach R {A I1 I2 I3} C [lrange $USE 0 3] {
         foreach I {0 1 2 3} {
             set J [expr $I * 8 + 7]
@@ -63,8 +60,6 @@ proc cycle {P X Y} {
 }
 
 proc square {P X1 X2 Y} {
-#    set PB [create_pblock pblock_$P]
-#    resize_pblock $PB -add [slices $X1 $Y 12 8]
     cycle $P/cA $X1 $Y
     cycle $P/cB $X2 $Y
     cycle $P/cC $X1 [expr $Y + 5]
@@ -78,66 +73,54 @@ proc squaresquare {P X1 X2 X3 X4 Y} {
     square $P/qD $X3 $X4 [expr $Y + 10]
 }
 
-proc supercolumn {P X1 X2 X3 X4} {
-    for {set I 0} {$I < 24} {incr I} {
-        set PP [expr $P + $I]
-        squaresquare b\[$PP].b $X1 $X2 $X3 $X4 [expr $I * 20 + 1]
+proc nonet {P Q B X1 X2 X3 X4 X5 X6 Y} {
+    square $P/qA $X1 $X2 [expr $Y +  1]
+    square $P/qB $X1 $X2 [expr $Y + 11]
+    square $P/qC $X1 $X2 [expr $Y + 21]
+    square $P/qD $X3 $X4 [expr $Y + 21]
+    set PF [expr $Y / 5 + 3]
+    set_property LOC RAMB36_X${B}Y${PF} [get_cells $P/fifo/fifo]
+
+    square $Q/qA $X5 $X6 [expr $Y + 21]
+    square $Q/qB $X5 $X6 [expr $Y + 11]
+    square $Q/qC $X5 $X6 [expr $Y +  1]
+    square $Q/qD $X3 $X4 [expr $Y +  1]
+    set QF [expr $Y / 5 + 2]
+    set_property LOC RAMB36_X${B}Y${QF} [get_cells $Q/fifo/fifo]
+
+    set PB [expr $Y / 300]
+    #add_cells_to_pblock [get_pblock pblock_$PB] [get_cells $P] [get_cells $Q]
+    #add_cells_to_pblock [get_pblock pblock_$PB] [get_cells $P] [get_cells $Q]
+    set_property USER_SLR_ASSIGNMENT SLR$PB [get_cells $P] [get_cells $Q]
+}
+
+set P 0
+
+proc supercolumn {B X1 X2 X3 X4 X5 X6 XR} {
+    global P
+    for {set I 0} {$I < 30} {incr I} {
+        if {$I % 10 == 0 || $I == 11} {
+            continue
+        }
+        if {$X1 > 120 && $I >= 10 && $I < 20} {
+            continue
+        }
+        set pb [create_pblock pblock_$P]
+        set PP b\[$P\].b
+        incr P
+        set QQ b\[$P\].b
+        incr P
+        set Y [expr $I * 30]
+        set_property IS_SOFT TRUE $pb
+        resize_pblock $pb -add "SLICE_X${X1}Y$Y:SLICE_X${XR}Y[expr $Y+29]"
+        add_cells_to_pblock $pb [get_cells $PP] [get_cells $QQ]
+        nonet $PP $QQ $B $X1 $X2 $X3 $X4 $X5 $X6 $Y
     }
 }
 
-supercolumn   0    0   9  17  25
-supercolumn  24   31  38  44  51
-supercolumn  48   58  65  72  80
-supercolumn  72   86  95 103 109
-
-supercolumn  96  120 127 133 140
-supercolumn 120  150 157 163 170
-supercolumn 144  180 187 193 200
-supercolumn 168  207 213 220 227
-
-set_property IS_ENABLED 0 [get_drc_checks]
+supercolumn 1   0   6  13  20  26  32   40
+supercolumn 4  41  48  55  61  68  74   81
+supercolumn 7  82  88  95 101 112 118  124
+supercolumn 9 125 131 139 146 154 162  168
 
 set_param drc.disableLUTOverUtilError 1
-
-#squaresquare b[1].b 0 9 17 25 1
-#squaresquare b[2].b 0 9 17 25 21
-#squaresquare b[3].b 0 9 17 25 41
-#squaresquare b[4].b 0 9 17 25 61
-#squaresquare b[5].b 0 9 17 25 81
-#squaresquare b[6].b 0 9 17 25 101
-
-#squaresquare b[7].b 31 38 44 51 1
-#squaresquare b[8].b 31 38 44 51 21
-#squaresquare b[9].b 31 38 44 51 41
-#squaresquare b[10].b 31 38 44 51 61
-#squaresquare b[11].b 31 38 44 51 81
-#squaresquare b[12].b 31 38 44 51 101
-
-#squaresquare b[13].b 57 65 72 80 1
-#squaresquare b[14].b 57 65 72 80 21
-#squaresquare b[15].b 57 65 72 80 41
-#squaresquare b[16].b 57 65 72 80 61
-#squaresquare b[17].b 57 65 72 80 81
-#squaresquare b[18].b 57 65 72 80 101
-
-#squaresquare b[19].b 86 95 103 109 1
-#squaresquare b[20].b 86 95 103 109 21
-#squaresquare b[21].b 86 95 103 109 41
-#squaresquare b[22].b 86 95 103 109 61
-#squaresquare b[23].b 86 95 103 109 81
-#squaresquare b[24].b 86 95 103 109 101
-
-
-set_false_path -to [get_pins -filter {REF_PIN_NAME == RST} -of_objects [get_cells -hierarchical -filter {REF_NAME =~ FIFO*}]]
-
-foreach i {0 1} {
-    set_false_path \
-        -from [get_clocks -of_objects [get_pins pll/CLKOUT6]] \
-        -to [get_clocks -of_objects [get_pins pll/CLKOUT$i]]
-}
-
-foreach i {0 1} j {1 0} {
-    set_false_path \
-        -from [get_clocks -of_objects [get_pins pll/CLKOUT$i]] \
-        -to [get_clocks -of_objects [get_pins pll/CLKOUT$j]]
-}

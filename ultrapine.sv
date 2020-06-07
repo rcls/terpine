@@ -1,106 +1,88 @@
 `default_nettype none
 
-module ultrapine(
-  input bit[1:0] rmii_RX,
-  input bit rmii_RX_CRS_DV,
+module ultrapine #(BLOCKS = 192) (
+  input bit PCIE_REFCLK_P,
+  input bit PCIE_REFCLK_N,
+  input bit PCIE_PERST_LS,
+  input bit PEX_RX0_P,
+  input bit PEX_RX0_N,
+  output bit PEX_TX0_P,
+  output bit PEX_TX0_N,
 
-  output bit eth_rst,
-  output bit[1:0] rmii_TX,
-  output bit rmii_TX_EN,
-  input bit link_led,
-  input bit sys_diff_clock_clk_p,
-  input bit sys_diff_clock_clk_n);
+  inout wire I2C_FPGA_SDA_LS,
+  inout wire I2C_FPGA_SCL_LS,
+
+  output bit FPGA_TXD_MSP,
+  input bit FPGA_RXD_MSP);
 
    bit [19:0] command;
    bit [2:0] opcode;
    bit strobe;
-   bit rmii_CLK_pad;
+   bit turbo;
+   bit alarm;
 
-   bit [191:0] fifo_req;
-   bit [191:0] fifo_empty;
-   bit [191:0] fifo_oflow;
-   bit [191:0] fifo_bits;
-   bit pllfb, mii_clk;
-   bit fast_clk, slow_clk, clk;
-   bit fifo_rst;
-   bit xadc_alarm;
+   bit [BLOCKS-1:0] fifo_req;
+   bit [BLOCKS-1:0] fifo_empty;
+   bit [BLOCKS-1:0] fifo_oflow;
+   bit [BLOCKS-1:0] fifo_bits;
 
-   IBUFDS sys_clock(.I(sys_diff_clock_clk_p), .IB(sys_diff_clock_clk_n),
-     .O(rmii_CLK_pad));
-
-   BUFGMUX_CTRL clkmux(.S(xadc_alarm), .I0(fast_clk), .I1(slow_clk), .O(clk));
-
-   MMCME2_BASE #(
-     .CLKFBOUT_MULT_F(30),
-     .CLKIN1_PERIOD(20),
-     .CLKOUT0_DIVIDE_F(3),
-     .CLKOUT1_DIVIDE(6),
-     .CLKOUT6_DIVIDE(60)
-     ) pll (
-     .CLKIN1(rmii_CLK_pad),
-     .CLKOUT0(fast_clk), .CLKOUT1(slow_clk), .CLKOUT6(mii_clk),
-     .CLKFBOUT(pllfb), .CLKFBIN(pllfb), .PWRDWN(0), .RST(0));
+   bit ClkFast, ClkSlow, axi_aclk, clk;
 
    genvar i;
-   for (i = 0; i <= 191; i = i + 1) begin:b
-      block #(i) b(command, opcode, strobe, clk,
+   for (i = 0; i < BLOCKS; i = i + 1) begin:b
+      block #(.id(i), .id_width(8)) b(command, opcode, strobe, clk,
      fifo_empty[i], fifo_oflow[i], fifo_req[i], fifo_bits[i],
-     fifo_rst, mii_clk);
+     0, axi_aclk);
    end
 
-   // "At least 1µs" for the PHY.
-   bit [7:0] fifo_rst_count = 8'h80;
-   assign fifo_rst = fifo_rst_count[7];
-   assign eth_rst = !fifo_rst_count[7];
-   always@(posedge mii_clk)
-     fifo_rst_count <= fifo_rst_count + fifo_rst;
+   BUFGMUX_CTRL clkmux(.S(!alarm && turbo), .I0(ClkSlow), .I1(ClkFast), .O(clk));
+   /*
+   (* async_reg = "true" *)
+   bit turbo1, turbo2, alarm1, alarm2;
+   bit clk_ce = 0;
+   bit clk_ce2 = 0;
+   bit clk_ce3 = 0;
+   bit clk_internal;
+   BUFG internal(.I(ClkFast), .O(clk_internal));
+   BUFGCE gate(.I(ClkFast), .O(clk), .CE(clk_ce3));
+   always@(posedge clk_internal) begin
+      turbo1 <= turbo;
+      turbo2 <= turbo1;
+      alarm1 <= alarm;
+      alarm2 <= alarm1;
+      clk_ce <= turbo2 && !alarm2 || (!clk_ce && !clk_ce2);
+      clk_ce2 <= clk_ce;
+      clk_ce3 <= clk_ce2;
+   end
+    */
 
-   bit [3:0] rmii_D;
-   bit [3:0] mii_Q;
-   bit [1:0] rmii_DV;
-   bit mii_QV;
+   control con (.Alarm(alarm),
+     .strobe(strobe),
+     .command(command),
+     .opcode(opcode),
+     .fifo_bits(fifo_bits),
+     .fifo_empty(fifo_empty),
+     .fifo_oflow(fifo_oflow),
+     .fifo_req(fifo_req),
+     .turbo(turbo),
 
-   // The IDDR in "same edge mode" has Q2 earlier than Q1!
-   IDDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_RX0
-     (.D(rmii_RX[0]), .Q2(rmii_D[0]), .Q1(rmii_D[2]), .C(mii_clk));
-   IDDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_RX1
-     (.D(rmii_RX[1]), .Q2(rmii_D[1]), .Q1(rmii_D[3]), .C(mii_clk));
-   IDDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_RDV
-     (.D(rmii_RX_CRS_DV), .Q2(rmii_DV[0]), .Q1(rmii_DV[1]), .C(mii_clk));
+     .PCIE_REFCLK_clk_p(PCIE_REFCLK_P),
+     .PCIE_REFCLK_clk_n(PCIE_REFCLK_N),
+     .PCIE_PERST_LS(PCIE_PERST_LS),
+     .PEX_rxp(PEX_RX0_P),
+     .PEX_rxn(PEX_RX0_N),
+     .PEX_txp(PEX_TX0_P),
+     .PEX_txn(PEX_TX0_N),
 
-   ODDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_TX0
-     (.Q(rmii_TX[0]), .D1(mii_Q[0]), .D2(mii_Q[2]), .C(mii_clk));
-   ODDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_O1
-     (.Q(rmii_TX[1]), .D1(mii_Q[1]), .D2(mii_Q[3]), .C(mii_clk));
-   ODDR #(.DDR_CLK_EDGE("SAME_EDGE")) rmii_TXDV
-     (.Q(rmii_TX_EN), .D1(mii_QV), .D2(mii_QV), .C(mii_clk));
+     .I2C_FPGA_SDA_LS(I2C_FPGA_SDA_LS),
+     .I2C_FPGA_SCL_LS(I2C_FPGA_SCL_LS),
 
-   bit [7:0] seqnum;
-   bit tx_strobe;
+     .FPGA_MSP_rxd(FPGA_RXD_MSP),
+     .FPGA_MSP_txd(FPGA_TXD_MSP),
 
-   bit [23:0] folded_empty, folded_oflow, folded_req, folded_bits;
-   assign folded_empty = fifo_empty  [ 23:  0] | fifo_empty[ 47: 24]
-                         | fifo_empty[ 71: 48] | fifo_empty[ 95: 72]
-                         | fifo_empty[119: 96] | fifo_empty[143:120]
-                         | fifo_empty[167:144] | fifo_empty[191:168];
-   assign folded_oflow = fifo_oflow  [ 23:  0] | fifo_oflow[ 47: 24]
-                         | fifo_oflow[ 71: 48] | fifo_oflow[ 95: 72]
-                         | fifo_oflow[119: 96] | fifo_oflow[143:120]
-                         | fifo_oflow[167:144] | fifo_oflow[191:168];
-   assign folded_bits = fifo_bits   [ 23:  0] | fifo_bits[ 47: 24]
-                         | fifo_bits[ 71: 48] | fifo_bits[ 95: 72]
-                         | fifo_bits[119: 96] | fifo_bits[143:120]
-                         | fifo_bits[167:144] | fifo_bits[191:168];
-   assign fifo_req = {folded_req, folded_req, folded_req, folded_req,
-     folded_req, folded_req, folded_req, folded_req};
-
-   read_out ro(command, opcode, strobe, seqnum, tx_strobe,
-     folded_empty, folded_oflow, folded_req, folded_bits,
-     mii_Q, mii_QV, mii_clk);
-
-   control con(rmii_D, rmii_DV,
-     command, opcode, strobe, seqnum, tx_strobe, mii_clk);
-
-   //xadc_temp mon(.dclk_in(mii_clk), .alarm_out(xadc_alarm));
+     .ClkFast(ClkFast),
+     .ClkSlow(ClkSlow),
+     .axi_aclk(axi_aclk)
+     );
 
 endmodule

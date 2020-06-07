@@ -3,7 +3,7 @@ module fifo_out(
   input bit WREN,
   input bit WRCLK,
 
-  output bit [35:0] DO,
+  output bit [8:0] DO,
   input bit RDCLK,
   input bit RDEN,
   input bit RST,
@@ -13,15 +13,15 @@ module fifo_out(
    // These guys can ignore the fifo reset.
 
    FIFO36E2
-     #(.REGISTER_MODE("REGISTERED"), .WRITE_WIDTH(36), .READ_WIDTH(36),
+     #(.REGISTER_MODE("REGISTERED"), .WRITE_WIDTH(36), .READ_WIDTH(9),
        .FIRST_WORD_FALL_THROUGH("TRUE"), .PROG_EMPTY_THRESH(1000))
    fifo(
      .DIN({ 32'b0, DI[31:0] }),
      .DINP({ 4'b0, DI[35:32] }),
      .WREN(WREN),
      .WRCLK(WRCLK),
-     .DOUT(DO[31:0]),
-     .DOUTP(DO[35:32]),
+     .DOUT(DO[7:0]),
+     .DOUTP(DO[8]),
      .RDCLK(RDCLK),
      .RDEN(RDEN),
      .RST(0),

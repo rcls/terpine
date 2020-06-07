@@ -82,27 +82,4 @@ int main()
     IterationServer::it.start_threads(8);
     while (true)
         sleep(10000);
-#if 0
-#if 0
-    // 333589|1350906516047|ahgnv9pq000n00000000|0|1|
-    //sqlite> select * from samples where id = 333589 and count < 1350906516047 order by count desc limit 1 ;
-    //333589|1349935487456|f7n5ll7add4600630000|0|1|
-    text_code_t t = { "f7n5ll7add4600630000" };
-    uint64_t start = 1349935487456;
-    uint64_t end   = 1350906516047;
-    // p7budr2bt83s79nmlno3
-#else
-    // 134420|1099397200641|da372tmb49qk00qb0000|0|1|
-    //2o96ij9r002h00000000|1099680338680|134420
-    text_code_t t = { "da372tmb49qk00qb0000" };
-    uint64_t start = 1099397200641;
-    uint64_t end = 1099680338680;
-    // 7sr4mekvm0jjr3onqk1p
-#endif
-    uint64_t delta = end - start - 1;
-    printf("Catch up %lu\n", delta);
-    cycle<1>(&t, delta);
-    printf("%s\n", t.text);
-    return 0;
-#endif
 }

@@ -1,5 +1,7 @@
-*.jou
+.*
+vivado*_pid*
 Terpine.*/
+Ultrapine.*
 EthTest.*/
 *.pdf
 *.PDF

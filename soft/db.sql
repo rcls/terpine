@@ -37,3 +37,4 @@ CREATE TABLE prior(value CHARACTER(20) PRIMARY KEY,
                    prior CHARACTER(20),
                    image CHARACTER(40));
 CREATE INDEX prior_image ON prior(image);
+

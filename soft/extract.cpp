@@ -159,4 +159,5 @@ int main()
         threads.emplace_back(&extract, pp, &mutex);
     for (auto & t : threads)
         t.join();
+    return 0;
 }
