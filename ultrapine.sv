@@ -9,8 +9,9 @@ module ultrapine #(BLOCKS = 192) (
   output bit PEX_TX0_P,
   output bit PEX_TX0_N,
 
-  inout wire I2C_FPGA_SDA_LS,
-  inout wire I2C_FPGA_SCL_LS,
+  inout wire SYSMON_SDA,
+  inout wire SYSMON_SCL,
+  inout wire [3:0] MSP_GPIO,
 
   output bit FPGA_TXD_MSP,
   input bit FPGA_RXD_MSP);
@@ -26,13 +27,13 @@ module ultrapine #(BLOCKS = 192) (
    bit [BLOCKS-1:0] fifo_oflow;
    bit [BLOCKS-1:0] fifo_bits;
 
-   bit ClkFast, ClkSlow, axi_aclk, clk;
+   bit ClkFast, ClkSlow, ClkCon, clk;
 
    genvar i;
    for (i = 0; i < BLOCKS; i = i + 1) begin:b
       block #(.id(i), .id_width(8)) b(command, opcode, strobe, clk,
      fifo_empty[i], fifo_oflow[i], fifo_req[i], fifo_bits[i],
-     0, axi_aclk);
+     0, ClkCon);
    end
 
    BUFGMUX_CTRL clkmux(.S(!alarm && turbo), .I0(ClkSlow), .I1(ClkFast), .O(clk));
@@ -74,15 +75,16 @@ module ultrapine #(BLOCKS = 192) (
      .PEX_txp(PEX_TX0_P),
      .PEX_txn(PEX_TX0_N),
 
-     .I2C_FPGA_SDA_LS(I2C_FPGA_SDA_LS),
-     .I2C_FPGA_SCL_LS(I2C_FPGA_SCL_LS),
+     .SYSMON_SDA(SYSMON_SDA),
+     .SYSMON_SCL(SYSMON_SCL),
+     .MSP_GPIO(MSP_GPIO),
 
      .FPGA_MSP_rxd(FPGA_RXD_MSP),
      .FPGA_MSP_txd(FPGA_TXD_MSP),
 
      .ClkFast(ClkFast),
      .ClkSlow(ClkSlow),
-     .axi_aclk(axi_aclk)
+     .ClkCon(ClkCon)
      );
 
 endmodule

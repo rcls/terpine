@@ -1,16 +1,6 @@
 `default_nettype none
 
 module ultracon #(BLOCKS = 192) (
-  input wire [BLOCKS-1:0] fifo_empty,
-  input wire [BLOCKS-1:0] fifo_oflow,
-  input wire [BLOCKS-1:0] fifo_bits,
-  output reg [BLOCKS-1:0] fifo_req,
-
-  output reg [19:0] command,
-  output reg [2:0] opcode,
-  output reg strobe,
-  output reg turbo,
-
   input wire [7:0] axi_AWADDR,
   input wire axi_AWVALID,
   output wire axi_AWREADY,
@@ -35,7 +25,17 @@ module ultracon #(BLOCKS = 192) (
 
   input wire axi_resetn,
 
-  input wire clk);
+  input wire clk,
+
+  input wire [BLOCKS-1:0] fifo_empty,
+  input wire [BLOCKS-1:0] fifo_oflow,
+  input wire [BLOCKS-1:0] fifo_bits,
+  output reg [BLOCKS-1:0] fifo_req,
+
+  output reg [19:0] command,
+  output reg [2:0] opcode,
+  output reg strobe,
+  output reg turbo);
 
    wire artransaction;
    reg wtransaction;

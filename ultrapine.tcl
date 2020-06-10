@@ -124,3 +124,22 @@ supercolumn 7  82  88  95 101 112 118  124
 supercolumn 9 125 131 139 146 154 162  168
 
 set_param drc.disableLUTOverUtilError 1
+
+proc getclk {net} {get_clocks -of_objects [get_nets $net]}
+
+set_false_path -from  [getclk ClkFast] -to [getclk ClkSlow]
+set_false_path -from  [getclk ClkSlow] -to [getclk ClkFast]
+
+set_max_delay -from [getclk ClkCon] -to [getclk clk] 40
+
+set_max_delay -to [get_pins clkmux/S0] 40
+
+set PBC [create_pblock pblock_control]
+resize_pblock $PBC -add {CLOCKREGION_X5Y5:CLOCKREGION_X5Y6}
+resize_pblock $PBC -add {CLOCKREGION_X5Y8:CLOCKREGION_X5Y8}
+
+foreach X {AXI CMS Clock ClockBuffer Convert PCIe Reset Control} {
+    add_cells_to_pblock $PBC [get_cells "con/$X"]
+}
+add_cells_to_pblock $PBC [get_cells dbg_hub]
+set_property IS_SOFT TRUE $PBC
