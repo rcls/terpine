@@ -12,6 +12,7 @@ static int s;
 
 read_out_t last;
 static int next_sequence;
+static int eth_index;
 
 const read_out_t & open_socket()
 {
@@ -21,9 +22,10 @@ const read_out_t & open_socket()
 
     sockaddr_ll sll = {};
     sll.sll_family = AF_PACKET;
-    sll.sll_ifindex = if_nametoindex("eth0");
-    if (!sll.sll_ifindex)
+    eth_index = if_nametoindex("eth0");
+    if (!eth_index)
         err(1, "lookup eth0");
+    sll.sll_ifindex = eth_index;
     if (bind(s, (sockaddr *) &sll, sizeof sll) < 0)
         err(1, "bind to device");
 
@@ -61,7 +63,7 @@ const read_out_t & transact(control_t & req, bool seq_match)
     struct sockaddr_ll a = {};
     a.sll_family = AF_PACKET;
     a.sll_protocol = 0x5555;
-    a.sll_ifindex = 3;
+    a.sll_ifindex = eth_index;
     a.sll_halen = 6;
     memset(a.sll_addr, 0xff, 6);
 
